@@ -71,12 +71,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <!-- 哨兵事件监听服务 -->
-        <service
-            android:name=".service.SentryGuardianService"
-            android:enabled="true"
-            android:exported="false"
-            android:process=":core" />
+
 
         <!-- 通知栏快捷动作广播接收器 -->
         <receiver
