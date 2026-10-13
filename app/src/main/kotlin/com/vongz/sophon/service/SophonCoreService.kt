@@ -1,23 +1,19 @@
 package com.vongz.sophon.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import com.vongz.sophon.R
 import com.vongz.sophon.SophonApp
+import com.vongz.sophon.core.notification.SophonNotificationManager
 import com.vongz.sophon.core.storage.RamRingBuffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -25,49 +21,41 @@ import kotlinx.coroutines.launch
  *
  * 【架构隔离】
  * 运行于独立的 `:core` 后台守护进程中。
- * 即使 UI 交互进程发生任何 OOM 或崩溃，核心行车记录与补盲管线均不受任何干扰。
+ * 顶部状态栏常驻图标，通知栏常驻卡片，实时感知 U 盘状态与录制时长。
  */
 class SophonCoreService : Service() {
 
     companion object {
         private const val TAG = "Sophon.CoreService"
-        private const val CHANNEL_ID = "sophon_core_channel"
-        private const val NOTIFICATION_ID = 1001
+
+        const val ACTION_TRIGGER_SNAPSHOT = "com.vongz.sophon.action.TRIGGER_SNAPSHOT"
+        const val ACTION_TRIGGER_LOCK = "com.vongz.sophon.action.TRIGGER_LOCK"
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val ramRingBuffer = RamRingBuffer()
 
+    private lateinit var notifManager: SophonNotificationManager
+    private var isRecordingActive = false
+    private var recordingDurationSec = 0L
+
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "SophonCoreService onCreate in PID: ${android.os.Process.myPid()}")
+
+        notifManager = SophonNotificationManager(this)
         startForegroundServiceInternal()
         observeStorageHealth()
+        startNotificationUpdateLoop()
     }
 
     private fun startForegroundServiceInternal() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                getString(R.string.channel_core_service_name),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.channel_core_service_desc)
-                setShowBadge(false)
-            }
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nm.createNotificationChannel(channel)
-        }
-
-        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getString(R.string.recording_active))
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
-
-        startForeground(NOTIFICATION_ID, notification)
+        val initialNotif = notifManager.buildOngoingNotification(
+            isRecording = false,
+            durationSec = 0L,
+            isUsbMounted = SophonApp.storageVault.isUsbMounted.value
+        )
+        startForeground(SophonNotificationManager.NOTIFICATION_ID, initialNotif)
     }
 
     private fun observeStorageHealth() {
@@ -77,14 +65,43 @@ class SophonCoreService : Service() {
                 if (!isMounted) {
                     Log.w(TAG, "USB storage unmounted! Halting disk writer. RAM Ring Buffer enters standby.")
                     ramRingBuffer.clear()
+                    isRecordingActive = false
                 } else {
                     Log.i(TAG, "USB storage mounted. Ready for streaming write.")
+                    isRecordingActive = true
                 }
+                notifManager.updateNotification(isRecordingActive, recordingDurationSec, isMounted)
+            }
+        }
+    }
+
+    private fun startNotificationUpdateLoop() {
+        serviceScope.launch {
+            while (isActive) {
+                delay(1000L)
+                if (isRecordingActive) {
+                    recordingDurationSec++
+                }
+                notifManager.updateNotification(
+                    isRecording = isRecordingActive,
+                    durationSec = recordingDurationSec,
+                    isUsbMounted = SophonApp.storageVault.isUsbMounted.value
+                )
             }
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_TRIGGER_SNAPSHOT -> {
+                Log.i(TAG, "Handling snapshot trigger from notification...")
+                // 执行拍照抓拍
+            }
+            ACTION_TRIGGER_LOCK -> {
+                Log.i(TAG, "Handling event lock trigger from notification...")
+                // 标记加锁事件
+            }
+        }
         return START_STICKY
     }
 
