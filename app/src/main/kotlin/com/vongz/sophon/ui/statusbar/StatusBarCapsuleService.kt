@@ -199,6 +199,16 @@ class StatusBarCapsuleService : Service() {
             resetDismissTimer()
         }
 
+        // 免流快传按钮
+        panelView?.findViewById<TextView>(R.id.btn_panel_share)?.setOnClickListener {
+            dismissQuickPanel()
+            val mainIntent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("action_show_lan_share", true)
+            }
+            startActivity(mainIntent)
+        }
+
         // 主页按钮
         panelView?.findViewById<TextView>(R.id.btn_panel_open)?.setOnClickListener {
             val mainIntent = Intent(this, MainActivity::class.java).apply {

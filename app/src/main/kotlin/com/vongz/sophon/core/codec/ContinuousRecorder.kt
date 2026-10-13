@@ -244,4 +244,39 @@ class ContinuousRecorder(
         }
         Log.i(TAG, "Recording pipeline completely stopped.")
     }
+
+    /**
+     * 车祸碰撞/熄火休眠紧急落盘封包 (毫秒级执行，防止 moov atom 缺失导致视频损坏)
+     */
+    @Synchronized
+    fun emergencyFinalizeCurrentChunk(reason: String) {
+        Log.w(TAG, "EMERGENCY FINALIZE TRIGGERED: $reason! Flushing and closing current MP4 chunk...")
+        _isRecording.value = false
+        sliceTimerJob?.cancel()
+        durationTimerJob?.cancel()
+
+        try {
+            if (isMuxerStarted && currentMuxer != null) {
+                currentMuxer?.stop()
+                currentMuxer?.release()
+                Log.i(TAG, "Current MP4 chunk successfully finalized with valid moov header.")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed during emergency muxer finalization", e)
+        } finally {
+            currentMuxer = null
+            isMuxerStarted = false
+        }
+
+        try {
+            mediaCodec?.stop()
+            mediaCodec?.release()
+        } catch (e: Exception) {
+            Log.w(TAG, "Error stopping media codec during emergency finalization", e)
+        } finally {
+            mediaCodec = null
+        }
+        ramRingBuffer.clear()
+        Log.i(TAG, "Emergency finalization completed cleanly.")
+    }
 }

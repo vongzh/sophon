@@ -208,6 +208,19 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+            <!-- 手机互联/免流快传 药丸按钮 -->
+            <TextView
+                android:id="@+id/btn_top_lan_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_badge_pill"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="4dp"
+                android:text="📲 免流快传"
+                android:textColor="@color/flyme_cyan"
+                android:textSize="13sp" />
+
             <!-- 挡位 / 车速遥测微件 -->
             <TextView
                 android:id="@+id/tv_telemetry_gear"
@@ -241,12 +254,18 @@
 
             <!-- 前视 -->
             <FrameLayout
+                android:id="@+id/container_cam_front"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/bg_cockpit_card">
+
+                <SurfaceView
+                    android:id="@+id/surface_cam_front"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -263,12 +282,18 @@
 
             <!-- 后视 -->
             <FrameLayout
+                android:id="@+id/container_cam_back"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/bg_cockpit_card">
+
+                <SurfaceView
+                    android:id="@+id/surface_cam_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -285,12 +310,18 @@
 
             <!-- 左侧视 -->
             <FrameLayout
+                android:id="@+id/container_cam_left"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/bg_cockpit_card">
+
+                <SurfaceView
+                    android:id="@+id/surface_cam_left"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -307,12 +338,18 @@
 
             <!-- 右侧视 -->
             <FrameLayout
+                android:id="@+id/container_cam_right"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="6dp"
                 android:background="@drawable/bg_cockpit_card">
+
+                <SurfaceView
+                    android:id="@+id/surface_cam_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:layout_width="wrap_content"

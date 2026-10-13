@@ -27,6 +27,8 @@ class LynkcoWakeupReceiver : BroadcastReceiver() {
         const val ACTION_STR_RESUME = "com.lynkco.intent.action.STR_RESUME"
         const val ACTION_SYSTEM_READY = "com.lynkco.intent.action.SYSTEM_READY"
         const val ACTION_WAKEUP = "com.lynkco.intent.action.WAKEUP"
+        const val ACTION_STR_SUSPEND = "com.lynkco.intent.action.STR_SUSPEND"
+        const val ACTION_PRE_SLEEP = "com.lynkco.intent.action.PRE_SLEEP"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -39,9 +41,16 @@ class LynkcoWakeupReceiver : BroadcastReceiver() {
                 val serviceIntent = Intent(context, SophonCoreService::class.java)
                 context.startService(serviceIntent)
 
-                // 可选通过 Bark 发送车辆唤醒上线通知
                 val dispatcher = RemoteDispatcher(context)
                 dispatcher.sendBarkAlert("领克08 车辆唤醒", "车辆电源已就绪，极视记录仪处于工作态。")
+            }
+
+            ACTION_STR_SUSPEND, ACTION_PRE_SLEEP, Intent.ACTION_SHUTDOWN, Intent.ACTION_REBOOT -> {
+                Log.w(TAG, "Vehicle entering STR SUSPEND or SHUTDOWN! Emergency finalizing MP4 chunk...")
+                val finalizeIntent = Intent(context, SophonCoreService::class.java).apply {
+                    this.action = SophonCoreService.ACTION_EMERGENCY_FINALIZE
+                }
+                context.startService(finalizeIntent)
             }
         }
     }

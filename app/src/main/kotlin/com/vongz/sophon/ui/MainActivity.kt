@@ -41,6 +41,19 @@ class MainActivity : AppCompatActivity() {
         initViews()
         startDaemonServices()
         observeSystemStates()
+        checkShowLanShare(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        checkShowLanShare(intent)
+    }
+
+    private fun checkShowLanShare(intent: Intent?) {
+        if (intent?.getBooleanExtra("action_show_lan_share", false) == true) {
+            com.vongz.sophon.ui.lan.LanShareDialog(this).show()
+        }
     }
 
     private fun initViews() {
@@ -65,6 +78,33 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.btn_nav_settings).setOnClickListener {
             startActivity(Intent(this, com.vongz.sophon.ui.settings.SophonSettingsActivity::class.java))
         }
+
+        findViewById<View>(R.id.btn_top_lan_share).setOnClickListener {
+            com.vongz.sophon.ui.lan.LanShareDialog(this).show()
+        }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: android.view.KeyEvent): Boolean {
+        if (isSteeringWheelCustomKey(keyCode)) {
+            if (event.isLongPress || event.repeatCount > 0) {
+                SophonApp.vehicleSignalBus.dispatchHardKeyEvent(com.vongz.sophon.domain.model.HardKeyEvent.LONG_PRESS)
+                android.widget.Toast.makeText(this, "🔒 方向盘按键长按：已紧急锁死当前视频", android.widget.Toast.LENGTH_SHORT).show()
+                return true
+            } else if (event.repeatCount == 0) {
+                SophonApp.vehicleSignalBus.dispatchHardKeyEvent(com.vongz.sophon.domain.model.HardKeyEvent.SHORT_PRESS)
+                android.widget.Toast.makeText(this, "📷 方向盘按键抓拍成功", android.widget.Toast.LENGTH_SHORT).show()
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun isSteeringWheelCustomKey(keyCode: Int): Boolean {
+        return keyCode == android.view.KeyEvent.KEYCODE_BUTTON_1 ||
+                keyCode == android.view.KeyEvent.KEYCODE_CAMERA ||
+                keyCode == android.view.KeyEvent.KEYCODE_MEDIA_RECORD ||
+                keyCode == android.view.KeyEvent.KEYCODE_STAR ||
+                keyCode == 280
     }
 
     private fun startDaemonServices() {

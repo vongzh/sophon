@@ -39,6 +39,7 @@ class SophonCoreService : Service() {
 
         const val ACTION_TRIGGER_SNAPSHOT = "com.vongz.sophon.action.TRIGGER_SNAPSHOT"
         const val ACTION_TRIGGER_LOCK = "com.vongz.sophon.action.TRIGGER_LOCK"
+        const val ACTION_EMERGENCY_FINALIZE = "com.vongz.sophon.action.EMERGENCY_FINALIZE"
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -49,6 +50,7 @@ class SophonCoreService : Service() {
     private lateinit var gpuCompositor: GpuCompositorImpl
     private lateinit var multiCameraManager: MultiCameraManager
     private lateinit var continuousRecorder: ContinuousRecorder
+    private var lanShareServer: com.vongz.sophon.core.lan.LanShareServer? = null
 
     private var isRecordingActive = false
     private var recordingDurationSec = 0L
@@ -61,10 +63,23 @@ class SophonCoreService : Service() {
         startForegroundServiceInternal()
 
         initVisualAndRecordingPipeline()
+        startLanShareServerInternal()
         observeStorageHealth()
         observeVehicleTelemetryForOsd()
         observeEmergencyCollisionEvents()
+        observeHardKeyEvents()
         startNotificationUpdateLoop()
+    }
+
+    private fun startLanShareServerInternal() {
+        try {
+            lanShareServer = com.vongz.sophon.core.lan.LanShareServer(SophonApp.storageVault, 8088).apply {
+                start()
+            }
+            Log.i(TAG, "LanShareServer started on port 8088.")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to start LanShareServer", e)
+        }
     }
 
     private fun startForegroundServiceInternal() {
@@ -154,6 +169,26 @@ class SophonCoreService : Service() {
         }
     }
 
+    private fun observeHardKeyEvents() {
+        val bus = SophonApp.vehicleSignalBus
+        serviceScope.launch {
+            bus.hardKeyEvents.collectLatest { event ->
+                when (event) {
+                    com.vongz.sophon.domain.model.HardKeyEvent.SHORT_PRESS -> {
+                        Log.i(TAG, "Hard key SHORT_PRESS -> Triggering instant snapshot")
+                        takeManualSnapshot()
+                    }
+                    com.vongz.sophon.domain.model.HardKeyEvent.LONG_PRESS -> {
+                        Log.w(TAG, "Hard key LONG_PRESS -> Triggering emergency event lock")
+                        continuousRecorder.triggerEventLock("Steering Wheel Custom Key Long Press")
+                        barkNotifier.sendAlert("方向盘加锁", "驾驶员长按方向盘自定义键锁定了当前视频。")
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
     private fun startNotificationUpdateLoop() {
         serviceScope.launch {
             while (isActive) {
@@ -180,6 +215,10 @@ class SophonCoreService : Service() {
                 Log.i(TAG, "Handling manual event lock trigger...")
                 continuousRecorder.triggerEventLock("Manual User Trigger")
                 barkNotifier.sendAlert("手动加锁", "驾驶员已手动加锁当前行车切片。")
+            }
+            ACTION_EMERGENCY_FINALIZE -> {
+                Log.w(TAG, "EMERGENCY FINALIZE: Vehicle power-cut or STR suspend detected!")
+                continuousRecorder.emergencyFinalizeCurrentChunk("System Suspend / Power-down")
             }
         }
         return START_STICKY
@@ -210,6 +249,7 @@ class SophonCoreService : Service() {
         Log.i(TAG, "SophonCoreService onDestroy")
         serviceScope.cancel()
         try {
+            lanShareServer?.stop()
             continuousRecorder.stopRecording()
             multiCameraManager.stopAllCameras()
             gpuCompositor.release()
