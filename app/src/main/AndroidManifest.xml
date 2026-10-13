@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 相机权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <!-- 前台服务权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+
+    <!-- 车机悬浮窗权限 (打灯盲区辅助) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- 开机与电源唤醒 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- 外部 U 盘存储访问权限 (严格禁止写入内部闪存) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" tools:ignore="ScopedStorage" />
+
+    <application
+        android:name=".SophonApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Sophon">
+
+        <!-- 主控界面 (UI 进程) -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 核心视觉与录制前台服务 (独立 :core 进程，隔离 UI 崩溃) -->
+        <service
+            android:name=".service.SophonCoreService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="camera"
+            android:process=":core" />
+
+        <!-- 盲区补盲悬浮窗服务 -->
+        <service
+            android:name=".service.BlindSpotOverlayService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- 哨兵事件监听服务 -->
+        <service
+            android:name=".service.SentryGuardianService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":core" />
+
+    </application>
+
+</manifest>

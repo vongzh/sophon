@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.Sophon" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:statusBarColor">@color/bg_cockpit_dark</item>
+        <item name="android:navigationBarColor">@color/bg_cockpit_dark</item>
+        <item name="android:windowBackground">@color/bg_cockpit_dark</item>
+        <item name="colorPrimary">@color/flyme_cyan</item>
+        <item name="colorSecondary">@color/flyme_blue</item>
+    </style>
+</resources>
