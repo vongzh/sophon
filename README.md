@@ -3,8 +3,6 @@
 > **“极目四方，视守全程。”**  
 > 面向智能座舱定制开发的新一代**四向全维行车记录、盲区辅助感知与智能哨兵系统**。
 
-命名与合规说明见 [`docs/NAMING.md`](docs/NAMING.md)。
-
 ---
 
 ## 🌌 项目缘起与愿景
@@ -138,7 +136,6 @@ GNU General Public License for more details.
 
 | 文档 | 内容 |
 | :--- | :--- |
-| [`docs/NAMING.md`](docs/NAMING.md) | 命名决策与风险日志（**改名前必读**） |
 | [`docs/SYSTEM_SAFETY_PRINCIPLES.md`](docs/SYSTEM_SAFETY_PRINCIPLES.md) | 车载系统安全与稳定性最高准则（**开发前必读**） |
 | [`docs/EVCAM_ANALYSIS.md`](docs/EVCAM_ANALYSIS.md) | EVCam 架构分析报告 |
 | [`docs/EVCAM_DEEP_ANALYSIS.md`](docs/EVCAM_DEEP_ANALYSIS.md) | EVCam 代码级深度技术分析与避坑白皮书 |
