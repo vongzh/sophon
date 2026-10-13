@@ -5,6 +5,8 @@ import android.util.Log
 import com.vongz.sophon.domain.contract.IVehicleSignalBus
 import com.vongz.sophon.domain.model.DoorState
 import com.vongz.sophon.domain.model.GearState
+import com.vongz.sophon.domain.model.HardKeyEvent
+import com.vongz.sophon.domain.model.TirePressureInfo
 import com.vongz.sophon.domain.model.TurnSignalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +22,11 @@ import kotlinx.coroutines.launch
 /**
  * 车身信号反应式监听总线实现 (VehicleSignalBusImpl)
  *
+ * 【全面对标 EVCC 与 盯盯车】
+ * 支持接入 EVCC AIDL、Android CarPropertyManager 及 ECARX 本地总线。
+ *
  * 【安全红线 - 底线三 (Zero Tampering)】
- * 1. 严格作为 Read-Only Subscriber 监听车身数据；
- * 2. 绝不向车身总线发送任何写报文；
- * 3. 毫秒级分发原厂 AVM (360全景) 信号，支撑 50ms 悬浮窗极速避让。
+ * 100% 只读订阅者 (Read-Only Subscriber)，绝不向总线发送控制指令。
  */
 class VehicleSignalBusImpl(
     private val context: Context
@@ -44,11 +47,23 @@ class VehicleSignalBusImpl(
     private val _gearState = MutableStateFlow(GearState.PARK)
     override val gearState: StateFlow<GearState> = _gearState.asStateFlow()
 
+    private val _steeringAngle = MutableStateFlow(0f)
+    override val steeringAngle: StateFlow<Float> = _steeringAngle.asStateFlow()
+
+    private val _isDriverSeatbeltFastened = MutableStateFlow(true)
+    override val isDriverSeatbeltFastened: StateFlow<Boolean> = _isDriverSeatbeltFastened.asStateFlow()
+
+    private val _tirePressureInfo = MutableStateFlow(TirePressureInfo())
+    override val tirePressureInfo: StateFlow<TirePressureInfo> = _tirePressureInfo.asStateFlow()
+
     private val _isAvmActive = MutableStateFlow(false)
     override val isAvmActive: StateFlow<Boolean> = _isAvmActive.asStateFlow()
 
     private val _doorState = MutableStateFlow(DoorState())
     override val doorState: StateFlow<DoorState> = _doorState.asStateFlow()
+
+    private val _hardKeyEvents = MutableSharedFlow<HardKeyEvent>(extraBufferCapacity = 8)
+    override val hardKeyEvents: SharedFlow<HardKeyEvent> = _hardKeyEvents.asSharedFlow()
 
     private val _sentryTriggerEvents = MutableSharedFlow<Long>(extraBufferCapacity = 8)
     override val sentryTriggerEvents: SharedFlow<Long> = _sentryTriggerEvents.asSharedFlow()
@@ -58,7 +73,7 @@ class VehicleSignalBusImpl(
     override fun startListening() {
         if (isListening) return
         isListening = true
-        Log.i(TAG, "VehicleSignalBus started. Read-Only subscriber mode ACTIVE.")
+        Log.i(TAG, "VehicleSignalBus started. Multi-source read-only pipeline active.")
     }
 
     override fun stopListening() {
@@ -66,6 +81,8 @@ class VehicleSignalBusImpl(
         isListening = false
         Log.i(TAG, "VehicleSignalBus stopped.")
     }
+
+    // --- 内部只读分发接口 (供底层 HAL / EVCC 适配器更新内存状态) ---
 
     fun dispatchTurnSignalUpdate(state: TurnSignalState) {
         _turnSignalState.value = state
@@ -82,15 +99,33 @@ class VehicleSignalBusImpl(
         }
     }
 
+    fun dispatchSteeringAngleUpdate(angle: Float) {
+        _steeringAngle.value = angle
+    }
+
+    fun dispatchSeatbeltUpdate(fastened: Boolean) {
+        _isDriverSeatbeltFastened.value = fastened
+    }
+
+    fun dispatchTirePressureUpdate(info: TirePressureInfo) {
+        _tirePressureInfo.value = info
+    }
+
     fun dispatchAvmStateUpdate(active: Boolean) {
         if (_isAvmActive.value != active) {
-            Log.d(TAG, "AVM active state changed: $active (Priority: Emergency)")
+            Log.d(TAG, "AVM active state: $active (50ms Evasion Channel)")
             _isAvmActive.value = active
         }
     }
 
     fun dispatchDoorStateUpdate(door: DoorState) {
         _doorState.value = door
+    }
+
+    fun dispatchHardKeyEvent(event: HardKeyEvent) {
+        busScope.launch {
+            _hardKeyEvents.emit(event)
+        }
     }
 
     fun dispatchSentryVibrationEvent(timestampMs: Long) {

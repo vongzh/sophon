@@ -22,17 +22,47 @@ enum class GearState {
 }
 
 /**
- * 车门开启状态
+ * 车门与舱盖开启状态
  */
 data class DoorState(
     val isDriverAjar: Boolean = false,
     val isPassengerAjar: Boolean = false,
     val isRearLeftAjar: Boolean = false,
     val isRearRightAjar: Boolean = false,
-    val isTrunkAjar: Boolean = false
+    val isTrunkAjar: Boolean = false,
+    val isHoodAjar: Boolean = false
 ) {
     val isAnyAjar: Boolean
-        get() = isDriverAjar || isPassengerAjar || isRearLeftAjar || isRearRightAjar || isTrunkAjar
+        get() = isDriverAjar || isPassengerAjar || isRearLeftAjar || isRearRightAjar || isTrunkAjar || isHoodAjar
+}
+
+/**
+ * 单轮胎压与温度信息 (单位: bar, 摄氏度)
+ */
+data class SingleTireInfo(
+    val pressureBar: Float = 0f,
+    val tempCelsius: Int = 0,
+    val isWarning: Boolean = false
+)
+
+/**
+ * 四轮胎压监测数据 (TPMS)
+ */
+data class TirePressureInfo(
+    val frontLeft: SingleTireInfo = SingleTireInfo(),
+    val frontRight: SingleTireInfo = SingleTireInfo(),
+    val rearLeft: SingleTireInfo = SingleTireInfo(),
+    val rearRight: SingleTireInfo = SingleTireInfo()
+)
+
+/**
+ * 车载物理/方向盘硬件按键动作
+ */
+enum class HardKeyEvent {
+    STEERING_CUSTOM_CLICK,
+    STEERING_CUSTOM_LONG_PRESS,
+    REAR_FOG_LIGHT_LONG_PRESS,
+    TURN_LEVER_LONG_PRESS
 }
 
 /**
