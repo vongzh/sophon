@@ -51,6 +51,13 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
+        <!-- 车载抓拍相册大图查看器 -->
+        <activity
+            android:name=".ui.photo.PhotoViewerActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- 核心视觉与录制前台服务 (独立 :core 进程，隔离 UI 崩溃) -->
         <service
             android:name=".service.SophonCoreService"
@@ -91,6 +98,17 @@
                 <action android:name="com.lynkco.intent.action.STR_RESUME" />
                 <action android:name="com.lynkco.intent.action.SYSTEM_READY" />
                 <action android:name="com.lynkco.intent.action.WAKEUP" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 开机通电与包替换自启广播接收器 -->
+        <receiver
+            android:name=".core.vhal.BootCompletedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 

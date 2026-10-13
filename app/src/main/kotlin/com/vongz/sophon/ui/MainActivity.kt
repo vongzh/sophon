@@ -3,6 +3,7 @@ package com.vongz.sophon.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -13,6 +14,8 @@ import com.vongz.sophon.SophonApp
 import com.vongz.sophon.domain.model.GearState
 import com.vongz.sophon.service.BlindSpotOverlayService
 import com.vongz.sophon.service.SophonCoreService
+import com.vongz.sophon.ui.photo.PhotoViewerActivity
+import com.vongz.sophon.ui.playback.QuadSyncPlayerActivity
 import com.vongz.sophon.ui.widget.StorageCapacityRingView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,6 +49,18 @@ class MainActivity : AppCompatActivity() {
         tvTelemetrySpeed = findViewById(R.id.tv_telemetry_speed)
         tvUsbStatus = findViewById(R.id.tv_usb_status)
         storageRingMini = findViewById(R.id.view_storage_ring_mini)
+
+        findViewById<View>(R.id.btn_nav_driving).setOnClickListener {
+            startActivity(Intent(this, QuadSyncPlayerActivity::class.java))
+        }
+
+        findViewById<View>(R.id.btn_nav_sentry).setOnClickListener {
+            startActivity(Intent(this, QuadSyncPlayerActivity::class.java))
+        }
+
+        findViewById<View>(R.id.btn_nav_photos).setOnClickListener {
+            startActivity(Intent(this, PhotoViewerActivity::class.java))
+        }
     }
 
     private fun startDaemonServices() {

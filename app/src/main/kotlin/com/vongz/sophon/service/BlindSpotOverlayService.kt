@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import com.vongz.sophon.SophonApp
 import com.vongz.sophon.domain.model.CameraPosition
+import com.vongz.sophon.domain.model.GearState
 import com.vongz.sophon.domain.model.TurnSignalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +24,16 @@ import kotlinx.coroutines.launch
 /**
  * 盲区补盲悬浮窗服务 (BlindSpotOverlayService)
  *
- * 【性能红线 - 底线一 (Zero Impact on IVI)】
- * 1. 50ms 原厂 AVM 避让机制：当接收到倒车或 360 全景信号时，窗口瞬间隐身并解绑；
- * 2. GPU 节能休眠联动：当悬浮窗隐藏时，通知渲染管线挂起，释放 GPU 资源给车机系统。
+ * 【核心功能扩展 - 窄道会车双闪补盲】
+ * 1. 左转/右转：左下角/右下角滑入单向 480x320 盲区画面；
+ * 2. 窄道会车模式：低速 (<15km/h) 且挂 D 挡打双闪时，屏幕底部正中弹出 800x320 左右双分屏全景补盲；
+ * 3. 50ms 原厂 AVM 避让机制：倒车或原厂 360 雷达弹出时，50ms 内无条件隐身并释放 GPU！
  */
 class BlindSpotOverlayService : Service() {
 
     companion object {
         private const val TAG = "Sophon.BlindSpotOverlay"
+        private const val HAZARD_SPEED_THRESHOLD_KMH = 15f
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -75,10 +78,27 @@ class BlindSpotOverlayService : Service() {
                     when (turnState) {
                         TurnSignalState.LEFT -> showOverlay(CameraPosition.LEFT)
                         TurnSignalState.RIGHT -> showOverlay(CameraPosition.RIGHT)
-                        TurnSignalState.OFF, TurnSignalState.HAZARD -> hideOverlay()
+                        TurnSignalState.HAZARD -> checkHazardPassingAssist()
+                        TurnSignalState.OFF -> hideOverlay()
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * 窄道会车双闪模式研判
+     */
+    private fun checkHazardPassingAssist() {
+        val bus = SophonApp.vehicleSignalBus
+        val speed = bus.vehicleSpeed.value
+        val gear = bus.gearState.value
+
+        if (speed < HAZARD_SPEED_THRESHOLD_KMH && gear == GearState.DRIVE) {
+            Log.d(TAG, "Hazard passing assist triggered (Speed: $speed km/h, D gear)")
+            showDualOverlay()
+        } else {
+            hideOverlay()
         }
     }
 
@@ -86,52 +106,102 @@ class BlindSpotOverlayService : Service() {
         val wm = windowManager ?: return
         val view = overlayView ?: return
 
-        if (!isOverlayAttached) {
-            val layoutParams = WindowManager.LayoutParams(
-                480,
-                320,
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                else
-                    @Suppress("DEPRECATION")
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT
-            ).apply {
-                gravity = if (position == CameraPosition.LEFT)
-                    Gravity.BOTTOM or Gravity.START
-                else
-                    Gravity.BOTTOM or Gravity.END
-                x = 32
-                y = 32
-            }
+        hideOverlay()
 
+        val layoutParams = WindowManager.LayoutParams(
+            480,
+            320,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = if (position == CameraPosition.LEFT)
+                Gravity.BOTTOM or Gravity.START
+            else
+                Gravity.BOTTOM or Gravity.END
+            x = 32
+            y = 32
+        }
+
+        try {
             view.visibility = View.VISIBLE
             wm.addView(view, layoutParams)
             isOverlayAttached = true
             Log.d(TAG, "Blind spot overlay SHOWN for camera: $position")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to show single overlay", e)
+        }
+    }
+
+    /**
+     * 弹出左右双分屏窄道会车浮窗
+     */
+    private fun showDualOverlay() {
+        val wm = windowManager ?: return
+        val view = overlayView ?: return
+
+        hideOverlay()
+
+        val layoutParams = WindowManager.LayoutParams(
+            800, // 宽幅双分屏
+            320,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            y = 32
+        }
+
+        try {
+            view.visibility = View.VISIBLE
+            wm.addView(view, layoutParams)
+            isOverlayAttached = true
+            Log.i(TAG, "Dual hazard passing overlay SHOWN at bottom center.")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to show dual hazard overlay", e)
         }
     }
 
     private fun hideOverlay() {
         if (isOverlayAttached && overlayView != null) {
-            overlayView?.visibility = View.GONE
-            windowManager?.removeViewImmediate(overlayView)
-            isOverlayAttached = false
-            Log.d(TAG, "Blind spot overlay HIDDEN. Conserving GPU.")
+            try {
+                overlayView?.visibility = View.GONE
+                windowManager?.removeViewImmediate(overlayView)
+            } catch (e: Exception) {
+                Log.w(TAG, "Error removing overlay view", e)
+            } finally {
+                isOverlayAttached = false
+            }
+            Log.d(TAG, "Blind spot overlay HIDDEN. GPU conserved.")
         }
     }
 
     private fun dismissOverlayImmediate(reason: String) {
         if (isOverlayAttached && overlayView != null) {
             val startTime = System.currentTimeMillis()
-            overlayView?.visibility = View.GONE
-            windowManager?.removeViewImmediate(overlayView)
-            isOverlayAttached = false
+            try {
+                overlayView?.visibility = View.GONE
+                windowManager?.removeViewImmediate(overlayView)
+            } catch (e: Exception) {
+                Log.w(TAG, "Error emergency dismissing overlay", e)
+            } finally {
+                isOverlayAttached = false
+            }
             val elapsed = System.currentTimeMillis() - startTime
-            Log.w(TAG, "Dismissed overlay ($reason) in ${elapsed}ms (Limit: 50ms)")
+            Log.w(TAG, "Emergency dismissed overlay ($reason) in ${elapsed}ms (Limit: 50ms)")
         }
     }
 
