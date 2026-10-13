@@ -21,7 +21,7 @@ output.json
 .DS_Store
 Thumbs.db
 
-# === 竞品分析：仅保留说明，二进制不入库 ===
-docs/竞品分析/*.apk
-docs/竞品分析/*.xapk
-docs/竞品分析/*.zip
+# === 竞品分析：原始 APK、解包与反编译产物一律不入库（只保留分析结论 .md）===
+docs/竞品分析/
+docs/competitor/*
+!docs/competitor/*.md
