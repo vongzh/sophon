@@ -83,6 +83,17 @@
             </intent-filter>
         </receiver>
 
+        <!-- 领克08 原厂休眠唤醒协同广播接收器 -->
+        <receiver
+            android:name=".core.vhal.LynkcoWakeupReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.lynkco.intent.action.STR_RESUME" />
+                <action android:name="com.lynkco.intent.action.SYSTEM_READY" />
+                <action android:name="com.lynkco.intent.action.WAKEUP" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
