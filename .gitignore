@@ -1,15 +1,27 @@
+# === Android / Gradle 构建产物 ===
 *.iml
 .gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+output.json
+
+# === IDE ===
+/.idea/
+*.hprof
+
+# === 系统 ===
+.DS_Store
+Thumbs.db
+
+# === 竞品分析：仅保留说明，二进制不入库 ===
+docs/竞品分析/*.apk
+docs/竞品分析/*.xapk
+docs/竞品分析/*.zip
