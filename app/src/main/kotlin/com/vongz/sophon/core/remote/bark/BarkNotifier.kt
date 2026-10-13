@@ -90,4 +90,20 @@ class BarkNotifier(
             }
         }
     }
+
+    /**
+     * 发送系统预警通知 (自动读取全局配置中的 Key 与 Server)
+     */
+    fun sendAlert(title: String, body: String) {
+        val prefs = com.vongz.sophon.SophonApp.preferences
+        val key = prefs.barkDeviceKey
+        if (key.isNotBlank()) {
+            sendPush(
+                serverUrl = prefs.barkServerUrl,
+                deviceKey = key,
+                title = title,
+                body = body
+            )
+        }
+    }
 }

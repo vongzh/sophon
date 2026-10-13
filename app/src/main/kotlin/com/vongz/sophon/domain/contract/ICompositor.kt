@@ -51,6 +51,11 @@ interface ICompositor {
     fun resumeUiRendering()
 
     /**
+     * 更新当前视频帧叠加的 OSD 遥测水印数据 (车速、挡位)
+     */
+    fun updateOsdMetadata(speedKmh: Float, gearText: String)
+
+    /**
      * 彻底释放 EGL 上下文与纹理显存资源
      */
     fun release()

@@ -58,6 +58,13 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
+        <!-- 座舱系统偏好设置界面 -->
+        <activity
+            android:name=".ui.settings.SophonSettingsActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- 核心视觉与录制前台服务 (独立 :core 进程，隔离 UI 崩溃) -->
         <service
             android:name=".service.SophonCoreService"
@@ -109,6 +116,24 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 外置 U 盘热插拔与挂载广播接收器 -->
+        <receiver
+            android:name=".core.storage.UsbStorageMountReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED" />
+                <action android:name="android.intent.action.MEDIA_REMOVED" />
+                <action android:name="android.intent.action.MEDIA_EJECT" />
+                <data android:scheme="file" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+                <action android:name="android.os.storage.action.VOLUME_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 

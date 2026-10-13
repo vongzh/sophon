@@ -90,12 +90,18 @@ class BlindSpotOverlayService : Service() {
      * 窄道会车双闪模式研判
      */
     private fun checkHazardPassingAssist() {
+        val threshold = SophonApp.preferences.hazardSpeedThresholdKmh
+        if (threshold <= 0f) {
+            hideOverlay()
+            return
+        }
+
         val bus = SophonApp.vehicleSignalBus
         val speed = bus.vehicleSpeed.value
         val gear = bus.gearState.value
 
-        if (speed < HAZARD_SPEED_THRESHOLD_KMH && gear == GearState.DRIVE) {
-            Log.d(TAG, "Hazard passing assist triggered (Speed: $speed km/h, D gear)")
+        if (speed < threshold && gear == GearState.DRIVE) {
+            Log.d(TAG, "Hazard passing assist triggered (Speed: $speed km/h, Limit: $threshold, D gear)")
             showDualOverlay()
         } else {
             hideOverlay()

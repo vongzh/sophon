@@ -68,18 +68,35 @@ class VehicleSignalBusImpl(
     private val _sentryTriggerEvents = MutableSharedFlow<Long>(extraBufferCapacity = 8)
     override val sentryTriggerEvents: SharedFlow<Long> = _sentryTriggerEvents.asSharedFlow()
 
+    private val _emergencyCollisionEvents = MutableSharedFlow<String>(extraBufferCapacity = 8)
+    override val emergencyCollisionEvents: SharedFlow<String> = _emergencyCollisionEvents.asSharedFlow()
+
+    private var nativeObserver: NativeVehiclePropertyObserver? = null
     private var isListening = false
 
     override fun startListening() {
         if (isListening) return
         isListening = true
         Log.i(TAG, "VehicleSignalBus started. Multi-source read-only pipeline active.")
+
+        // 直连底层车规 CarPropertyManager 观察者
+        nativeObserver = NativeVehiclePropertyObserver(context, this).apply {
+            start()
+        }
     }
 
     override fun stopListening() {
         if (!isListening) return
         isListening = false
+        nativeObserver?.stop()
+        nativeObserver = null
         Log.i(TAG, "VehicleSignalBus stopped.")
+    }
+
+    fun dispatchEmergencyCollisionEvent(reason: String) {
+        busScope.launch {
+            _emergencyCollisionEvents.emit(reason)
+        }
     }
 
     // --- 内部只读分发接口 (供底层 HAL / EVCC 适配器更新内存状态) ---

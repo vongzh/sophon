@@ -26,6 +26,9 @@ class SophonApp : Application() {
 
         lateinit var vehicleSignalBus: IVehicleSignalBus
             private set
+
+        lateinit var preferences: com.vongz.sophon.core.config.SophonPreferences
+            private set
     }
 
     override fun onCreate() {
@@ -33,6 +36,7 @@ class SophonApp : Application() {
         instance = this
         setupSandboxCrashIsolation()
 
+        preferences = com.vongz.sophon.core.config.SophonPreferences(this)
         storageVault = StorageVaultImpl(this)
         vehicleSignalBus = VehicleSignalBusImpl(this).apply {
             startListening()

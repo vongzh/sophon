@@ -26,11 +26,16 @@ class NativeVehiclePropertyObserver(
 
     companion object {
         private const val TAG = "Sophon.NativeVhalObserver"
+        private const val EMERGENCY_DECEL_THRESHOLD_KMH_PER_S = 16f // 约 4.44 m/s² 强减速度阈值
+        private const val EMERGENCY_DECEL_MIN_SPEED_KMH = 15f
     }
 
     private var car: Car? = null
     private var carPropertyManager: CarPropertyManager? = null
     private var isConnected = false
+
+    private var lastSpeedKmh = 0f
+    private var lastSpeedTimestampMs = 0L
 
     /**
      * 启动原生车身信号监听
@@ -73,6 +78,21 @@ class NativeVehiclePropertyObserver(
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             val speedMps = (value.value as? Float) ?: return
             val speedKmh = speedMps * 3.6f
+            val now = System.currentTimeMillis()
+
+            if (lastSpeedTimestampMs > 0L) {
+                val dtSec = (now - lastSpeedTimestampMs) / 1000f
+                if (dtSec in 0.1f..1.5f && lastSpeedKmh >= EMERGENCY_DECEL_MIN_SPEED_KMH) {
+                    val decel = (lastSpeedKmh - speedKmh) / dtSec
+                    if (decel >= EMERGENCY_DECEL_THRESHOLD_KMH_PER_S) {
+                        Log.w(TAG, "EMERGENCY DECELERATION DETECTED! Drop: ${lastSpeedKmh - speedKmh} km/h in ${dtSec}s (Decel rate: $decel km/h/s)")
+                        signalBus.dispatchEmergencyCollisionEvent("Emergency braking (Decel: %.1f km/h/s)".format(decel))
+                    }
+                }
+            }
+
+            lastSpeedKmh = speedKmh
+            lastSpeedTimestampMs = now
             signalBus.dispatchSpeedUpdate(speedKmh)
         }
 
@@ -105,6 +125,7 @@ class NativeVehiclePropertyObserver(
             val state = when (stateInt) {
                 1 -> TurnSignalState.RIGHT
                 2 -> TurnSignalState.LEFT
+                3 -> TurnSignalState.HAZARD // 领克/Android VHAL 双闪状态
                 else -> TurnSignalState.OFF
             }
             signalBus.dispatchTurnSignalUpdate(state)

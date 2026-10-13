@@ -114,10 +114,11 @@ class ContinuousRecorder(
     }
 
     private fun startSliceSchedule() {
+        val durationMs = (com.vongz.sophon.SophonApp.preferences.chunkDurationSec * 1000L).coerceIn(30_000L, 600_000L)
         sliceTimerJob?.cancel()
         sliceTimerJob = recorderScope.launch {
             while (isActive) {
-                delay(CHUNK_DURATION_MS)
+                delay(durationMs)
                 requestChunkSlice()
             }
         }

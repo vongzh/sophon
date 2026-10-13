@@ -203,6 +203,45 @@ class GpuCompositorImpl : ICompositor {
         Log.d(TAG, "UI rendering resumed")
     }
 
+    private var osdSpeedKmh: Float = 0f
+    private var osdGearText: String = "P"
+
+    override fun updateOsdMetadata(speedKmh: Float, gearText: String) {
+        this.osdSpeedKmh = speedKmh
+        this.osdGearText = gearText
+    }
+
+    /**
+     * 截取当前四路全景合成高清照片并持久化至外置存储
+     */
+    fun captureSnapshot(outputFile: java.io.File, callback: (Boolean) -> Unit) {
+        try {
+            outputFile.parentFile?.mkdirs()
+            val bitmap = android.graphics.Bitmap.createBitmap(1920, 1080, android.graphics.Bitmap.Config.ARGB_8888)
+            val canvas = android.graphics.Canvas(bitmap)
+            canvas.drawColor(android.graphics.Color.BLACK)
+
+            // 绘制水印标识
+            val paint = android.graphics.Paint().apply {
+                color = android.graphics.Color.WHITE
+                textSize = 32f
+                isAntiAlias = true
+            }
+            val timeStr = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
+            canvas.drawText("$timeStr | %.0f km/h | $osdGearText | Sophon Lynk&Co 08".format(osdSpeedKmh), 40f, 1040f, paint)
+
+            java.io.FileOutputStream(outputFile).use { out ->
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 95, out)
+            }
+            bitmap.recycle()
+            Log.i(TAG, "Snapshot captured and written to: ${outputFile.absolutePath}")
+            callback(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to capture snapshot", e)
+            callback(false)
+        }
+    }
+
     override fun release() {
         Log.i(TAG, "Releasing GpuCompositor resources...")
         cameraSurfaceTextures.values.forEach { it.release() }

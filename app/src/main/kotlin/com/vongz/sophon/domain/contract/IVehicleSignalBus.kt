@@ -72,6 +72,11 @@ interface IVehicleSignalBus {
     val sentryTriggerEvents: SharedFlow<Long>
 
     /**
+     * 行车急刹 / 碰撞异常事件流 (携带判定原因)
+     */
+    val emergencyCollisionEvents: SharedFlow<String>
+
+    /**
      * 启动信号监听
      */
     fun startListening()

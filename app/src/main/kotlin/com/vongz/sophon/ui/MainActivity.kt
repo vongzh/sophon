@@ -61,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.btn_nav_photos).setOnClickListener {
             startActivity(Intent(this, PhotoViewerActivity::class.java))
         }
+
+        findViewById<View>(R.id.btn_nav_settings).setOnClickListener {
+            startActivity(Intent(this, com.vongz.sophon.ui.settings.SophonSettingsActivity::class.java))
+        }
     }
 
     private fun startDaemonServices() {
