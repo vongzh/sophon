@@ -41,14 +41,20 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingVertical="12dp">
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_nav_live" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_live"
                 android:textColor="@color/flyme_cyan"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -59,14 +65,20 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingVertical="12dp">
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_nav_driving" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_driving"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -76,31 +88,20 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingVertical="12dp">
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_nav_sentry" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_sentry"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btn_nav_trip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nav_trip"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -110,14 +111,20 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingVertical="12dp">
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_nav_photos" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nav_photos"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -127,14 +134,20 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingVertical="12dp">
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_nav_settings" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置"
                 android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <View
@@ -232,17 +245,20 @@
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@color/bg_card_dark">
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_cockpit_card">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:layout_margin="8dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:text="前视 (FRONT)"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="11sp" />
             </FrameLayout>
 
             <!-- 后视 -->
@@ -251,17 +267,20 @@
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@color/bg_card_dark">
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_cockpit_card">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:layout_margin="8dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:text="后视 (BACK)"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="11sp" />
             </FrameLayout>
 
             <!-- 左侧视 -->
@@ -270,17 +289,20 @@
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@color/bg_card_dark">
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_cockpit_card">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:layout_margin="8dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:text="左侧视 (LEFT)"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="11sp" />
             </FrameLayout>
 
             <!-- 右侧视 -->
@@ -289,17 +311,20 @@
                 android:layout_height="0dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:background="@color/bg_card_dark">
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_cockpit_card">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:layout_margin="8dp"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
                     android:text="右侧视 (RIGHT)"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="11sp" />
             </FrameLayout>
 
         </GridLayout>

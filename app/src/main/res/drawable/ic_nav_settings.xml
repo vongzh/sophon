@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 座舱系统设置调节滑块图标 (FlymeAuto 极简风) -->
+    <!-- 上滑块 -->
+    <path
+        android:pathData="M 3,7 L 9,7 M 15,7 L 21,7"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 12,7 A 3,3 0 1,1 12,6.99 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8" />
+
+    <!-- 下滑块 -->
+    <path
+        android:pathData="M 3,17 L 6,17 M 12,17 L 21,17"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 9,17 A 3,3 0 1,1 9,16.99 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8" />
+</vector>

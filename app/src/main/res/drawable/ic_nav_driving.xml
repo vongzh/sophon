@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 行车记录仪图标 (胶卷录像机) -->
+    <path
+        android:pathData="M 4,6 C 4,4.9 4.9,4 6,4 L 14,4 C 15.1,4 16,4.9 16,6 L 16,18 C 16,19.1 15.1,20 14,20 L 6,20 C 4.9,20 4,19.1 4,18 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 侧向播放镜头 -->
+    <path
+        android:pathData="M 16,9.5 L 20.5,6.5 C 21.1,6.1 22,6.5 22,7.2 L 22,16.8 C 22,17.5 21.1,17.9 20.5,17.5 L 16,14.5"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 录制指示红点 / 智瞳光点 -->
+    <path
+        android:pathData="M 10,12 A 2,2 0 1,1 10,11.99 Z"
+        android:fillColor="@color/text_secondary" />
+</vector>

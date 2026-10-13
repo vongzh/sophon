@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 哨兵安全防护盾图标 -->
+    <path
+        android:pathData="M 12,2 L 4,5.5 L 4,11.5 C 4,16.5 7.4,21.1 12,22.3 C 16.6,21.1 20,16.5 20,11.5 L 20,5.5 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 盾内感知警戒中心 -->
+    <path
+        android:pathData="M 12,8 L 12,13"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M 12,16 A 1,1 0 1,1 12,15.99 Z"
+        android:fillColor="@color/text_secondary" />
+</vector>

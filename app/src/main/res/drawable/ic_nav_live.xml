@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 实时视界图标 (FlymeAuto 全景智瞳) -->
+    <path
+        android:pathData="M 12,4.5 C 7,4.5 2.73,7.61 1,12 C 2.73,16.39 7,19.5 12,19.5 C 17,19.5 21.27,16.39 23,12 C 21.27,7.61 17,4.5 12,4.5 Z"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M 12,8.5 A 3.5,3.5 0 1,1 12,8.49 Z"
+        android:fillColor="@color/flyme_cyan" />
+
+    <path
+        android:pathData="M 13,10 A 1,1 0 1,1 13,9.99 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>
