@@ -44,6 +44,13 @@
             </intent-filter>
         </activity>
 
+        <!-- 四路同步回放播放器 -->
+        <activity
+            android:name=".ui.playback.QuadSyncPlayerActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- 核心视觉与录制前台服务 (独立 :core 进程，隔离 UI 崩溃) -->
         <service
             android:name=".service.SophonCoreService"

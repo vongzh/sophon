@@ -69,6 +69,10 @@ dependencies {
     // Image loading
     implementation(libs.glide)
 
+    // LAN Share & QR Code
+    implementation(libs.nanohttpd)
+    implementation(libs.zxing)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
