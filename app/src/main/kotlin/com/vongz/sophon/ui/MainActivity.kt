@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
 
         val overlayIntent = Intent(this, BlindSpotOverlayService::class.java)
         startService(overlayIntent)
+
+        val capsuleIntent = Intent(this, com.vongz.sophon.ui.statusbar.StatusBarCapsuleService::class.java)
+        startService(capsuleIntent)
     }
 
     private fun observeSystemStates() {

@@ -58,6 +58,12 @@
             android:enabled="true"
             android:exported="false" />
 
+        <!-- 顶部状态栏常驻胶囊与快捷卡片服务 -->
+        <service
+            android:name=".ui.statusbar.StatusBarCapsuleService"
+            android:enabled="true"
+            android:exported="false" />
+
         <!-- 哨兵事件监听服务 -->
         <service
             android:name=".service.SentryGuardianService"
