@@ -1,7 +1,9 @@
-# 智子 (Sophon) - 车载四向行车记录与全维哨兵系统
+# 极视 (Sophon) - 车载四向行车记录与全维哨兵系统
 
-> **“主不在乎，但智子在注视。”**  
+> **“极目四方，视守全程。”**  
 > 面向智能座舱定制开发的新一代**四向全维行车记录、盲区辅助感知与智能哨兵系统**。
+
+命名与合规说明见 [`docs/NAMING.md`](docs/NAMING.md)。
 
 ---
 
@@ -19,7 +21,7 @@
 
 ## 🛠️ 核心架构演进 (Vs EVCam)
 
-| 核心维度 | 前代项目痛点 (EVCam) | 智子 (Sophon) 架构演进 |
+| 核心维度 | 前代项目痛点 (EVCam) | 极视 (Sophon) 架构演进 |
 | :--- | :--- | :--- |
 | **代码架构** | `MainActivity` 达 5600 行，业务逻辑与 UI 极度耦合 | **服务与 UI 彻底解耦**：核心录制引擎驻留独立 Service，UI 仅为展示客户端 |
 | **相机管线** | 多路动态 Surface 频繁增减导致 HAL 死锁 | **统一 GPU 渲染管线**：每路 Camera 仅输出到固定的 SurfaceTexture，由 EGL 按需分发 |
@@ -82,7 +84,7 @@ graph TD
 ## 🗺️ 研发路线图 (Roadmap)
 
 - [ ] **Phase 1: 基础设施与架构骨架**
-  - [x] 项目脚手架与命名确立（Sophon / 智子）
+  - [x] 项目脚手架与命名确立（Sophon / 极视）
   - [ ] Gradle 模块化配置与环境搭建
   - [ ] 核心架构设计文档与接口定义 (`IVehicleSignalBus`, `IRecordingEngine`)
 - [ ] **Phase 2: 采集与编码流水线**
@@ -102,4 +104,41 @@ graph TD
 
 ## 📜 许可证
 
-本项目遵循 [GPL-3.0](LICENSE) 开源协议。
+本项目遵循 **GNU General Public License v3.0** 开源协议，全文见 [`LICENSE`](LICENSE)。
+
+```
+Copyright (C) 2026 vongzh
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+```
+
+> ⚠️ **GPL-3.0 的传染性**：本项目参照 `EVCam`（同许可）的架构经验，并可能直接复用其部分实现。**任何再分发、二次开发或衍生作品都必须同样以 GPL-3.0 开源**，不得闭源分发或仅以二进制形式提供。
+>
+> ⚠️ **车载安全边界**：本项目仅提供**记录与辅助感知**功能，**不参与任何车辆控制**。全部安全与稳定性红线见 [`docs/SYSTEM_SAFETY_PRINCIPLES.md`](docs/SYSTEM_SAFETY_PRINCIPLES.md)。
+
+---
+
+## ⚖️ 免责与非关联声明
+
+本项目为**独立第三方开源项目**，与领克汽车、吉利汽车集团及其关联公司**无任何关联**，**非官方应用**，不代表、不模拟任何原厂功能。所有商标、产品名与功能名的权利归其各自所有者。
+
+本项目为**非商业性开源软件**，不提供服务、不收取费用、不售卖任何硬件。**在车内使用本软件前请确认符合当地法规，行车中请勿操作界面。**
+
+---
+
+## 📚 文档索引
+
+| 文档 | 内容 |
+| :--- | :--- |
+| [`docs/NAMING.md`](docs/NAMING.md) | 命名决策与风险日志（**改名前必读**） |
+| [`docs/SYSTEM_SAFETY_PRINCIPLES.md`](docs/SYSTEM_SAFETY_PRINCIPLES.md) | 车载系统安全与稳定性最高准则（**开发前必读**） |
+| [`docs/EVCAM_ANALYSIS.md`](docs/EVCAM_ANALYSIS.md) | EVCam 架构分析报告 |
+| [`docs/EVCAM_DEEP_ANALYSIS.md`](docs/EVCAM_DEEP_ANALYSIS.md) | EVCam 代码级深度技术分析与避坑白皮书 |
