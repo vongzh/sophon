@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.vongz.sophon"
+    namespace = "com.vongzh.sophon"
     compileSdk = 35
 
     signingConfigs {
@@ -16,11 +16,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.vongz.sophon"
+        applicationId = "com.vongzh.sophon"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.0-test-10140927"
+        versionName = "1.0.0-test-10140958"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

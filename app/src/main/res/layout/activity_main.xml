@@ -156,7 +156,7 @@
             android:layout_weight="1" />
 
         <!-- 底部 U 盘容量微缩圆环 -->
-        <com.vongz.sophon.ui.widget.StorageCapacityRingView
+        <com.vongzh.sophon.ui.widget.StorageCapacityRingView
             android:id="@+id/view_storage_ring_mini"
             android:layout_width="44dp"
             android:layout_height="44dp"

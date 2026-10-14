@@ -99,8 +99,8 @@
             android:name=".core.notification.SophonNotificationActionReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.vongz.sophon.action.NOTIF_SNAPSHOT" />
-                <action android:name="com.vongz.sophon.action.NOTIF_LOCK_EVENT" />
+                <action android:name="com.vongzh.sophon.action.NOTIF_SNAPSHOT" />
+                <action android:name="com.vongzh.sophon.action.NOTIF_LOCK_EVENT" />
             </intent-filter>
         </receiver>
 

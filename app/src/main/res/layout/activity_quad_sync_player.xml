@@ -107,7 +107,7 @@
         android:paddingVertical="12dp">
 
         <!-- 刻度事件时间轴 (MarkedSeekBar) -->
-        <com.vongz.sophon.ui.widget.MarkedSeekBar
+        <com.vongzh.sophon.ui.widget.MarkedSeekBar
             android:id="@+id/player_seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -130,6 +130,32 @@
                 android:text="❚❚ 暂停"
                 android:textColor="@color/text_primary"
                 android:textSize="13sp" />
+
+            <!-- 上一事件标记 -->
+            <TextView
+                android:id="@+id/btn_prev_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_badge_pill"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:text="⏮ 上一事件"
+                android:textColor="@color/flyme_cyan"
+                android:textSize="12sp" />
+
+            <!-- 下一事件标记 -->
+            <TextView
+                android:id="@+id/btn_next_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_badge_pill"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:text="⏭ 下一事件"
+                android:textColor="@color/flyme_cyan"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tv_time_progress"
