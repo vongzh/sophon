@@ -6,7 +6,6 @@ import com.vongzh.sophon.domain.contract.IVehicleSignalBus
 import com.vongzh.sophon.domain.model.DoorState
 import com.vongzh.sophon.domain.model.GearState
 import com.vongzh.sophon.domain.model.HardKeyEvent
-import com.vongzh.sophon.domain.model.TirePressureInfo
 import com.vongzh.sophon.domain.model.TurnSignalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,9 +57,6 @@ class VehicleSignalBusImpl(
 
     private val _isDriverSeatbeltFastened = MutableStateFlow(true)
     override val isDriverSeatbeltFastened: StateFlow<Boolean> = _isDriverSeatbeltFastened.asStateFlow()
-
-    private val _tirePressureInfo = MutableStateFlow(TirePressureInfo())
-    override val tirePressureInfo: StateFlow<TirePressureInfo> = _tirePressureInfo.asStateFlow()
 
     private val _isAvmActive = MutableStateFlow(false)
     override val isAvmActive: StateFlow<Boolean> = _isAvmActive.asStateFlow()
@@ -136,10 +132,6 @@ class VehicleSignalBusImpl(
 
     fun dispatchSeatbeltUpdate(fastened: Boolean) {
         _isDriverSeatbeltFastened.value = fastened
-    }
-
-    fun dispatchTirePressureUpdate(info: TirePressureInfo) {
-        _tirePressureInfo.value = info
     }
 
     fun dispatchAvmStateUpdate(active: Boolean) {

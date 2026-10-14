@@ -32,6 +32,9 @@ class SophonApp : Application() {
 
         lateinit var remoteDispatcher: com.vongzh.sophon.core.remote.RemoteDispatcher
             private set
+
+        lateinit var powerStateMachine: com.vongzh.sophon.core.power.PowerStateMachine
+            private set
     }
 
     override fun onCreate() {
@@ -43,6 +46,13 @@ class SophonApp : Application() {
         storageVault = StorageVaultImpl(this)
         vehicleSignalBus = VehicleSignalBusImpl(this).apply {
             startListening()
+        }
+        powerStateMachine = com.vongzh.sophon.core.power.PowerStateMachine(
+            bus = vehicleSignalBus,
+            preferences = preferences,
+            scope = kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.Default)
+        ).apply {
+            start()
         }
         remoteDispatcher = com.vongzh.sophon.core.remote.RemoteDispatcher(this).apply {
             startRemoteServices()

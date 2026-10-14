@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.vongzh.sophon.SophonApp
 import com.vongzh.sophon.core.remote.RemoteDispatcher
 import com.vongzh.sophon.service.SophonCoreService
 
@@ -38,15 +39,30 @@ class LynkcoWakeupReceiver : BroadcastReceiver() {
         when (action) {
             ACTION_STR_RESUME, ACTION_SYSTEM_READY, ACTION_WAKEUP -> {
                 Log.i(TAG, "Vehicle awakened by OEM power state. Starting core services...")
+                try {
+                    SophonApp.powerStateMachine.notifyStrResume()
+                } catch (e: Exception) {
+                    Log.w(TAG, "PowerStateMachine not ready yet", e)
+                }
+
                 val serviceIntent = Intent(context, SophonCoreService::class.java)
                 context.startService(serviceIntent)
 
-                val dispatcher = RemoteDispatcher(context)
-                dispatcher.sendBarkAlert("领克08 车辆唤醒", "车辆电源已就绪，极视记录仪处于工作态。")
+                try {
+                    SophonApp.remoteDispatcher.sendMultiChannelAlert("领克08 车辆唤醒", "车辆电源已就绪，极视记录仪处于工作态。")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to send wakeup alert", e)
+                }
             }
 
             ACTION_STR_SUSPEND, ACTION_PRE_SLEEP, Intent.ACTION_SHUTDOWN, Intent.ACTION_REBOOT -> {
                 Log.w(TAG, "Vehicle entering STR SUSPEND or SHUTDOWN! Emergency finalizing MP4 chunk...")
+                try {
+                    SophonApp.powerStateMachine.notifyStrSuspend()
+                } catch (e: Exception) {
+                    Log.w(TAG, "PowerStateMachine not ready yet", e)
+                }
+
                 val finalizeIntent = Intent(context, SophonCoreService::class.java).apply {
                     this.action = SophonCoreService.ACTION_EMERGENCY_FINALIZE
                 }

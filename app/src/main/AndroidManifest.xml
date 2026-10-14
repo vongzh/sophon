@@ -83,13 +83,12 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
-        <!-- 核心视觉与录制前台服务 (独立 :core 进程，隔离 UI 崩溃) -->
+        <!-- 核心视觉与录制前台服务 (统一前台进程，避免多进程单例双花与状态孤岛) -->
         <service
             android:name=".service.SophonCoreService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="camera"
-            android:process=":core" />
+            android:foregroundServiceType="camera" />
 
         <!-- 盲区补盲悬浮窗服务 -->
         <service

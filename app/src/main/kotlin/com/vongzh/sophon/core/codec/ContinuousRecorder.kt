@@ -67,10 +67,37 @@ class ContinuousRecorder(
     private var isMuxerStarted = false
     private var cachedOutputFormat: MediaFormat? = null
 
+    private var baseCategory = RecordCategory.NORMAL
     private var currentCategory = RecordCategory.NORMAL
     private val shouldSliceAtNextKeyframe = AtomicBoolean(false)
     private var sliceTimerJob: Job? = null
     private var durationTimerJob: Job? = null
+
+    /**
+     * 动态设置基础录像分类 (NORMAL 行车录制 vs SENTRY 哨兵警戒)
+     */
+    fun setBaseCategory(category: RecordCategory) {
+        this.baseCategory = category
+        if (this.currentCategory != RecordCategory.EVENT) {
+            this.currentCategory = category
+        }
+    }
+
+    /**
+     * 动态平滑调节编码码率 (如行车 10Mbps, 哨兵 3Mbps)
+     */
+    fun updateBitrate(newBitrateBps: Int) {
+        if (!_isRecording.value) return
+        try {
+            val params = Bundle().apply {
+                putInt(MediaCodec.PARAMETER_KEY_VIDEO_BITRATE, newBitrateBps)
+            }
+            mediaCodec?.setParameters(params)
+            Log.i(TAG, "Dynamic encoder bitrate updated to: ${newBitrateBps / 1000} kbps")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to update bitrate on active MediaCodec", e)
+        }
+    }
 
     /**
      * 初始化 MediaCodec 硬件编码器并创建 Input Surface
@@ -102,14 +129,15 @@ class ContinuousRecorder(
         val codec = mediaCodec ?: return false
         codec.start()
         _isRecording.value = true
-        startNewMuxerChunk(RecordCategory.NORMAL)
+        currentCategory = baseCategory
+        startNewMuxerChunk(currentCategory)
 
         // 启动编码数据轮询输出协程
         recorderScope.launch { drainEncoderLoop() }
         // 启动切片定时器与计时器
         startSliceSchedule()
 
-        Log.i(TAG, "Continuous recording pipeline ACTIVE.")
+        Log.i(TAG, "Continuous recording pipeline ACTIVE (Category: $currentCategory).")
         return true
     }
 
@@ -172,7 +200,17 @@ class ContinuousRecorder(
                     if (isMuxerStarted && bufferInfo.size > 0) {
                         encodedData.position(bufferInfo.offset)
                         encodedData.limit(bufferInfo.offset + bufferInfo.size)
-                        currentMuxer?.writeSampleData(currentVideoTrackIndex, encodedData, bufferInfo)
+                        try {
+                            currentMuxer?.writeSampleData(currentVideoTrackIndex, encodedData, bufferInfo)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed writing sample to MediaMuxer! Cushioning in RamRingBuffer...", e)
+                            try {
+                                encodedData.position(bufferInfo.offset)
+                                ramRingBuffer.enqueue(encodedData, bufferInfo.size)
+                            } catch (bufEx: Exception) {
+                                Log.w(TAG, "RamRingBuffer cushion failure", bufEx)
+                            }
+                        }
                     }
                 }
                 codec.releaseOutputBuffer(outputBufferIndex, false)
@@ -221,8 +259,8 @@ class ContinuousRecorder(
         }
 
         startNewMuxerChunk(currentCategory)
-        // 切片后恢复常规轮询分类
-        currentCategory = RecordCategory.NORMAL
+        // 切片后恢复常规轮询基线分类 (NORMAL 或 SENTRY)
+        currentCategory = baseCategory
     }
 
     override fun stopRecording() {

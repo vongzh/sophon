@@ -37,25 +37,6 @@ data class DoorState(
 }
 
 /**
- * 单轮胎压与温度信息 (单位: bar, 摄氏度)
- */
-data class SingleTireInfo(
-    val pressureBar: Float = 0f,
-    val tempCelsius: Int = 0,
-    val isWarning: Boolean = false
-)
-
-/**
- * 四轮胎压监测数据 (TPMS)
- */
-data class TirePressureInfo(
-    val frontLeft: SingleTireInfo = SingleTireInfo(),
-    val frontRight: SingleTireInfo = SingleTireInfo(),
-    val rearLeft: SingleTireInfo = SingleTireInfo(),
-    val rearRight: SingleTireInfo = SingleTireInfo()
-)
-
-/**
  * 车载物理/方向盘硬件按键动作
  */
 enum class HardKeyEvent {

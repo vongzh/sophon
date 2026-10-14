@@ -9,9 +9,11 @@ import com.vongzh.sophon.core.camera.MultiCameraManager
 import com.vongzh.sophon.core.codec.ContinuousRecorder
 import com.vongzh.sophon.core.gl.GpuCompositorImpl
 import com.vongzh.sophon.core.notification.SophonNotificationManager
+import com.vongzh.sophon.core.power.PowerState
 import com.vongzh.sophon.core.remote.bark.BarkNotifier
 import com.vongzh.sophon.core.storage.RamRingBuffer
 import com.vongzh.sophon.domain.model.GearState
+import com.vongzh.sophon.domain.model.RecordCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -68,7 +70,7 @@ class SophonCoreService : Service() {
         observeStorageHealth()
         observeVehicleTelemetryForOsd()
         observeEmergencyCollisionEvents()
-        observeSentryTriggers()
+        observePowerStateMachine()
         observeBatterySafety()
         observeHardKeyEvents()
         startNotificationUpdateLoop()
@@ -176,6 +178,54 @@ class SophonCoreService : Service() {
         }
     }
 
+    private fun observePowerStateMachine() {
+        serviceScope.launch {
+            SophonApp.powerStateMachine.currentState.collectLatest { state ->
+                Log.i(TAG, "PowerState transition observed: $state")
+                when (state) {
+                    PowerState.AWAKE_DRIVING, PowerState.AWAKE_PARKED -> {
+                        continuousRecorder.setBaseCategory(RecordCategory.NORMAL)
+                        continuousRecorder.updateBitrate(10_000_000)
+                        if (!continuousRecorder.isRecording.value && SophonApp.storageVault.isUsbMounted.value) {
+                            continuousRecorder.startRecording()
+                        }
+                    }
+                    PowerState.SENTRY_STANDBY -> {
+                        Log.i(TAG, "Entering SENTRY_STANDBY: 3Mbps low bitrate encoding mode.")
+                        continuousRecorder.setBaseCategory(RecordCategory.SENTRY)
+                        continuousRecorder.updateBitrate(3_000_000)
+                        if (!continuousRecorder.isRecording.value && SophonApp.storageVault.isUsbMounted.value) {
+                            continuousRecorder.startRecording()
+                        }
+                    }
+                    PowerState.SENTRY_ALERT -> {
+                        Log.w(TAG, "Entering SENTRY_ALERT: 10Mbps bitrate boosted, triggering event lock.")
+                        continuousRecorder.updateBitrate(10_000_000)
+                        continuousRecorder.triggerEventLock("Sentry Shock Alarm")
+                        if (SophonApp.preferences.isSentryDeterrentEnabled) {
+                            try {
+                                val intent = Intent(this@SophonCoreService, com.vongzh.sophon.ui.sentry.SentryDeterrentActivity::class.java).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                                startActivity(intent)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to launch SentryDeterrentActivity", e)
+                            }
+                        }
+                        SophonApp.remoteDispatcher.sendMultiChannelAlert(
+                            title = "🚨 哨兵异常震动报警",
+                            body = "侦测到车身震动/异常晃动，已锁定四路全维视频切片并亮屏威慑！"
+                        )
+                    }
+                    PowerState.EMERGENCY_POWER_CUT -> {
+                        Log.w(TAG, "EMERGENCY_POWER_CUT: Finalizing chunk and stopping recorder.")
+                        continuousRecorder.emergencyFinalizeCurrentChunk("Low 12V Battery / Vehicle STR Suspend")
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeBatterySafety() {
         val bus = SophonApp.vehicleSignalBus
         val prefs = SophonApp.preferences
@@ -188,31 +238,6 @@ class SophonCoreService : Service() {
                         body = "车辆12V蓄电池电压降至 %.1fV (保护阈值 %.1fV)，已主动休眠哨兵模式避免小电瓶亏电趴窝！".format(volts, prefs.batteryProtectionThresholdVolts)
                     )
                 }
-            }
-        }
-    }
-
-    private fun observeSentryTriggers() {
-        val bus = SophonApp.vehicleSignalBus
-        val prefs = SophonApp.preferences
-        serviceScope.launch {
-            bus.sentryTriggerEvents.collectLatest { timestampMs ->
-                Log.w(TAG, "Sentry event triggered! Vibrate at $timestampMs")
-                continuousRecorder.triggerEventLock("Sentry Vibration Trigger")
-                if (prefs.isSentryDeterrentEnabled) {
-                    try {
-                        val intent = Intent(this@SophonCoreService, com.vongzh.sophon.ui.sentry.SentryDeterrentActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Failed to launch SentryDeterrentActivity", e)
-                    }
-                }
-                SophonApp.remoteDispatcher.sendMultiChannelAlert(
-                    title = "🚨 哨兵异常震动报警",
-                    body = "侦测到车身震动/异常晃动，已锁定四路全维视频切片并亮屏威慑！"
-                )
             }
         }
     }

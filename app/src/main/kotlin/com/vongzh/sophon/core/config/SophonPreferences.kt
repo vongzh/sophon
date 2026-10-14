@@ -26,6 +26,7 @@ class SophonPreferences(context: Context) {
         private const val KEY_DOOR_OPEN_WARNING = "door_open_warning"
         private const val KEY_BATTERY_PROTECTION_ENABLED = "battery_protection_enabled"
         private const val KEY_BATTERY_PROTECTION_VOLTS = "battery_protection_volts"
+        private const val KEY_SENTRY_MODE_ENABLED = "sentry_mode_enabled"
         private const val KEY_SENTRY_DETERRENT_ENABLED = "sentry_deterrent_enabled"
         private const val KEY_PIP_AUTO_ENABLED = "pip_auto_enabled"
         private const val KEY_STORAGE_NORMAL_QUOTA = "storage_normal_quota"
@@ -94,6 +95,10 @@ class SophonPreferences(context: Context) {
     var batteryProtectionThresholdVolts: Float
         get() = sp.getFloat(KEY_BATTERY_PROTECTION_VOLTS, DEFAULT_BATTERY_VOLTS)
         set(value) = sp.edit().putFloat(KEY_BATTERY_PROTECTION_VOLTS, value).apply()
+
+    var isSentryModeEnabled: Boolean
+        get() = sp.getBoolean(KEY_SENTRY_MODE_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_SENTRY_MODE_ENABLED, value).apply()
 
     var isSentryDeterrentEnabled: Boolean
         get() = sp.getBoolean(KEY_SENTRY_DETERRENT_ENABLED, true)

@@ -3,7 +3,6 @@ package com.vongzh.sophon.domain.contract
 import com.vongzh.sophon.domain.model.DoorState
 import com.vongzh.sophon.domain.model.GearState
 import com.vongzh.sophon.domain.model.HardKeyEvent
-import com.vongzh.sophon.domain.model.TirePressureInfo
 import com.vongzh.sophon.domain.model.TurnSignalState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,11 +55,6 @@ interface IVehicleSignalBus {
      * 主驾安全带佩戴状态
      */
     val isDriverSeatbeltFastened: StateFlow<Boolean>
-
-    /**
-     * 四轮胎压与胎温数据流 (TPMS 看板)
-     */
-    val tirePressureInfo: StateFlow<TirePressureInfo>
 
     /**
      * 原厂 360 全景影像 (AVM) / 倒车影像激活状态 (50ms 避让信号)
