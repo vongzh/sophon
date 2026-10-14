@@ -19,6 +19,9 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -26,7 +29,7 @@ import java.util.concurrent.TimeUnit
  *
  * 【架构规范 - 业务逻辑与网络协议独立解耦】
  * 1. 采用官方长轮询 (Long-Polling getUpdates) 机制，无需公网固定 IP 与 Webhook 端口映射；
- * 2. 支持远程 `/snap` 抓拍并回传四向高清合成图片、`/status` 车况健康上报；
+ * 2. 支持远程 `/snap` 抓拍回传照片、`/clip` 远程提取 15s 高清短视频、`/status` 车况健康上报；
  * 3. 严格受白名单 Chat ID 鉴权保护，杜绝未授权访问。
  */
 class TelegramBotClient(
@@ -116,12 +119,24 @@ class TelegramBotClient(
             trimmed.startsWith("/snap") || trimmed.equals("抓拍", ignoreCase = true) -> {
                 sendTextMessage(botToken, chatId, "📷 正在为您截取领克08四向视角画面，请稍候...")
                 remoteDispatcher.processRemoteCommand("SNAPSHOT") { report ->
-                    // 发送最新抓拍照片
                     val latestPhoto = remoteDispatcher.getLatestSnapshotFile()
                     if (latestPhoto != null && latestPhoto.exists()) {
                         sendPhoto(botToken, chatId, latestPhoto, report)
                     } else {
                         sendTextMessage(botToken, chatId, report)
+                    }
+                }
+            }
+            trimmed.startsWith("/clip") || trimmed.equals("视频", ignoreCase = true) || trimmed.equals("微剪", ignoreCase = true) -> {
+                val secStr = trimmed.removePrefix("/clip").trim()
+                val durationSec = secStr.toIntOrNull()?.coerceIn(5, 30) ?: 15
+                sendTextMessage(botToken, chatId, "🎬 正在为您抽取最近 ${durationSec} 秒视频微片段，请稍候...")
+                remoteDispatcher.extractRecentVideoClip(durationSec) { videoFile ->
+                    if (videoFile != null && videoFile.exists()) {
+                        val timeStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+                        sendVideo(botToken, chatId, videoFile, "🎬 领克08 最近 ${durationSec}s 原画视频片段\n时间: $timeStr")
+                    } else {
+                        sendTextMessage(botToken, chatId, "⚠️ 提取视频片段失败：U 盘中暂无有效录像切片或提取异常。")
                     }
                 }
             }
@@ -140,6 +155,7 @@ class TelegramBotClient(
                     🛰️ <b>极视 (Sophon) 领克08 车载机器人</b>
                     ─────────────────────
                     /snap - 实时远程抓拍四向视角照片
+                    /clip 15 - 远程抽取最近 15 秒高清短视频
                     /status - 查询车速、挡位与U盘容量
                     /lock - 紧急加锁当前录像片段
                 """.trimIndent()
@@ -205,6 +221,33 @@ class TelegramBotClient(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to send Telegram photo", e)
+            callback?.invoke(false)
+        }
+    }
+
+    fun sendVideo(
+        botToken: String,
+        chatId: String,
+        videoFile: File,
+        caption: String,
+        callback: ((Boolean) -> Unit)? = null
+    ) {
+        val url = "$BASE_URL/bot$botToken/sendVideo"
+        val multipart = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("chat_id", chatId)
+            .addFormDataPart("caption", caption)
+            .addFormDataPart("supports_streaming", "true")
+            .addFormDataPart("video", videoFile.name, videoFile.asRequestBody("video/mp4".toMediaType()))
+            .build()
+
+        val request = Request.Builder().url(url).post(multipart).build()
+        try {
+            httpClient.newCall(request).execute().use { resp ->
+                callback?.invoke(resp.isSuccessful)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to send Telegram video", e)
             callback?.invoke(false)
         }
     }

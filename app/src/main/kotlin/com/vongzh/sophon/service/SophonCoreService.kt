@@ -44,7 +44,6 @@ class SophonCoreService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val ramRingBuffer = RamRingBuffer()
-    private val barkNotifier = BarkNotifier()
 
     private lateinit var notifManager: SophonNotificationManager
     private lateinit var gpuCompositor: GpuCompositorImpl
@@ -184,7 +183,7 @@ class SophonCoreService : Service() {
             bus.batteryVoltage.collectLatest { volts ->
                 if (prefs.isBatteryProtectionEnabled && volts > 0f && volts < prefs.batteryProtectionThresholdVolts) {
                     Log.e(TAG, "CRITICAL: 12V Battery Voltage below safety threshold (%.2fV < %.1fV). Emergency sentry power cut!".format(volts, prefs.batteryProtectionThresholdVolts))
-                    barkNotifier.sendAlert(
+                    SophonApp.remoteDispatcher.sendMultiChannelAlert(
                         title = "⚠️ 蓄电池低压保护触发",
                         body = "车辆12V蓄电池电压降至 %.1fV (保护阈值 %.1fV)，已主动休眠哨兵模式避免小电瓶亏电趴窝！".format(volts, prefs.batteryProtectionThresholdVolts)
                     )
@@ -210,7 +209,7 @@ class SophonCoreService : Service() {
                         Log.e(TAG, "Failed to launch SentryDeterrentActivity", e)
                     }
                 }
-                barkNotifier.sendAlert(
+                SophonApp.remoteDispatcher.sendMultiChannelAlert(
                     title = "🚨 哨兵异常震动报警",
                     body = "侦测到车身震动/异常晃动，已锁定四路全维视频切片并亮屏威慑！"
                 )
@@ -225,7 +224,7 @@ class SophonCoreService : Service() {
                 if (SophonApp.preferences.isAutoCrashLockEnabled) {
                     Log.w(TAG, "CRITICAL: Triggering auto lock due to collision/emergency decel: $reason")
                     continuousRecorder.triggerEventLock(reason)
-                    barkNotifier.sendAlert(
+                    SophonApp.remoteDispatcher.sendMultiChannelAlert(
                         title = "车辆急刹/碰撞警报",
                         body = "检测到: $reason，已紧急锁死当前与前序关键视频分段！"
                     )
@@ -246,7 +245,7 @@ class SophonCoreService : Service() {
                     com.vongzh.sophon.domain.model.HardKeyEvent.LONG_PRESS -> {
                         Log.w(TAG, "Hard key LONG_PRESS -> Triggering emergency event lock")
                         continuousRecorder.triggerEventLock("Steering Wheel Custom Key Long Press")
-                        barkNotifier.sendAlert("方向盘加锁", "驾驶员长按方向盘自定义键锁定了当前视频。")
+                        SophonApp.remoteDispatcher.sendMultiChannelAlert("方向盘加锁", "驾驶员长按方向盘自定义键锁定了当前视频。")
                     }
                     else -> {}
                 }
@@ -279,7 +278,7 @@ class SophonCoreService : Service() {
             ACTION_TRIGGER_LOCK -> {
                 Log.i(TAG, "Handling manual event lock trigger...")
                 continuousRecorder.triggerEventLock("Manual User Trigger")
-                barkNotifier.sendAlert("手动加锁", "驾驶员已手动加锁当前行车切片。")
+                SophonApp.remoteDispatcher.sendMultiChannelAlert("手动加锁", "驾驶员已手动加锁当前行车切片。")
             }
             ACTION_EMERGENCY_FINALIZE -> {
                 Log.w(TAG, "EMERGENCY FINALIZE: Vehicle power-cut or STR suspend detected!")
@@ -303,7 +302,7 @@ class SophonCoreService : Service() {
         gpuCompositor.captureSnapshot(photoFile) { success ->
             if (success) {
                 Log.i(TAG, "Snapshot taken successfully: ${photoFile.name}")
-                barkNotifier.sendAlert("抓拍成功", "四路全景原图已保存至 U 盘 Snapshot/${photoFile.name}")
+                SophonApp.remoteDispatcher.sendMultiChannelAlert("抓拍成功", "四路全景原图已保存至 U 盘 Snapshot/${photoFile.name}", photoFile)
             } else {
                 Log.e(TAG, "Failed to capture snapshot.")
             }

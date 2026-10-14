@@ -7,9 +7,13 @@ import android.util.Log
 import com.vongzh.sophon.domain.contract.IStorageVault
 import com.vongzh.sophon.domain.model.RecordCategory
 import com.vongzh.sophon.domain.model.StorageUsageBreakdown
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -23,7 +27,8 @@ import java.util.Locale
  * 【安全红线 - 底线二 (Zero Write to Internal Flash / UFS)】
  * 1. 严格校验存储路径，若解析为车机内部闪存直接熔断抛出 SecurityException；
  * 2. 贯彻 "No USB, No Write" 准则；
- * 3. 自动多级目录维护与 FIFO 循环覆盖淘汰机制。
+ * 3. 自动多级目录维护与 FIFO 循环覆盖淘汰机制（严禁触碰 Event 与 Snapshot 保护区）；
+ * 4. 集成 Mp4MoovRescuer 异常断电未闭合视频自动修复与孤儿坏道清理。
  */
 class StorageVaultImpl(
     private val context: Context
@@ -34,7 +39,11 @@ class StorageVaultImpl(
         private const val BASE_RECORD_DIR = "SophonRecord"
         private const val MIN_FREE_BYTES_THRESHOLD = 2L * 1024 * 1024 * 1024 // 2GB 最低保护阈值
         private const val AUTO_PRUNE_BYTES_THRESHOLD = 8L * 1024 * 1024 * 1024 // 8GB 启动清理阈值
+        private const val EVENT_QUOTA_ALERT_BYTES = 25L * 1024 * 1024 * 1024 // 25GB 加锁事件预警阈值
     }
+
+    private val vaultScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val moovRescuer = Mp4MoovRescuer()
 
     private val _isUsbMounted = MutableStateFlow(false)
     override val isUsbMounted: StateFlow<Boolean> = _isUsbMounted.asStateFlow()
@@ -76,7 +85,13 @@ class StorageVaultImpl(
             _currentUsbRoot.value = detectedUsbDir
             _isUsbMounted.value = true
             Log.i(TAG, "External USB detected & mounted: ${detectedUsbDir.absolutePath}")
+            val baseDir = File(detectedUsbDir, BASE_RECORD_DIR)
             ensureDirectoryStructures(detectedUsbDir)
+
+            // 挂载成功后，自动启动后台断电坏道与未闭合 MP4 拯救扫描
+            vaultScope.launch {
+                moovRescuer.scanAndRescue(baseDir)
+            }
         } else {
             _currentUsbRoot.value = null
             _isUsbMounted.value = false
@@ -194,15 +209,23 @@ class StorageVaultImpl(
         try {
             val stat = StatFs(usbRoot.absolutePath)
             val availableBytes = stat.availableBlocksLong * stat.blockSizeLong
+            val baseDir = File(usbRoot, BASE_RECORD_DIR)
+
+            // 1. 监测加锁保护区配额预警
+            val eventBytes = calculateDirSize(File(baseDir, RecordCategory.EVENT.dirName)) +
+                    calculateDirSize(File(baseDir, RecordCategory.SENTRY.dirName))
+            if (eventBytes > EVENT_QUOTA_ALERT_BYTES) {
+                Log.w(TAG, "WARNING: Protected Event/Sentry size exceeds quota (${eventBytes / (1024*1024*1024)}GB > 25GB).")
+            }
+
             if (availableBytes > AUTO_PRUNE_BYTES_THRESHOLD) {
                 return false
             }
 
             Log.i(TAG, "Free storage low ($availableBytes bytes). Staging oldest recordings to .Trash recycle buffer...")
-            val baseDir = File(usbRoot, BASE_RECORD_DIR)
             val trashDir = File(baseDir, ".Trash").apply { if (!exists()) mkdirs() }
 
-            // 1. 先从 .Trash 彻底抹除超过空间限制的最旧文件
+            // 2. 先从 .Trash 彻底抹除超过空间限制的最旧文件
             val trashFiles = trashDir.listFiles()?.filter { it.isFile }?.sortedBy { it.lastModified() } ?: emptyList()
             var freedBytes = 0L
             for (f in trashFiles) {
@@ -216,7 +239,7 @@ class StorageVaultImpl(
                 }
             }
 
-            // 2. 将 Normal 目录下最旧的视频平滑移入 .Trash 缓冲池，保留 3 天内后悔药机制
+            // 3. 将 Normal 目录下最旧的视频平滑移入 .Trash 缓冲池（严禁触碰 Event/Sentry/Snapshot 保护区！）
             val normalDir = File(baseDir, RecordCategory.NORMAL.dirName)
             val normalFiles = normalDir.listFiles()?.filter { it.isFile }?.sortedBy { it.lastModified() } ?: return false
 

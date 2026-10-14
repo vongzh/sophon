@@ -1,8 +1,10 @@
 package com.vongzh.sophon.core.remote
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.util.Log
 import com.vongzh.sophon.SophonApp
+import com.vongzh.sophon.core.codec.VideoClipper
 import com.vongzh.sophon.core.remote.bark.BarkNotifier
 import com.vongzh.sophon.core.remote.feishu.FeishuBotClient
 import com.vongzh.sophon.core.remote.telegram.TelegramBotClient
@@ -22,8 +24,9 @@ import java.util.concurrent.TimeUnit
  *
  * 【多平台通知渠道集成 - 明确仅接入 Telegram 与飞书，排除钉钉】
  * 1. Bark: iOS 极简低延迟即时推送；
- * 2. Telegram Bot: 原生 HTTP 长轮询支持，无需公网反代，支持 /snap 抓拍实况与 /status 车况巡检；
+ * 2. Telegram Bot: 原生 HTTP 长轮询支持，支持 /snap 静态抓拍、/clip 远程微短片提取与 /status 车况巡检；
  * 3. 飞书 (Feishu / Lark): 企业级自建应用直发与自定义 Webhook 告警卡片；
+ * 4. 离线警报持久队列 (OfflineAlertQueue): 地下车库断网不丢警报，驶出地库自动重连补发；
  *
  * 【物理安全红线 - 领克08 原厂休眠协同】
  * 熄火后完全释放 WakeLock，绝不私自阻止车机深休眠，12V 小电瓶 0 额外功耗！
@@ -46,6 +49,12 @@ class RemoteDispatcher(
     val barkNotifier = BarkNotifier(httpClient)
     val telegramClient = TelegramBotClient(httpClient)
     val feishuClient = FeishuBotClient(httpClient)
+    private val videoClipper = VideoClipper()
+
+    val offlineAlertQueue = OfflineAlertQueue(context) { alert ->
+        val photoFile = alert.photoPath?.let { File(it) }?.takeIf { it.exists() }
+        sendMultiChannelAlertInternal(alert.title, alert.body, photoFile, isRetry = true)
+    }
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
@@ -82,7 +91,18 @@ class RemoteDispatcher(
      * 全渠道协同广播警报与图片 (Bark + Telegram + 飞书)
      */
     fun sendMultiChannelAlert(title: String, body: String, photoFile: File? = null) {
+        sendMultiChannelAlertInternal(title, body, photoFile, isRetry = false)
+    }
+
+    private fun sendMultiChannelAlertInternal(
+        title: String,
+        body: String,
+        photoFile: File? = null,
+        isRetry: Boolean = false
+    ): Boolean {
         val prefs = SophonApp.preferences
+        var anySent = false
+        var anyFailed = false
 
         // 1. Bark 推送
         if (prefs.barkDeviceKey.isNotBlank()) {
@@ -91,17 +111,28 @@ class RemoteDispatcher(
                 deviceKey = prefs.barkDeviceKey,
                 title = title,
                 body = body,
-                group = "Sophon"
+                group = "Sophon",
+                callback = { success, _ ->
+                    if (success) anySent = true else anyFailed = true
+                }
             )
         }
 
         // 2. Telegram 机器人推送
         if (prefs.isTelegramEnabled && prefs.telegramBotToken.isNotBlank() && prefs.telegramChatId.isNotBlank()) {
             dispatcherScope.launch {
-                if (photoFile != null && photoFile.exists()) {
-                    telegramClient.sendPhoto(prefs.telegramBotToken, prefs.telegramChatId, photoFile, "$title\n$body")
-                } else {
-                    telegramClient.sendTextMessage(prefs.telegramBotToken, prefs.telegramChatId, "<b>$title</b>\n$body")
+                try {
+                    if (photoFile != null && photoFile.exists()) {
+                        telegramClient.sendPhoto(prefs.telegramBotToken, prefs.telegramChatId, photoFile, "$title\n$body") { success ->
+                            if (success) anySent = true else anyFailed = true
+                        }
+                    } else {
+                        telegramClient.sendTextMessage(prefs.telegramBotToken, prefs.telegramChatId, "<b>$title</b>\n$body") { success ->
+                            if (success) anySent = true else anyFailed = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    anyFailed = true
                 }
             }
         }
@@ -109,19 +140,32 @@ class RemoteDispatcher(
         // 3. 飞书 (Feishu) 机器人推送
         if (prefs.isFeishuEnabled) {
             dispatcherScope.launch {
-                if (prefs.feishuWebhookUrl.isNotBlank()) {
-                    feishuClient.sendWebhookMessage(prefs.feishuWebhookUrl, "【$title】\n$body")
-                } else if (prefs.feishuAppId.isNotBlank() && prefs.feishuAppSecret.isNotBlank() && prefs.feishuReceiveId.isNotBlank()) {
-                    feishuClient.sendAppMessage(
-                        appId = prefs.feishuAppId,
-                        appSecret = prefs.feishuAppSecret,
-                        receiveId = prefs.feishuReceiveId,
-                        text = "【$title】\n$body",
-                        photoFile = photoFile
-                    )
+                try {
+                    val success = if (prefs.feishuWebhookUrl.isNotBlank()) {
+                        feishuClient.sendWebhookMessage(prefs.feishuWebhookUrl, "【$title】\n$body")
+                    } else if (prefs.feishuAppId.isNotBlank() && prefs.feishuAppSecret.isNotBlank() && prefs.feishuReceiveId.isNotBlank()) {
+                        feishuClient.sendAppMessage(
+                            appId = prefs.feishuAppId,
+                            appSecret = prefs.feishuAppSecret,
+                            receiveId = prefs.feishuReceiveId,
+                            text = "【$title】\n$body",
+                            photoFile = photoFile
+                        )
+                    } else false
+
+                    if (success) anySent = true else anyFailed = true
+                } catch (e: Exception) {
+                    anyFailed = true
                 }
             }
         }
+
+        // 若非重试调用且存在发送失败或离线异常，自动入队断网重试队列
+        if (!isRetry && anyFailed) {
+            offlineAlertQueue.enqueue(title, body, photoFile)
+        }
+
+        return anySent || !anyFailed
     }
 
     /**
@@ -148,8 +192,55 @@ class RemoteDispatcher(
                     callback(lockMsg)
                 }
                 else -> {
-                    callback("【极视指令帮助】\n- 输入 [/snap] 或 [抓拍]: 立即截取四向全景并回传照片\n- 输入 [/status] 或 [状态]: 实时查询车速与 U 盘容量\n- 输入 [/lock] 或 [加锁]: 紧急保护当前录像片段")
+                    callback("【极视指令帮助】\n- 输入 [/snap] 或 [抓拍]: 立即截取四向全景并回传照片\n- 输入 [/clip 15]: 远程提取最近 15 秒高清短视频\n- 输入 [/status] 或 [状态]: 实时查询车速与 U 盘容量\n- 输入 [/lock] 或 [加锁]: 紧急保护当前录像片段")
                 }
+            }
+        }
+    }
+
+    /**
+     * 远程提取最近几秒的视频片段
+     */
+    fun extractRecentVideoClip(durationSec: Int = 15, onComplete: (File?) -> Unit) {
+        dispatcherScope.launch {
+            val usbRoot = SophonApp.storageVault.currentUsbRoot.value
+            if (usbRoot == null || !SophonApp.storageVault.isUsbMounted.value) {
+                onComplete(null)
+                return@launch
+            }
+
+            val normalDir = File(usbRoot, "SophonRecord/Normal")
+            val eventDir = File(usbRoot, "SophonRecord/Event")
+            val candidateFiles = mutableListOf<File>()
+            if (eventDir.exists()) candidateFiles.addAll(eventDir.listFiles { f -> f.isFile && f.name.endsWith(".mp4", ignoreCase = true) } ?: emptyArray())
+            if (normalDir.exists()) candidateFiles.addAll(normalDir.listFiles { f -> f.isFile && f.name.endsWith(".mp4", ignoreCase = true) } ?: emptyArray())
+
+            val latestFile = candidateFiles.maxByOrNull { it.lastModified() }
+            if (latestFile == null || latestFile.length() < 100 * 1024) {
+                onComplete(null)
+                return@launch
+            }
+
+            val cacheDir = File(context.cacheDir, "remote_clips").apply { if (!exists()) mkdirs() }
+            val outputFile = File(cacheDir, "CLIP_${System.currentTimeMillis()}_${durationSec}s.mp4")
+
+            try {
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(latestFile.absolutePath)
+                val totalDurationMs = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 60_000L
+                retriever.release()
+
+                val clipDurationMs = durationSec * 1000L
+                val startMs = maxOf(0L, totalDurationMs - clipDurationMs)
+                val success = videoClipper.clipRangeLossless(latestFile, outputFile, startMs, totalDurationMs)
+                if (success && outputFile.exists() && outputFile.length() > 0) {
+                    onComplete(outputFile)
+                } else {
+                    onComplete(null)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed extracting remote video clip", e)
+                onComplete(null)
             }
         }
     }
