@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 零掉帧连续硬件编码与无感切片流水线实现 (ContinuousRecorder)
  *
  * 【性能红线 - 0 毫秒无感切换】
- * 彻底消灭 EVCam 的 500ms 切片丢帧缺陷：
+ * 彻底消除传统行车记录仪切片丢帧缺陷：
  * 1. 龙鹰一号 MediaCodec 硬件实例在录制全程持续运转，永不停机；
  * 2. 切片到期时请求 IDR 关键帧，以流式热切换无感轮换目标文件；
  * 3. 严格直连 RamRingBuffer 与 StorageVault，落实 "No USB, No Write"。

@@ -22,8 +22,8 @@ import kotlinx.coroutines.launch
 /**
  * 车身信号反应式监听总线实现 (VehicleSignalBusImpl)
  *
- * 【全面对标 EVCC 与 盯盯车】
- * 支持接入 EVCC AIDL、Android CarPropertyManager 及 ECARX 本地总线。
+ * 【座舱级全域信号总线】
+ * 支持接入 Android CarPropertyManager 及车身专用通信信道。
  *
  * 【安全红线 - 底线三 (Zero Tampering)】
  * 100% 只读订阅者 (Read-Only Subscriber)，绝不向总线发送控制指令。
@@ -37,6 +37,12 @@ class VehicleSignalBusImpl(
     }
 
     private val busScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private val _batteryVoltage = MutableStateFlow(12.6f)
+    override val batteryVoltage: StateFlow<Float> = _batteryVoltage.asStateFlow()
+
+    private val _isBraking = MutableStateFlow(false)
+    override val isBraking: StateFlow<Boolean> = _isBraking.asStateFlow()
 
     private val _turnSignalState = MutableStateFlow(TurnSignalState.OFF)
     override val turnSignalState: StateFlow<TurnSignalState> = _turnSignalState.asStateFlow()
@@ -99,7 +105,15 @@ class VehicleSignalBusImpl(
         }
     }
 
-    // --- 内部只读分发接口 (供底层 HAL / EVCC 适配器更新内存状态) ---
+    // --- 内部只读分发接口 (供底层 HAL / 车辆总线观察者更新内存状态) ---
+
+    fun dispatchBatteryVoltageUpdate(voltage: Float) {
+        _batteryVoltage.value = voltage
+    }
+
+    fun dispatchBrakeUpdate(isBraking: Boolean) {
+        _isBraking.value = isBraking
+    }
 
     fun dispatchTurnSignalUpdate(state: TurnSignalState) {
         _turnSignalState.value = state

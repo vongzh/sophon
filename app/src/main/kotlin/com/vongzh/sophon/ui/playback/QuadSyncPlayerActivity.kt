@@ -35,11 +35,14 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
     private lateinit var btnPrevMarker: TextView
     private lateinit var btnNextMarker: TextView
     private lateinit var tvTimeProgress: TextView
+    private lateinit var btnClipVideo: TextView
     private lateinit var btnSpeed: TextView
     private lateinit var btnViewQuad: TextView
     private lateinit var btnViewFront: TextView
     private lateinit var btnViewBack: TextView
 
+    private val videoClipper = com.vongzh.sophon.core.codec.VideoClipper()
+    private var loadedVideoPath: String? = null
     private var isPlaying = true
     private var currentSpeed = 1.0f
 
@@ -60,7 +63,12 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
         btnPrevMarker = findViewById(R.id.btn_prev_marker)
         btnNextMarker = findViewById(R.id.btn_next_marker)
         tvTimeProgress = findViewById(R.id.tv_time_progress)
+        btnClipVideo = findViewById(R.id.btn_clip_video)
         btnSpeed = findViewById(R.id.btn_play_speed)
+
+        btnClipVideo.setOnClickListener {
+            showClipExtractDialog()
+        }
 
         btnViewQuad = findViewById(R.id.btn_view_quad)
         btnViewFront = findViewById(R.id.btn_view_front)
@@ -130,6 +138,7 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
     private fun loadVideoSource() {
         val videoPath = intent.getStringExtra(EXTRA_VIDEO_PATH)
         if (!videoPath.isNullOrBlank() && java.io.File(videoPath).exists()) {
+            this.loadedVideoPath = videoPath
             videoView.setVideoPath(videoPath)
             videoView.setOnPreparedListener { mp ->
                 mp.isLooping = true
@@ -229,6 +238,66 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
                     val totSec = total / 1000
                     tvTimeProgress.text = String.format("%02d:%02d / %02d:%02d", curSec / 60, curSec % 60, totSec / 60, totSec % 60)
                 }
+            }
+        }
+    }
+
+    private fun showClipExtractDialog() {
+        val path = loadedVideoPath ?: intent.getStringExtra(EXTRA_VIDEO_PATH)
+        if (path.isNullOrBlank() || !java.io.File(path).exists()) {
+            Toast.makeText(this, "未加载有效视频文件", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val currentPos = videoView.currentPosition.toLong()
+        val duration = videoView.duration.toLong()
+
+        val items = arrayOf(
+            "⚡ 提取当前位置前 15 秒 (事故黄金取证)",
+            "⏱ 提取当前位置前后各 15 秒 (30 秒完整事件)",
+            "🎬 提取当前位置后 30 秒片段"
+        )
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("✂️ 极速无损截取取证片段")
+            .setItems(items) { _, which ->
+                val (startMs, endMs) = when (which) {
+                    0 -> maxOf(0L, currentPos - 15_000L) to currentPos
+                    1 -> maxOf(0L, currentPos - 15_000L) to minOf(duration, currentPos + 15_000L)
+                    else -> currentPos to minOf(duration, currentPos + 30_000L)
+                }
+                executeLosslessClip(java.io.File(path), startMs, endMs)
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun executeLosslessClip(sourceFile: java.io.File, startMs: Long, endMs: Long) {
+        val usbRoot = com.vongzh.sophon.SophonApp.storageVault.currentUsbRoot.value
+        val targetDir = if (usbRoot != null && com.vongzh.sophon.SophonApp.storageVault.isUsbMounted.value) {
+            java.io.File(java.io.File(usbRoot, "SophonRecord"), "Clips")
+        } else {
+            java.io.File(sourceFile.parentFile, "Clips")
+        }.apply { mkdirs() }
+
+        val timeStr = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
+        val outputFile = java.io.File(targetDir, "CLIP_${timeStr}.mp4")
+
+        Toast.makeText(this, "⏳ 正在无损抽取取证片段...", Toast.LENGTH_SHORT).show()
+
+        lifecycleScope.launch {
+            val success = videoClipper.clipRangeLossless(sourceFile, outputFile, startMs, endMs)
+            if (success) {
+                androidx.appcompat.app.AlertDialog.Builder(this@QuadSyncPlayerActivity)
+                    .setTitle("✅ 事故片段截取成功")
+                    .setMessage("文件已导出至:\n${outputFile.name} (${outputFile.length() / 1024} KB)\n\n是否立即启动车载局域网免流快传给手机？")
+                    .setPositiveButton("手机扫码快传") { _, _ ->
+                        com.vongzh.sophon.ui.lan.LanShareDialog(this@QuadSyncPlayerActivity).show()
+                    }
+                    .setNegativeButton("好的", null)
+                    .show()
+            } else {
+                Toast.makeText(this@QuadSyncPlayerActivity, "❌ 截取失败，请检查文件状态与存储空间", Toast.LENGTH_LONG).show()
             }
         }
     }

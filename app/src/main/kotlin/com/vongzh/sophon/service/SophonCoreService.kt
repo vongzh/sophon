@@ -50,6 +50,7 @@ class SophonCoreService : Service() {
     private lateinit var gpuCompositor: GpuCompositorImpl
     private lateinit var multiCameraManager: MultiCameraManager
     private lateinit var continuousRecorder: ContinuousRecorder
+    private lateinit var crashSensorDetector: com.vongzh.sophon.core.sensor.CrashSensorDetector
     private var lanShareServer: com.vongzh.sophon.core.lan.LanShareServer? = null
 
     private var isRecordingActive = false
@@ -64,11 +65,22 @@ class SophonCoreService : Service() {
 
         initVisualAndRecordingPipeline()
         startLanShareServerInternal()
+        initCrashSensorDetector()
         observeStorageHealth()
         observeVehicleTelemetryForOsd()
         observeEmergencyCollisionEvents()
+        observeSentryTriggers()
+        observeBatterySafety()
         observeHardKeyEvents()
         startNotificationUpdateLoop()
+    }
+
+    private fun initCrashSensorDetector() {
+        crashSensorDetector = com.vongzh.sophon.core.sensor.CrashSensorDetector(this) { impactG ->
+            val bus = SophonApp.vehicleSignalBus as? com.vongzh.sophon.core.vhal.VehicleSignalBusImpl
+            bus?.dispatchEmergencyCollisionEvent("加速度计剧烈碰撞 (%.1fG)".format(impactG))
+        }
+        crashSensorDetector.start()
     }
 
     private fun startLanShareServerInternal() {
@@ -149,7 +161,59 @@ class SophonCoreService : Service() {
                     GearState.DRIVE -> "D"
                     GearState.UNKNOWN -> "--"
                 }
-                gpuCompositor.updateOsdMetadata(speed, gearText)
+                val turnText = when (bus.turnSignalState.value) {
+                    com.vongzh.sophon.domain.model.TurnSignalState.LEFT -> "左"
+                    com.vongzh.sophon.domain.model.TurnSignalState.RIGHT -> "右"
+                    com.vongzh.sophon.domain.model.TurnSignalState.HAZARD -> "双闪"
+                    else -> "--"
+                }
+                gpuCompositor.updateOsdMetadata(
+                    speedKmh = speed,
+                    gearText = gearText,
+                    isBraking = bus.isBraking.value,
+                    turnSignalText = turnText
+                )
+            }
+        }
+    }
+
+    private fun observeBatterySafety() {
+        val bus = SophonApp.vehicleSignalBus
+        val prefs = SophonApp.preferences
+        serviceScope.launch {
+            bus.batteryVoltage.collectLatest { volts ->
+                if (prefs.isBatteryProtectionEnabled && volts > 0f && volts < prefs.batteryProtectionThresholdVolts) {
+                    Log.e(TAG, "CRITICAL: 12V Battery Voltage below safety threshold (%.2fV < %.1fV). Emergency sentry power cut!".format(volts, prefs.batteryProtectionThresholdVolts))
+                    barkNotifier.sendAlert(
+                        title = "⚠️ 蓄电池低压保护触发",
+                        body = "车辆12V蓄电池电压降至 %.1fV (保护阈值 %.1fV)，已主动休眠哨兵模式避免小电瓶亏电趴窝！".format(volts, prefs.batteryProtectionThresholdVolts)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeSentryTriggers() {
+        val bus = SophonApp.vehicleSignalBus
+        val prefs = SophonApp.preferences
+        serviceScope.launch {
+            bus.sentryTriggerEvents.collectLatest { timestampMs ->
+                Log.w(TAG, "Sentry event triggered! Vibrate at $timestampMs")
+                continuousRecorder.triggerEventLock("Sentry Vibration Trigger")
+                if (prefs.isSentryDeterrentEnabled) {
+                    try {
+                        val intent = Intent(this@SophonCoreService, com.vongzh.sophon.ui.sentry.SentryDeterrentActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Failed to launch SentryDeterrentActivity", e)
+                    }
+                }
+                barkNotifier.sendAlert(
+                    title = "🚨 哨兵异常震动报警",
+                    body = "侦测到车身震动/异常晃动，已锁定四路全维视频切片并亮屏威慑！"
+                )
             }
         }
     }
@@ -250,6 +314,7 @@ class SophonCoreService : Service() {
         Log.i(TAG, "SophonCoreService onDestroy")
         serviceScope.cancel()
         try {
+            crashSensorDetector.stop()
             lanShareServer?.stop()
             continuousRecorder.stopRecording()
             multiCameraManager.stopAllCameras()

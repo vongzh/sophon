@@ -50,6 +50,9 @@ class SophonSettingsActivity : AppCompatActivity() {
     private lateinit var swOsdWatermark: Switch
     private lateinit var swRainyNightMode: Switch
     private lateinit var swDoorOpenWarning: Switch
+    private lateinit var swBatteryProtection: Switch
+    private lateinit var swSentryDeterrent: Switch
+    private lateinit var swPipAuto: Switch
 
     // Telegram
     private lateinit var swTelegramEnabled: Switch
@@ -103,6 +106,9 @@ class SophonSettingsActivity : AppCompatActivity() {
         swOsdWatermark = findViewById(R.id.sw_osd_watermark)
         swRainyNightMode = findViewById(R.id.sw_rainy_night_shader)
         swDoorOpenWarning = findViewById(R.id.sw_door_open_warning)
+        swBatteryProtection = findViewById(R.id.sw_battery_protection)
+        swSentryDeterrent = findViewById(R.id.sw_sentry_deterrent)
+        swPipAuto = findViewById(R.id.sw_pip_auto)
 
         swTelegramEnabled = findViewById(R.id.sw_telegram_enabled)
         etTelegramBotToken = findViewById(R.id.et_telegram_bot_token)
@@ -153,6 +159,9 @@ class SophonSettingsActivity : AppCompatActivity() {
         swOsdWatermark.isChecked = prefs.isOsdWatermarkEnabled
         swRainyNightMode.isChecked = prefs.isRainyNightModeEnabled
         swDoorOpenWarning.isChecked = prefs.isDoorOpenWarningEnabled
+        swBatteryProtection.isChecked = prefs.isBatteryProtectionEnabled
+        swSentryDeterrent.isChecked = prefs.isSentryDeterrentEnabled
+        swPipAuto.isChecked = prefs.isPipAutoEnabled
 
         // Telegram
         swTelegramEnabled.isChecked = prefs.isTelegramEnabled
@@ -322,6 +331,9 @@ class SophonSettingsActivity : AppCompatActivity() {
         prefs.isOsdWatermarkEnabled = swOsdWatermark.isChecked
         prefs.isRainyNightModeEnabled = swRainyNightMode.isChecked
         prefs.isDoorOpenWarningEnabled = swDoorOpenWarning.isChecked
+        prefs.isBatteryProtectionEnabled = swBatteryProtection.isChecked
+        prefs.isSentryDeterrentEnabled = swSentryDeterrent.isChecked
+        prefs.isPipAutoEnabled = swPipAuto.isChecked
 
         // Telegram
         prefs.isTelegramEnabled = swTelegramEnabled.isChecked

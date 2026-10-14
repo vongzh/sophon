@@ -249,10 +249,19 @@ class GpuCompositorImpl : ICompositor {
 
     private var osdSpeedKmh: Float = 0f
     private var osdGearText: String = "P"
+    private var osdIsBraking: Boolean = false
+    private var osdTurnText: String = "--"
 
-    override fun updateOsdMetadata(speedKmh: Float, gearText: String) {
+    override fun updateOsdMetadata(
+        speedKmh: Float,
+        gearText: String,
+        isBraking: Boolean,
+        turnSignalText: String
+    ) {
         this.osdSpeedKmh = speedKmh
         this.osdGearText = gearText
+        this.osdIsBraking = isBraking
+        this.osdTurnText = turnSignalText
     }
 
     /**
@@ -265,14 +274,19 @@ class GpuCompositorImpl : ICompositor {
             val canvas = android.graphics.Canvas(bitmap)
             canvas.drawColor(android.graphics.Color.BLACK)
 
-            // 绘制水印标识
-            val paint = android.graphics.Paint().apply {
-                color = android.graphics.Color.WHITE
-                textSize = 32f
-                isAntiAlias = true
+            // 绘制水印标识 (当启用水印时)
+            if (com.vongzh.sophon.SophonApp.preferences.isOsdWatermarkEnabled) {
+                val paint = android.graphics.Paint().apply {
+                    color = android.graphics.Color.WHITE
+                    textSize = 28f
+                    isAntiAlias = true
+                    setShadowLayer(4f, 2f, 2f, 0xFF000000.toInt())
+                }
+                val timeStr = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.getDefault()).format(java.util.Date())
+                val brakeText = if (osdIsBraking) "ON" else "OFF"
+                val watermark = "$timeStr | %.0f km/h | $osdGearText 挡 | 刹车:$brakeText | 转向:$osdTurnText | 领克08 · 极视".format(osdSpeedKmh)
+                canvas.drawText(watermark, 32f, 1048f, paint)
             }
-            val timeStr = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date())
-            canvas.drawText("$timeStr | %.0f km/h | $osdGearText | Sophon Lynk&Co 08".format(osdSpeedKmh), 40f, 1040f, paint)
 
             java.io.FileOutputStream(outputFile).use { out ->
                 bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 95, out)

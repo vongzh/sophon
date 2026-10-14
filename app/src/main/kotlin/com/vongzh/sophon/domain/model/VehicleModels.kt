@@ -77,7 +77,8 @@ enum class RecordCategory(val dirName: String) {
     NORMAL("Normal"),
     EVENT("Event"),
     SENTRY("Sentry"),
-    SNAPSHOT("Snapshot")
+    SNAPSHOT("Snapshot"),
+    CLIPS("Clips")
 }
 
 /**

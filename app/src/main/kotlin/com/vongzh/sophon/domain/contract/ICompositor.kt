@@ -51,9 +51,14 @@ interface ICompositor {
     fun resumeUiRendering()
 
     /**
-     * 更新当前视频帧叠加的 OSD 遥测水印数据 (车速、挡位)
+     * 更新当前视频帧叠加的 OSD 遥测水印数据 (车速、挡位、刹车、转向)
      */
-    fun updateOsdMetadata(speedKmh: Float, gearText: String)
+    fun updateOsdMetadata(
+        speedKmh: Float,
+        gearText: String,
+        isBraking: Boolean = false,
+        turnSignalText: String = "--"
+    )
 
     /**
      * 开启或关闭 GPU 雨夜与破雾透亮滤波模式

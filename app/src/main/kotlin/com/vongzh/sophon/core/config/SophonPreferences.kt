@@ -20,9 +20,16 @@ class SophonPreferences(context: Context) {
         private const val KEY_HAZARD_SPEED_THRESHOLD = "hazard_speed_threshold"
         private const val KEY_FISHEYE_CORRECTION = "fisheye_correction"
         private const val KEY_AUTO_CRASH_LOCK = "auto_crash_lock"
+        private const val KEY_CRASH_SENSITIVITY = "crash_sensitivity" // 0: 3.5G, 1: 2.5G, 2: 1.8G
         private const val KEY_OSD_WATERMARK = "osd_watermark"
         private const val KEY_RAINY_NIGHT_SHADER = "rainy_night_shader"
         private const val KEY_DOOR_OPEN_WARNING = "door_open_warning"
+        private const val KEY_BATTERY_PROTECTION_ENABLED = "battery_protection_enabled"
+        private const val KEY_BATTERY_PROTECTION_VOLTS = "battery_protection_volts"
+        private const val KEY_SENTRY_DETERRENT_ENABLED = "sentry_deterrent_enabled"
+        private const val KEY_PIP_AUTO_ENABLED = "pip_auto_enabled"
+        private const val KEY_STORAGE_NORMAL_QUOTA = "storage_normal_quota"
+        private const val KEY_STORAGE_EMERGENCY_QUOTA = "storage_emergency_quota"
 
         // Telegram Bot 配置
         private const val KEY_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
@@ -39,6 +46,7 @@ class SophonPreferences(context: Context) {
         private const val DEFAULT_BARK_SERVER = "https://api.day.app"
         private const val DEFAULT_CHUNK_DURATION = 60 // 默认 1 分钟切片
         private const val DEFAULT_HAZARD_SPEED = 15f // 默认 15 km/h 会车阈值
+        private const val DEFAULT_BATTERY_VOLTS = 11.8f // 默认 11.8V 蓄电池防亏电门限
     }
 
     private val sp: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -78,6 +86,34 @@ class SophonPreferences(context: Context) {
     var isDoorOpenWarningEnabled: Boolean
         get() = sp.getBoolean(KEY_DOOR_OPEN_WARNING, true)
         set(value) = sp.edit().putBoolean(KEY_DOOR_OPEN_WARNING, value).apply()
+
+    var isBatteryProtectionEnabled: Boolean
+        get() = sp.getBoolean(KEY_BATTERY_PROTECTION_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_BATTERY_PROTECTION_ENABLED, value).apply()
+
+    var batteryProtectionThresholdVolts: Float
+        get() = sp.getFloat(KEY_BATTERY_PROTECTION_VOLTS, DEFAULT_BATTERY_VOLTS)
+        set(value) = sp.edit().putFloat(KEY_BATTERY_PROTECTION_VOLTS, value).apply()
+
+    var isSentryDeterrentEnabled: Boolean
+        get() = sp.getBoolean(KEY_SENTRY_DETERRENT_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_SENTRY_DETERRENT_ENABLED, value).apply()
+
+    var isPipAutoEnabled: Boolean
+        get() = sp.getBoolean(KEY_PIP_AUTO_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_PIP_AUTO_ENABLED, value).apply()
+
+    var crashSensitivity: Int
+        get() = sp.getInt(KEY_CRASH_SENSITIVITY, 1) // 0: 3.5G, 1: 2.5G, 2: 1.8G
+        set(value) = sp.edit().putInt(KEY_CRASH_SENSITIVITY, value).apply()
+
+    var storageNormalQuotaPercent: Int
+        get() = sp.getInt(KEY_STORAGE_NORMAL_QUOTA, 70)
+        set(value) = sp.edit().putInt(KEY_STORAGE_NORMAL_QUOTA, value).apply()
+
+    var storageEmergencyQuotaPercent: Int
+        get() = sp.getInt(KEY_STORAGE_EMERGENCY_QUOTA, 20)
+        set(value) = sp.edit().putInt(KEY_STORAGE_EMERGENCY_QUOTA, value).apply()
 
     var telegramBotToken: String
         get() = sp.getString(KEY_TELEGRAM_BOT_TOKEN, "") ?: ""

@@ -135,37 +135,25 @@ graph TD
 ```
 Sophon/
 ├── app/
-│   ├── src/main/java/com/vongzh/sophon/
-│   │   ├── camera/            # Camera2 多摄调度与离屏 EGL 管线
-│   │   │   ├── GpuCompositorImpl.kt   # OpenGL ES 3.0 FBO 四路合成与着色器
-│   │   │   ├── SophonCameraEngine.kt  # 核心采集状态机
-│   │   │   └── CodecSurfaceRecorder.kt# MediaCodec 硬件编码器
-│   │   ├── service/           # 核心前台服务与盲区悬浮感知
-│   │   │   ├── SophonRecordingService.kt  # 主录制引擎服务
-│   │   │   ├── BlindSpotOverlayService.kt # 转向/双闪/DOW开门防碰撞盲区
-│   │   │   └── SophonOverlayManager.kt    # 悬浮窗渲染管理
-│   │   ├── vhal/              # 车身信号总线集成 (只读监听)
-│   │   │   ├── IVehicleSignalBus.kt
-│   │   │   └── VehicleSignalBusImpl.kt
-│   │   ├── storage/           # 存储调度、U 盘测速与防误删回收站
-│   │   │   ├── StorageVaultImpl.kt    # 环形缓冲、存储生命周期与 .Trash/
-│   │   │   └── UsbBenchmark.kt        # U 盘读写性能与健康体检
-│   │   ├── ui/                # FlymeAuto 原生座舱交互界面
-│   │   │   ├── MainActivity.kt            # 主控与四路实时全景监控
-│   │   │   ├── QuadSyncPlayerActivity.kt  # 四分屏/单路同步回放播放器
-│   │   │   ├── RecordingHistoryActivity.kt# 录制历史网格列表与回收站视图
-│   │   │   ├── LanShareActivity.kt        # 局域网高速扫码分享
-│   │   │   └── UsbBenchmarkActivity.kt    # 存储健康评测面板
-│   │   ├── widget/            # 车载定制交互控件
-│   │   │   └── MarkedSeekBar.kt           # 关键事件打点与穿梭时间轴
-│   │   ├── remote/            # 远程交互与机器人引擎
-│   │   │   ├── RemoteDispatcher.kt        # 远程指令分发中心
-│   │   │   ├── TelegramBotClient.kt       # Telegram 机器人端
-│   │   │   ├── FeishuBotClient.kt         # 飞书机器人双向通信
-│   │   │   └── BarkNotificationClient.kt  # Bark iOS 极速告警
-│   │   └── web/               # 车载局域网免流 Web 服务
-│   │       └── LanShareServer.kt          # HTTP 206 范围流媒体与批量下载
-│   ├── src/main/res/          # FlymeAuto 规范布局、深色主题与车规矢量图标
+│   ├── src/main/kotlin/com/vongzh/sophon/
+│   │   ├── core/
+│   │   │   ├── camera/        # Camera2 多摄调度 (MultiCameraManager)
+│   │   │   ├── codec/         # MediaCodec 连续编码与零转码剪辑器 (VideoClipper)
+│   │   │   ├── gl/            # OpenGL ES 3.0 FBO 合流、OSD 水印与雨夜着色器
+│   │   │   ├── sensor/        # 三轴加速度计碰撞与急刹感知 (CrashSensorDetector)
+│   │   │   ├── storage/       # 8MB 环形缓冲、存储生命周期、.Trash/ 与 U 盘测速
+│   │   │   ├── vhal/          # 车规级信号总线只读监听与唤醒广播接收
+│   │   │   └── remote/        # Telegram、飞书机器人与 Bark 极速通知
+│   │   ├── service/           # 核心录制服务 (SophonCoreService) 与盲区/DOW 辅助
+│   │   ├── ui/                # FlymeAuto 原生座舱交互
+│   │   │   ├── MainActivity.kt            # 主控与四路实时全景监控 (支持原生画中画 PiP)
+│   │   │   ├── sentry/                    # 哨兵触发中控屏“警示眼”全屏威慑
+│   │   │   ├── playback/                  # 四路同步回放与 15s/30s 取证片段抽取
+│   │   │   ├── history/                   # 录制历史网格浏览器与回收站
+│   │   │   ├── settings/                  # 12V 蓄电池保护与座舱安全参数定制
+│   │   │   └── widget/                    # MarkedSeekBar 时间轴事件打点与穿梭
+│   │   └── SophonApp.kt       # 全局应用上下文与单例依赖注入
+│   ├── src/main/res/          # FlymeAuto 规范布局、深色主题与高精度矢量图标
 │   └── build.gradle.kts       # 模块构建配置
 ├── docs/                      # 架构设计与车载安全规范文档
 │   ├── ARCHITECTURE_DESIGN.md         # 核心系统架构设计

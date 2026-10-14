@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sentry_deterrent_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#07080A">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- 极视哨兵警示眼容器 (呼吸动效) -->
+        <FrameLayout
+            android:id="@+id/fl_sentry_eye_container"
+            android:layout_width="160dp"
+            android:layout_height="160dp">
+
+            <!-- 外圈能量光晕 -->
+            <View
+                android:id="@+id/v_eye_halo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_sentry_halo" />
+
+            <!-- 核心警示红眼 -->
+            <View
+                android:id="@+id/v_eye_core"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_sentry_core" />
+        </FrameLayout>
+
+        <!-- 醒目警示标题 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:letterSpacing="0.1"
+            android:text="SOPHON SENTRY ACTIVE"
+            android:textColor="#FF453A"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:letterSpacing="0.05"
+            android:text="极视全维哨兵正在录制 · 视守全程"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- 详细存证提示 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_badge_pill"
+            android:backgroundTint="#26FF453A"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="8dp"
+            android:text="⚠️ 侦测到车身震动 · 四路全维视频已实时加密锁存"
+            android:textColor="#FF6961"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="轻触屏幕关闭显示"
+            android:textColor="#5A6578"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

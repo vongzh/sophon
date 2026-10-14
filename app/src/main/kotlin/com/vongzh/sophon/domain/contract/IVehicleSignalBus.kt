@@ -11,14 +11,25 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * 车身信号反应式监听总线 (Vehicle Signal Bus)
  *
- * 【全面对标 EVCC (com.kooo.evcc) 与 盯盯车】
- * 覆盖：转向灯、挡位、车速、方向盘转角、胎压胎温 (TPMS)、车门状态、安全带状态、硬件按键长按、AVM 全景避让。
+ * 【车规级全域信号感知】
+ * 覆盖：转向灯、挡位、车速、方向盘转角、胎压胎温 (TPMS)、车门状态、安全带状态、
+ * 12V 蓄电池电压 (低压切断守护)、刹车踏板状态、硬件按键长按、AVM 全景避让。
  *
  * 【安全红线 - 底线三 (Zero Tampering)】
  * 100% 只读订阅者 (Read-Only Subscriber)。
  * 严禁声明任何写方法，不干预车辆任何 ECU 控制逻辑。
  */
 interface IVehicleSignalBus {
+
+    /**
+     * 12V 蓄电池电压 (伏特，用于哨兵低压切断保护)
+     */
+    val batteryVoltage: StateFlow<Float>
+
+    /**
+     * 刹车踏板踩下状态 (用于 OSD 水印与急刹感知)
+     */
+    val isBraking: StateFlow<Boolean>
 
     /**
      * 转向灯状态流 (OFF, LEFT, RIGHT, HAZARD)

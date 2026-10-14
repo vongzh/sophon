@@ -188,6 +188,7 @@
 
         <!-- 顶部座舱状态栏 -->
         <LinearLayout
+            android:id="@+id/layout_top_status_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"

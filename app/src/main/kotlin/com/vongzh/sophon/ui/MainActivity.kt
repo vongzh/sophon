@@ -167,4 +167,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SophonApp.preferences.isPipAutoEnabled) {
+            try {
+                val params = android.app.PictureInPictureParams.Builder()
+                    .setAspectRatio(android.util.Rational(16, 9))
+                    .build()
+                enterPictureInPictureMode(params)
+            } catch (e: Exception) {
+                // 忽略系统未授权或暂不支持 PiP
+            }
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: android.content.res.Configuration) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        val navRail = findViewById<View>(R.id.layout_nav_rail)
+        val topBar = findViewById<View>(R.id.layout_top_status_bar)
+        if (isInPictureInPictureMode) {
+            navRail?.visibility = View.GONE
+            topBar?.visibility = View.GONE
+        } else {
+            navRail?.visibility = View.VISIBLE
+            topBar?.visibility = View.VISIBLE
+        }
+    }
 }
