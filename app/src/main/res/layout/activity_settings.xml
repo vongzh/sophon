@@ -281,6 +281,258 @@
                     android:text="录制视频压制时间戳、车速与挡位 OSD 水印"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp" />
+
+                <Switch
+                    android:id="@+id/sw_rainy_night_shader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="GPU 雨夜与破雾透亮滤波 (低照度暗部提亮 / 强光眩光抑制)"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- 卡片 5: Telegram 远程机器人接入 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/bg_card_dark"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Telegram 远程机器人交互"
+                        android:textColor="@color/flyme_cyan"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/sw_telegram_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="支持发送 /snap 远程回传四向全景照片、/status 车况巡检、/lock 紧急加锁"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/et_telegram_bot_token"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/bg_cockpit_dark"
+                    android:hint="Bot Token (如: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ)"
+                    android:paddingHorizontal="12dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/et_telegram_chat_id"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@color/bg_cockpit_dark"
+                        android:hint="授权 Chat ID (用于接收警报与限制鉴权)"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_tertiary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/btn_test_telegram"
+                        android:layout_width="wrap_content"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_badge_pill"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:text="测试电报"
+                        android:textColor="@color/flyme_cyan"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 6: 飞书 (Feishu / Lark) 机器人接入 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/bg_card_dark"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="飞书 (Feishu) 机器人集成"
+                        android:textColor="@color/flyme_cyan"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:id="@+id/sw_feishu_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="支持群自定义 Webhook 告警或企业自建应用原图私信直发"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/et_feishu_webhook"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/bg_cockpit_dark"
+                    android:hint="群机器人 Webhook URL (https://open.feishu.cn/open-apis/bot/v2/hook/...)"
+                    android:paddingHorizontal="12dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_tertiary"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/et_feishu_app_id"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@color/bg_cockpit_dark"
+                        android:hint="自建应用 App ID (选填)"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_tertiary"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/et_feishu_app_secret"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@color/bg_cockpit_dark"
+                        android:hint="App Secret (选填)"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_tertiary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/et_feishu_receive_id"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@color/bg_cockpit_dark"
+                        android:hint="接收人 Open ID (如: ou_xxx)"
+                        android:paddingHorizontal="12dp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_tertiary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/btn_test_feishu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_badge_pill"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:text="测试飞书"
+                        android:textColor="@color/flyme_cyan"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 7: 外置 U 盘写入基准测速与车规健康体检 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/bg_card_dark"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="外置 U 盘写入基准测速与车规健康体检"
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="评估当前 U 盘物理 I/O 带宽是否满足四路 1080P/2K 视频流实时并发写入"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_benchmark_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/bg_cockpit_dark"
+                    android:padding="12dp"
+                    android:text="尚未进行测速体检，点击下方按钮开始。"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/btn_run_usb_benchmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_badge_pill"
+                    android:gravity="center"
+                    android:paddingHorizontal="20dp"
+                    android:text="⚡ 开始 U 盘写入基准测速"
+                    android:textColor="@color/flyme_cyan"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>

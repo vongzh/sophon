@@ -4,14 +4,14 @@ import android.content.Context
 import android.util.Log
 import com.vongz.sophon.SophonApp
 import com.vongz.sophon.core.remote.bark.BarkNotifier
+import com.vongz.sophon.core.remote.feishu.FeishuBotClient
+import com.vongz.sophon.core.remote.telegram.TelegramBotClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -20,9 +20,10 @@ import java.util.concurrent.TimeUnit
 /**
  * 远程千里眼与状态查询调度中枢 (RemoteDispatcher)
  *
- * 【多平台通知渠道集成】
- * 1. Bark: iOS 用户极简低延迟推送 (支持官方 api.day.app 与自建服务)；
- * 2. 钉钉 (DingTalk) / 飞书 (Feishu) / Telegram: 机器人群组互动与双向指令；
+ * 【多平台通知渠道集成 - 明确仅接入 Telegram 与飞书，排除钉钉】
+ * 1. Bark: iOS 极简低延迟即时推送；
+ * 2. Telegram Bot: 原生 HTTP 长轮询支持，无需公网反代，支持 /snap 抓拍实况与 /status 车况巡检；
+ * 3. 飞书 (Feishu / Lark): 企业级自建应用直发与自定义 Webhook 告警卡片；
  *
  * 【物理安全红线 - 领克08 原厂休眠协同】
  * 熄火后完全释放 WakeLock，绝不私自阻止车机深休眠，12V 小电瓶 0 额外功耗！
@@ -33,47 +34,93 @@ class RemoteDispatcher(
 
     companion object {
         private const val TAG = "Sophon.RemoteDispatcher"
-        private const val PREF_REMOTE = "sophon_remote_config"
-        private const val KEY_BARK_KEY = "bark_device_key"
-        private const val KEY_BARK_SERVER = "bark_server_url"
     }
 
     private val dispatcherScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(35, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    private val barkNotifier = BarkNotifier(httpClient)
-    private val prefs = context.getSharedPreferences(PREF_REMOTE, Context.MODE_PRIVATE)
+    val barkNotifier = BarkNotifier(httpClient)
+    val telegramClient = TelegramBotClient(httpClient)
+    val feishuClient = FeishuBotClient(httpClient)
+
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     /**
-     * 配置 Bark 设备密钥与服务器
+     * 初始化启动已启用的远程机器人服务
      */
-    fun configureBark(deviceKey: String, serverUrl: String? = null) {
-        prefs.edit().apply {
-            putString(KEY_BARK_KEY, deviceKey)
-            putString(KEY_BARK_SERVER, serverUrl)
-            apply()
+    fun startRemoteServices() {
+        val prefs = SophonApp.preferences
+        if (prefs.isTelegramEnabled && prefs.telegramBotToken.isNotBlank()) {
+            telegramClient.startPolling(
+                scope = dispatcherScope,
+                botToken = prefs.telegramBotToken,
+                allowedChatId = prefs.telegramChatId.ifBlank { null },
+                remoteDispatcher = this
+            )
         }
-        Log.i(TAG, "Bark push configuration updated.")
     }
 
     /**
-     * 发送 Bark 通知 (若已配置)
+     * 停止正在运行的远程轮询通道
+     */
+    fun stopRemoteServices() {
+        telegramClient.stopPolling()
+    }
+
+    /**
+     * 发送 Bark 通知 (兼容便捷方法)
      */
     fun sendBarkAlert(title: String, body: String) {
-        val key = prefs.getString(KEY_BARK_KEY, null)
-        val server = prefs.getString(KEY_BARK_SERVER, null)
-        if (!key.isNullOrBlank()) {
+        sendMultiChannelAlert(title, body)
+    }
+
+    /**
+     * 全渠道协同广播警报与图片 (Bark + Telegram + 飞书)
+     */
+    fun sendMultiChannelAlert(title: String, body: String, photoFile: File? = null) {
+        val prefs = SophonApp.preferences
+
+        // 1. Bark 推送
+        if (prefs.barkDeviceKey.isNotBlank()) {
             barkNotifier.sendPush(
-                serverUrl = server,
-                deviceKey = key,
+                serverUrl = prefs.barkServerUrl.ifBlank { null },
+                deviceKey = prefs.barkDeviceKey,
                 title = title,
                 body = body,
                 group = "Sophon"
             )
+        }
+
+        // 2. Telegram 机器人推送
+        if (prefs.isTelegramEnabled && prefs.telegramBotToken.isNotBlank() && prefs.telegramChatId.isNotBlank()) {
+            dispatcherScope.launch {
+                if (photoFile != null && photoFile.exists()) {
+                    telegramClient.sendPhoto(prefs.telegramBotToken, prefs.telegramChatId, photoFile, "$title\n$body")
+                } else {
+                    telegramClient.sendTextMessage(prefs.telegramBotToken, prefs.telegramChatId, "<b>$title</b>\n$body")
+                }
+            }
+        }
+
+        // 3. 飞书 (Feishu) 机器人推送
+        if (prefs.isFeishuEnabled) {
+            dispatcherScope.launch {
+                if (prefs.feishuWebhookUrl.isNotBlank()) {
+                    feishuClient.sendWebhookMessage(prefs.feishuWebhookUrl, "【$title】\n$body")
+                } else if (prefs.feishuAppId.isNotBlank() && prefs.feishuAppSecret.isNotBlank() && prefs.feishuReceiveId.isNotBlank()) {
+                    feishuClient.sendAppMessage(
+                        appId = prefs.feishuAppId,
+                        appSecret = prefs.feishuAppSecret,
+                        receiveId = prefs.feishuReceiveId,
+                        text = "【$title】\n$body",
+                        photoFile = photoFile
+                    )
+                }
+            }
         }
     }
 
@@ -83,21 +130,40 @@ class RemoteDispatcher(
     fun processRemoteCommand(command: String, callback: (String) -> Unit) {
         dispatcherScope.launch {
             when (command.trim().uppercase()) {
-                "SNAPSHOT", "抓拍", "拍照" -> {
+                "SNAPSHOT", "/SNAP", "抓拍", "拍照" -> {
                     Log.i(TAG, "Executing remote snapshot request...")
                     val resultMsg = executeRemoteSnapshot()
-                    sendBarkAlert("极视远程抓拍成功", "四向视角照片已成功拍摄归档至 U 盘。")
+                    val latest = getLatestSnapshotFile()
+                    sendMultiChannelAlert("极视远程抓拍成功", "四向视角照片已成功拍摄归档至 U 盘。", latest)
                     callback(resultMsg)
                 }
-                "STATUS", "状态", "查询" -> {
+                "STATUS", "/STATUS", "状态", "查询" -> {
                     val statusText = buildCurrentStatusReport()
                     callback(statusText)
                 }
+                "LOCK", "/LOCK", "锁存", "加锁" -> {
+                    SophonApp.vehicleSignalBus.dispatchHardKeyEvent(com.vongz.sophon.domain.model.HardKeyEvent.LONG_PRESS)
+                    val lockMsg = "🔒 已成功向记录仪中枢触发紧急加锁事件，当前录像片段已被移入永久受保护区。"
+                    sendMultiChannelAlert("极视紧急录像锁死", "远程指令已锁死当前录像，防止循环覆盖。")
+                    callback(lockMsg)
+                }
                 else -> {
-                    callback("【极视指令帮助】\n- 输入 [抓拍] 或 SNAPSHOT: 立即抓拍当前四路视角并推送\n- 输入 [状态] 或 STATUS: 查询车速与存储容量健康")
+                    callback("【极视指令帮助】\n- 输入 [/snap] 或 [抓拍]: 立即截取四向全景并回传照片\n- 输入 [/status] 或 [状态]: 实时查询车速与 U 盘容量\n- 输入 [/lock] 或 [加锁]: 紧急保护当前录像片段")
                 }
             }
         }
+    }
+
+    /**
+     * 获取外置 U 盘中最新的一张抓拍照片
+     */
+    fun getLatestSnapshotFile(): File? {
+        val usbRoot = SophonApp.storageVault.currentUsbRoot.value ?: return null
+        val snapshotDir = File(usbRoot, "SophonRecord/Snapshot")
+        if (!snapshotDir.exists() || !snapshotDir.isDirectory) return null
+
+        return snapshotDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) }
+            ?.maxByOrNull { it.lastModified() }
     }
 
     private fun executeRemoteSnapshot(): String {
@@ -105,7 +171,7 @@ class RemoteDispatcher(
         return "【极视远程抓拍成功】\n时间: $timeStr\n四向视角照片已归档至外置U盘 Snapshot/ 目录。"
     }
 
-    private fun buildCurrentStatusReport(): String {
+    fun buildCurrentStatusReport(): String {
         val isMounted = SophonApp.storageVault.isUsbMounted.value
         val speed = SophonApp.vehicleSignalBus.vehicleSpeed.value
         val gear = SophonApp.vehicleSignalBus.gearState.value

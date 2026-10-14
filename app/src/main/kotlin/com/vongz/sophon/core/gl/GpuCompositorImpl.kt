@@ -75,6 +75,44 @@ class GpuCompositorImpl : ICompositor {
                 }
             }
         """
+
+        // 雨夜与破雾透亮滤波片元着色器 (暗部提亮 + 远光眩光压缩 + 饱和度色彩重构)
+        private const val FRAGMENT_SHADER_RAINY_NIGHT = """#version 300 es
+            #extension GL_OES_EGL_image_external_essl3 : require
+            precision highp float;
+            in vec2 vTexCoord;
+            out vec4 fragColor;
+            uniform samplerExternalOES uTexture;
+            uniform float uRainyNightStrength;
+
+            void main() {
+                vec4 color = texture(uTexture, vTexCoord);
+                if (uRainyNightStrength <= 0.01) {
+                    fragColor = color;
+                    return;
+                }
+                
+                // 1. 亮度提取
+                float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+                
+                // 2. 雨夜低照度暗部自适应提亮 (Gamma 0.72)
+                float enhancedLuma = pow(luma, 0.72);
+                
+                // 3. 高光眩光压制 (对向远光灯/雨水强反光抑制)
+                if (enhancedLuma > 0.8) {
+                    enhancedLuma = 0.8 + (enhancedLuma - 0.8) * 0.35;
+                }
+                
+                // 4. 去雾对比度增强
+                vec3 boostedColor = color.rgb * (enhancedLuma / max(luma, 0.001));
+                
+                // 5. 色彩饱和度增强 (提升雨雾中车牌与红绿灯辨识度)
+                vec3 gray = vec3(dot(boostedColor, vec3(0.299, 0.587, 0.114)));
+                vec3 saturated = mix(gray, boostedColor, 1.25);
+                
+                fragColor = vec4(clamp(mix(color.rgb, saturated, uRainyNightStrength), 0.0, 1.0), color.a);
+            }
+        """
     }
 
     private var eglDisplay: EGLDisplay = EGL14.EGL_NO_DISPLAY
@@ -90,6 +128,7 @@ class GpuCompositorImpl : ICompositor {
     private val isRenderingPaused = AtomicBoolean(true)
     private var isBlindSpotActive = false
     private var activeBlindPosition: CameraPosition = CameraPosition.LEFT
+    private val isRainyNightActive = AtomicBoolean(false)
 
     override fun initialize(outputWidth: Int, outputHeight: Int) {
         Log.i(TAG, "Initializing EGL 1.4 context for GpuCompositor ($outputWidth x $outputHeight)...")
@@ -201,6 +240,11 @@ class GpuCompositorImpl : ICompositor {
     override fun resumeUiRendering() {
         isRenderingPaused.set(false)
         Log.d(TAG, "UI rendering resumed")
+    }
+
+    override fun setRainyNightMode(enabled: Boolean) {
+        isRainyNightActive.set(enabled)
+        Log.i(TAG, "Rainy Night / Fog vision shader mode set to: $enabled")
     }
 
     private var osdSpeedKmh: Float = 0f

@@ -29,6 +29,9 @@ class SophonApp : Application() {
 
         lateinit var preferences: com.vongz.sophon.core.config.SophonPreferences
             private set
+
+        lateinit var remoteDispatcher: com.vongz.sophon.core.remote.RemoteDispatcher
+            private set
     }
 
     override fun onCreate() {
@@ -40,6 +43,9 @@ class SophonApp : Application() {
         storageVault = StorageVaultImpl(this)
         vehicleSignalBus = VehicleSignalBusImpl(this).apply {
             startListening()
+        }
+        remoteDispatcher = com.vongz.sophon.core.remote.RemoteDispatcher(this).apply {
+            startRemoteServices()
         }
 
         Log.i(TAG, "Sophon Application Initialized successfully.")

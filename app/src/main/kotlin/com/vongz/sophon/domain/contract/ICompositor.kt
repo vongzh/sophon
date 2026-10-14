@@ -56,6 +56,11 @@ interface ICompositor {
     fun updateOsdMetadata(speedKmh: Float, gearText: String)
 
     /**
+     * 开启或关闭 GPU 雨夜与破雾透亮滤波模式
+     */
+    fun setRainyNightMode(enabled: Boolean)
+
+    /**
      * 彻底释放 EGL 上下文与纹理显存资源
      */
     fun release()

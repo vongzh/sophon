@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         checkShowLanShare(intent)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         checkShowLanShare(intent)
@@ -64,11 +64,17 @@ class MainActivity : AppCompatActivity() {
         storageRingMini = findViewById(R.id.view_storage_ring_mini)
 
         findViewById<View>(R.id.btn_nav_driving).setOnClickListener {
-            startActivity(Intent(this, QuadSyncPlayerActivity::class.java))
+            val intent = Intent(this, com.vongz.sophon.ui.history.RecordingHistoryActivity::class.java).apply {
+                putExtra(com.vongz.sophon.ui.history.RecordingHistoryActivity.EXTRA_FILTER, com.vongz.sophon.ui.history.RecordingHistoryActivity.FILTER_NORMAL)
+            }
+            startActivity(intent)
         }
 
         findViewById<View>(R.id.btn_nav_sentry).setOnClickListener {
-            startActivity(Intent(this, QuadSyncPlayerActivity::class.java))
+            val intent = Intent(this, com.vongz.sophon.ui.history.RecordingHistoryActivity::class.java).apply {
+                putExtra(com.vongz.sophon.ui.history.RecordingHistoryActivity.EXTRA_FILTER, com.vongz.sophon.ui.history.RecordingHistoryActivity.FILTER_EVENT)
+            }
+            startActivity(intent)
         }
 
         findViewById<View>(R.id.btn_nav_photos).setOnClickListener {

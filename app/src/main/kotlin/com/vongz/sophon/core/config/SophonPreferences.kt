@@ -21,6 +21,19 @@ class SophonPreferences(context: Context) {
         private const val KEY_FISHEYE_CORRECTION = "fisheye_correction"
         private const val KEY_AUTO_CRASH_LOCK = "auto_crash_lock"
         private const val KEY_OSD_WATERMARK = "osd_watermark"
+        private const val KEY_RAINY_NIGHT_SHADER = "rainy_night_shader"
+
+        // Telegram Bot 配置
+        private const val KEY_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
+        private const val KEY_TELEGRAM_CHAT_ID = "telegram_chat_id"
+        private const val KEY_TELEGRAM_ENABLED = "telegram_enabled"
+
+        // 飞书 (Feishu) 机器人配置
+        private const val KEY_FEISHU_WEBHOOK = "feishu_webhook"
+        private const val KEY_FEISHU_APP_ID = "feishu_app_id"
+        private const val KEY_FEISHU_APP_SECRET = "feishu_app_secret"
+        private const val KEY_FEISHU_RECEIVE_ID = "feishu_receive_id"
+        private const val KEY_FEISHU_ENABLED = "feishu_enabled"
 
         private const val DEFAULT_BARK_SERVER = "https://api.day.app"
         private const val DEFAULT_CHUNK_DURATION = 60 // 默认 1 分钟切片
@@ -56,4 +69,40 @@ class SophonPreferences(context: Context) {
     var isOsdWatermarkEnabled: Boolean
         get() = sp.getBoolean(KEY_OSD_WATERMARK, true)
         set(value) = sp.edit().putBoolean(KEY_OSD_WATERMARK, value).apply()
+
+    var isRainyNightModeEnabled: Boolean
+        get() = sp.getBoolean(KEY_RAINY_NIGHT_SHADER, false)
+        set(value) = sp.edit().putBoolean(KEY_RAINY_NIGHT_SHADER, value).apply()
+
+    var telegramBotToken: String
+        get() = sp.getString(KEY_TELEGRAM_BOT_TOKEN, "") ?: ""
+        set(value) = sp.edit().putString(KEY_TELEGRAM_BOT_TOKEN, value.trim()).apply()
+
+    var telegramChatId: String
+        get() = sp.getString(KEY_TELEGRAM_CHAT_ID, "") ?: ""
+        set(value) = sp.edit().putString(KEY_TELEGRAM_CHAT_ID, value.trim()).apply()
+
+    var isTelegramEnabled: Boolean
+        get() = sp.getBoolean(KEY_TELEGRAM_ENABLED, false)
+        set(value) = sp.edit().putBoolean(KEY_TELEGRAM_ENABLED, value).apply()
+
+    var feishuWebhookUrl: String
+        get() = sp.getString(KEY_FEISHU_WEBHOOK, "") ?: ""
+        set(value) = sp.edit().putString(KEY_FEISHU_WEBHOOK, value.trim()).apply()
+
+    var feishuAppId: String
+        get() = sp.getString(KEY_FEISHU_APP_ID, "") ?: ""
+        set(value) = sp.edit().putString(KEY_FEISHU_APP_ID, value.trim()).apply()
+
+    var feishuAppSecret: String
+        get() = sp.getString(KEY_FEISHU_APP_SECRET, "") ?: ""
+        set(value) = sp.edit().putString(KEY_FEISHU_APP_SECRET, value.trim()).apply()
+
+    var feishuReceiveId: String
+        get() = sp.getString(KEY_FEISHU_RECEIVE_ID, "") ?: ""
+        set(value) = sp.edit().putString(KEY_FEISHU_RECEIVE_ID, value.trim()).apply()
+
+    var isFeishuEnabled: Boolean
+        get() = sp.getBoolean(KEY_FEISHU_ENABLED, false)
+        set(value) = sp.edit().putBoolean(KEY_FEISHU_ENABLED, value).apply()
 }

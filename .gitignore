@@ -1,7 +1,8 @@
 # === Android / Gradle 构建产物 ===
 *.iml
 .gradle
-/build
+build/
+**/build/
 /captures
 .externalNativeBuild
 .cxx

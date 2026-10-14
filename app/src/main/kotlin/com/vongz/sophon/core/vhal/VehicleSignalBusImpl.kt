@@ -139,7 +139,7 @@ class VehicleSignalBusImpl(
         _doorState.value = door
     }
 
-    fun dispatchHardKeyEvent(event: HardKeyEvent) {
+    override fun dispatchHardKeyEvent(event: HardKeyEvent) {
         busScope.launch {
             _hardKeyEvents.emit(event)
         }

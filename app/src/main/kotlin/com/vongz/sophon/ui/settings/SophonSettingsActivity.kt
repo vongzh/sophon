@@ -1,6 +1,7 @@
 package com.vongz.sophon.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -8,9 +9,16 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.vongz.sophon.R
 import com.vongz.sophon.SophonApp
 import com.vongz.sophon.core.remote.bark.BarkNotifier
+import com.vongz.sophon.core.remote.feishu.FeishuBotClient
+import com.vongz.sophon.core.remote.telegram.TelegramBotClient
+import com.vongz.sophon.core.storage.UsbBenchmark
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 极视座舱系统偏好设置界面 (SophonSettingsActivity)
@@ -18,7 +26,8 @@ import com.vongz.sophon.core.remote.bark.BarkNotifier
  * 【座舱级体验】
  * 1. 深度适配 FlymeAuto 深色主题；
  * 2. 实时读写 SophonPreferences，配置即时生效；
- * 3. 支持 Bark 连通性一键测试与多挡位行车安全策略定制。
+ * 3. 支持 Bark / Telegram / 飞书 连通性一键测试与多挡位行车安全策略定制；
+ * 4. 内置车规级 U 盘物理写入基准测速与健康体检。
  */
 class SophonSettingsActivity : AppCompatActivity() {
 
@@ -39,8 +48,30 @@ class SophonSettingsActivity : AppCompatActivity() {
     private lateinit var swAutoCrashLock: Switch
     private lateinit var swFisheye: Switch
     private lateinit var swOsdWatermark: Switch
+    private lateinit var swRainyNightMode: Switch
+
+    // Telegram
+    private lateinit var swTelegramEnabled: Switch
+    private lateinit var etTelegramBotToken: EditText
+    private lateinit var etTelegramChatId: EditText
+    private lateinit var btnTestTelegram: TextView
+
+    // Feishu
+    private lateinit var swFeishuEnabled: Switch
+    private lateinit var etFeishuWebhook: EditText
+    private lateinit var etFeishuAppId: EditText
+    private lateinit var etFeishuAppSecret: EditText
+    private lateinit var etFeishuReceiveId: EditText
+    private lateinit var btnTestFeishu: TextView
+
+    // USB Benchmark
+    private lateinit var tvBenchmarkResult: TextView
+    private lateinit var btnRunUsbBenchmark: TextView
 
     private val barkNotifier = BarkNotifier()
+    private val telegramClient = TelegramBotClient()
+    private val feishuClient = FeishuBotClient()
+    private val usbBenchmark = UsbBenchmark()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +100,22 @@ class SophonSettingsActivity : AppCompatActivity() {
         swAutoCrashLock = findViewById(R.id.sw_auto_crash_lock)
         swFisheye = findViewById(R.id.sw_fisheye_correction)
         swOsdWatermark = findViewById(R.id.sw_osd_watermark)
+        swRainyNightMode = findViewById(R.id.sw_rainy_night_shader)
+
+        swTelegramEnabled = findViewById(R.id.sw_telegram_enabled)
+        etTelegramBotToken = findViewById(R.id.et_telegram_bot_token)
+        etTelegramChatId = findViewById(R.id.et_telegram_chat_id)
+        btnTestTelegram = findViewById(R.id.btn_test_telegram)
+
+        swFeishuEnabled = findViewById(R.id.sw_feishu_enabled)
+        etFeishuWebhook = findViewById(R.id.et_feishu_webhook)
+        etFeishuAppId = findViewById(R.id.et_feishu_app_id)
+        etFeishuAppSecret = findViewById(R.id.et_feishu_app_secret)
+        etFeishuReceiveId = findViewById(R.id.et_feishu_receive_id)
+        btnTestFeishu = findViewById(R.id.btn_test_feishu)
+
+        tvBenchmarkResult = findViewById(R.id.tv_benchmark_result)
+        btnRunUsbBenchmark = findViewById(R.id.btn_run_usb_benchmark)
 
         findViewById<TextView>(R.id.btn_settings_back).setOnClickListener {
             finish()
@@ -102,9 +149,23 @@ class SophonSettingsActivity : AppCompatActivity() {
         swAutoCrashLock.isChecked = prefs.isAutoCrashLockEnabled
         swFisheye.isChecked = prefs.isFisheyeCorrectionEnabled
         swOsdWatermark.isChecked = prefs.isOsdWatermarkEnabled
+        swRainyNightMode.isChecked = prefs.isRainyNightModeEnabled
+
+        // Telegram
+        swTelegramEnabled.isChecked = prefs.isTelegramEnabled
+        etTelegramBotToken.setText(prefs.telegramBotToken)
+        etTelegramChatId.setText(prefs.telegramChatId)
+
+        // Feishu
+        swFeishuEnabled.isChecked = prefs.isFeishuEnabled
+        etFeishuWebhook.setText(prefs.feishuWebhookUrl)
+        etFeishuAppId.setText(prefs.feishuAppId)
+        etFeishuAppSecret.setText(prefs.feishuAppSecret)
+        etFeishuReceiveId.setText(prefs.feishuReceiveId)
     }
 
     private fun setupListeners() {
+        // Bark 测试
         btnTestBark.setOnClickListener {
             val server = etBarkServer.text.toString().trim()
             val key = etBarkKey.text.toString().trim()
@@ -131,6 +192,108 @@ class SophonSettingsActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Telegram 测试
+        btnTestTelegram.setOnClickListener {
+            val token = etTelegramBotToken.text.toString().trim()
+            val chatId = etTelegramChatId.text.toString().trim()
+
+            if (token.isBlank() || chatId.isBlank()) {
+                Toast.makeText(this, "请先填写 Telegram Bot Token 与 Chat ID", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            btnTestTelegram.text = "发送中..."
+            lifecycleScope.launch(Dispatchers.IO) {
+                telegramClient.sendTextMessage(
+                    botToken = token,
+                    chatId = chatId,
+                    text = "🛰️ <b>极视 (Sophon) 车载电报机器人连通性测试</b>\n领克08 通信链路正常，已就绪接收远程控制！"
+                ) { success ->
+                    runOnUiThread {
+                        btnTestTelegram.text = "测试电报"
+                        if (success) {
+                            Toast.makeText(this@SophonSettingsActivity, "Telegram 测试消息已成功送达！", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@SophonSettingsActivity, "Telegram 发送失败，请检查网络或 Token", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
+
+        // 飞书测试
+        btnTestFeishu.setOnClickListener {
+            val webhook = etFeishuWebhook.text.toString().trim()
+            val appId = etFeishuAppId.text.toString().trim()
+            val appSecret = etFeishuAppSecret.text.toString().trim()
+            val receiveId = etFeishuReceiveId.text.toString().trim()
+
+            if (webhook.isBlank() && (appId.isBlank() || appSecret.isBlank() || receiveId.isBlank())) {
+                Toast.makeText(this, "请先填写飞书群 Webhook 或自建应用 AppID/Secret/ReceiveID", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            btnTestFeishu.text = "发送中..."
+            lifecycleScope.launch(Dispatchers.IO) {
+                val success = if (webhook.isNotBlank()) {
+                    feishuClient.sendWebhookMessage(
+                        webhookUrl = webhook,
+                        text = "🛰️ 极视 (Sophon) 飞书机器人测试\n领克08 车载行车记录仪通信通道连接正常！"
+                    )
+                } else {
+                    feishuClient.sendAppMessage(
+                        appId = appId,
+                        appSecret = appSecret,
+                        receiveId = receiveId,
+                        text = "🛰️ 极视 (Sophon) 飞书企业应用直发测试\n领克08 通信链路正常！"
+                    )
+                }
+
+                withContext(Dispatchers.Main) {
+                    btnTestFeishu.text = "测试飞书"
+                    if (success) {
+                        Toast.makeText(this@SophonSettingsActivity, "飞书测试消息已成功送达！", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@SophonSettingsActivity, "飞书发送失败，请检查配置或网络", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+
+        // USB 写入测速基准测试
+        btnRunUsbBenchmark.setOnClickListener {
+            val usbRoot = SophonApp.storageVault.currentUsbRoot.value
+            if (usbRoot == null) {
+                Toast.makeText(this, "未检测到已挂载的外置 U 盘，无法测速", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            btnRunUsbBenchmark.text = "⏳ 正在执行 8MB 顺序写入测速..."
+            btnRunUsbBenchmark.isEnabled = false
+            tvBenchmarkResult.text = "正在向外置 U 盘写入基准测试块并强制下刷物理 NAND，请稍候..."
+
+            lifecycleScope.launch {
+                val report = usbBenchmark.runBenchmark(usbRoot)
+                btnRunUsbBenchmark.text = "⚡ 开始 U 盘写入基准测速"
+                btnRunUsbBenchmark.isEnabled = true
+
+                if (report.isSuccess) {
+                    val gradeText = when (report.grade) {
+                        UsbBenchmark.UsbHealthGrade.EXCELLENT -> "🟢 【优秀】"
+                        UsbBenchmark.UsbHealthGrade.GOOD -> "🟡 【良好】"
+                        UsbBenchmark.UsbHealthGrade.POOR -> "🔴 【警告】"
+                    }
+                    tvBenchmarkResult.text = """
+                        $gradeText 顺序写入速度: ${String.format("%.1f", report.writeSpeedMBs)} MB/s
+                        • U 盘容量: 可用 ${String.format("%.1f", report.freeSpaceGB)} GB / 总计 ${String.format("%.1f", report.totalSpaceGB)} GB (已用 ${report.usedSpacePercent}%)
+                        • 车规建议: ${report.summary}
+                    """.trimIndent()
+                } else {
+                    tvBenchmarkResult.text = "❌ 测速失败: ${report.errorMessage ?: "未知错误"}\n${report.summary}"
+                }
+            }
+        }
     }
 
     private fun savePreferences() {
@@ -154,5 +317,21 @@ class SophonSettingsActivity : AppCompatActivity() {
         prefs.isAutoCrashLockEnabled = swAutoCrashLock.isChecked
         prefs.isFisheyeCorrectionEnabled = swFisheye.isChecked
         prefs.isOsdWatermarkEnabled = swOsdWatermark.isChecked
+        prefs.isRainyNightModeEnabled = swRainyNightMode.isChecked
+
+        // Telegram
+        prefs.isTelegramEnabled = swTelegramEnabled.isChecked
+        prefs.telegramBotToken = etTelegramBotToken.text.toString().trim()
+        prefs.telegramChatId = etTelegramChatId.text.toString().trim()
+
+        // Feishu
+        prefs.isFeishuEnabled = swFeishuEnabled.isChecked
+        prefs.feishuWebhookUrl = etFeishuWebhook.text.toString().trim()
+        prefs.feishuAppId = etFeishuAppId.text.toString().trim()
+        prefs.feishuAppSecret = etFeishuAppSecret.text.toString().trim()
+        prefs.feishuReceiveId = etFeishuReceiveId.text.toString().trim()
+
+        // 重启远程服务通道以应用新配置
+        SophonApp.remoteDispatcher.startRemoteServices()
     }
 }

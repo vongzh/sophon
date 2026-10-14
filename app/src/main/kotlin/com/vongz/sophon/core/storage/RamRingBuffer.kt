@@ -48,19 +48,18 @@ class RamRingBuffer(
             }
 
             val bytesToEnd = capacityBytes - head
+            val dup = directBuffer.duplicate()
+            dup.position(head)
+
             if (length <= bytesToEnd) {
-                source.get(directBuffer.duplicate().position(head) as ByteBuffer)
+                dup.put(source)
             } else {
                 val firstChunk = bytesToEnd
-                val secondChunk = length - bytesToEnd
-                
-                val dup = directBuffer.duplicate()
-                dup.position(head)
                 val tempSlice1 = source.slice()
                 tempSlice1.limit(firstChunk)
                 dup.put(tempSlice1)
                 source.position(source.position() + firstChunk)
-                
+
                 val dupStart = directBuffer.duplicate()
                 dupStart.position(0)
                 dupStart.put(source)

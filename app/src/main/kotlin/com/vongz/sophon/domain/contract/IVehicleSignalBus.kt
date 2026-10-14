@@ -82,6 +82,11 @@ interface IVehicleSignalBus {
     fun startListening()
 
     /**
+     * 手动分发按键动作事件 (如方向盘物理按键)
+     */
+    fun dispatchHardKeyEvent(event: HardKeyEvent)
+
+    /**
      * 停止信号监听并释放资源
      */
     fun stopListening()

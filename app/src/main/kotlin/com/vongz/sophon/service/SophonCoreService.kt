@@ -96,6 +96,7 @@ class SophonCoreService : Service() {
             // 1. 初始化 GPU 离屏渲染合成器 (1920x1080)
             gpuCompositor = GpuCompositorImpl().apply {
                 initialize(1920, 1080)
+                setRainyNightMode(SophonApp.preferences.isRainyNightModeEnabled)
             }
 
             // 2. 初始化 0 掉帧连续硬件编码器并绑定 Input Surface

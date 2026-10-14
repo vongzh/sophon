@@ -58,6 +58,13 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
+        <!-- 车载历史录像文件资料库 -->
+        <activity
+            android:name=".ui.history.RecordingHistoryActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- 座舱系统偏好设置界面 -->
         <activity
             android:name=".ui.settings.SophonSettingsActivity"
