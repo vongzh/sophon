@@ -1,65 +1,115 @@
-# 极视 (Sophon) - 车载四向行车记录与全维哨兵系统
+# 极视 (Sophon) - 车载四向行车记录与智能视觉安全系统
 
 > **“极目四方，视守全程。”**  
-> 面向智能座舱定制开发的新一代**四向全维行车记录、盲区辅助感知与智能哨兵系统**。
+> 专为**魅族 FlymeAuto** 智能座舱量身打造的新一代**车规级四向全维行车记录、智能盲区感知辅助与车联视觉安全系统**。
 
 ---
 
-## 🌌 项目缘起与愿景
+## 🌟 项目简介
 
-本项目吸取了前代开源行车记录仪项目（EVCam 等）在车载硬件环境下的宝贵实战踩坑经验，彻底重构了底层架构：
+**极视 (Sophon)** 针对以**领克 08 (Lynk & Co 08)** 为代表搭载**芯擎科技 龙鹰一号 (DragonHawk 1 / SE1000)** 7nm 高性能智能座舱芯片的车型深度定制研发。
 
-- **拒绝巨石架构**：摒弃上万行单一 Activity / Manager 的耦合设计，采用严格的**响应式分层架构（Clean Architecture）**。
-- **全维无死角记录**：突破车机软硬件限制，支持前、后、左、右 **4 路摄像头并行硬件/软件编码录制**。
-- **断电绝对容灾**：解决车载熄火突然断电造成的 MP4 文件损坏问题，引入安全切片与故障自愈机制。
-- **深度车身融合**：打通车机 VHAL 信号总线，实现转向灯智能盲区补盲、开门侧后预警与 AVM 全景避让。
-- **低功耗哨兵守护**：多级低功耗保活与唤醒管理，实现全天候驻车监控与远程千里眼告警。
+系统打破了传统行车记录仪单路画面有限、割裂存储和高发热卡顿的局限，通过原厂 Camera2 HAL 底层并发调度、OpenGL ES 3.0 硬件合流渲染、车身 VHAL 信号总线深度感知以及 FlymeAuto 原生座舱设计语言融合，为车主提供全天候、多维度、零感融入的行车安全与泊车监控体验。
 
 ---
 
-## 🛠️ 核心架构演进 (Vs EVCam)
+## 🛡️ 三大车载系统安全红线
 
-| 核心维度 | 前代项目痛点 (EVCam) | 极视 (Sophon) 架构演进 |
-| :--- | :--- | :--- |
-| **代码架构** | `MainActivity` 达 5600 行，业务逻辑与 UI 极度耦合 | **服务与 UI 彻底解耦**：核心录制引擎驻留独立 Service，UI 仅为展示客户端 |
-| **相机管线** | 多路动态 Surface 频繁增减导致 HAL 死锁 | **统一 GPU 渲染管线**：每路 Camera 仅输出到固定的 SurfaceTexture，由 EGL 按需分发 |
-| **断电保护** | 传统 MP4 容器在异常断电时 `moov` 未写入导致文件损坏 | **容灾容器与快刷机制**：支持 fMP4 / TS 流式切片，确保断电前最后一秒数据不丢失 |
-| **时间对齐** | 各路线程独立时间戳导致文件时间差 1 秒 | **集中式时间戳分发器**：四路音视频帧与文件名严格在毫秒级纳秒级同步对齐 |
-| **存储写入** | 直接写U盘偶发卡顿或使用内部闪存中转磨损UFS | **严格 No USB No Write + 纯内存环形缓冲**：严禁向车机闪存写入，8MB RAM Ring Buffer 直写外置 U 盘 |
-| **车身信号** | 信号捕获逻辑分散在多个 Service | **抽象车身信号总线 (IVehicleSignalBus)**：驱动适配器模式兼容 gRPC、ECARX、Logcat 等 |
+在车载嵌入式环境中，**系统稳定性与车机运行安全拥有最高优先级**。极视在底层架构中确立了三大不可动摇的黄金法则：
+
+```
+       ┌──────────────────────────────────────────────────────────┐
+       │                 极视车载三大核心安全红线                  │
+       └──────────────────────────┬───────────────────────────────┘
+                                  │
+         ┌────────────────────────┼────────────────────────┐
+         ▼                        ▼                        ▼
+┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+│  零影响原厂车机  │    │  零写内部闪存    │    │  零篡改车身总线  │
+│ Zero Impact IVI  │    │ No Internal Write│    │ Read-Only VHAL   │
+├──────────────────┤    ├──────────────────┤    ├──────────────────┤
+│• 原厂AVM全景优先 │    │• 严禁写入eMMC/UFS│    │• 仅只读监听广播  │
+│• 50ms极速避让释放│    │• 8MB环形内存缓冲 │    │• 严禁下发控制帧  │
+│• 守护驾驶安全第一│    │• 直写外置存储U盘 │    │• 零行车电控风险  │
+└──────────────────┘    └──────────────────┘    └──────────────────┘
+```
+
+1. **零影响原厂车机 (Zero Impact on IVI)**：
+   - 驾驶安全高于一切。原厂 360° AVM 环视及倒车影像拥有绝对抢占权；
+   - 监听原厂倒车/环视调用广播，在 50ms 内极速让出摄像头节点与图形渲染管线，确保原厂安全辅助零黑屏、零延迟。
+2. **零写内部闪存 (No USB, No Write to UFS/eMMC)**：
+   - 保护车机寿命，严禁向车机内部存储写入视频缓存；
+   - 采用纯内存 8MB 高速环形缓冲区（Ring Buffer）流转数据，外置 U 盘未就绪时自动阻断落盘，彻底杜绝闪存磨损与系统存储耗尽故障。
+3. **零篡改车身总线 (Zero Tampering Read-Only VHAL)**：
+   - 车身信号监听层采用单向抽象总线（`IVehicleSignalBus`），仅以只读方式被动订阅车速、挡位、转向灯、车门等状态；
+   - 坚决杜绝向下发送任何 CAN/VHAL 控制指令，从物理架构层面消除行车电控干扰风险。
 
 ---
 
-## 🏗️ 整体分层设计
+## ⚡ 核心能力与技术亮点
+
+### 1. 四路全维并发合成录制 (Quad-Camera Direct Hardware Stream)
+- **4 路并发调度**：无缝调度前视、后视、左侧视、右侧视 4 路高清车载摄像头，单路独立状态机管控；
+- **GPU 离屏合流 (OpenGL ES 3.0)**：每路视频流映射至独立 `SurfaceTexture`，通过 FBO 离屏渲染动态合成为单路超宽画卷；
+- **单路 MediaCodec 硬件编码**：相比多路独立编码器，单编码器管线大幅降低 SE1000 硬件 VPU 负载与发热，保持帧率丝滑稳定；
+- **0ms IDR 热切片与断电容灾**：采用流式分片机制，精准对齐关键帧，在车辆熄火离线或突然断电时最后一秒视频数据完整保全。
+
+### 2. 全场景智能盲区感知辅助与图像增强
+- **智能打灯补盲**：拨动左右转向灯或变道时，毫秒级在车机屏幕对应侧呼出侧后方高清浮窗，方向盘回正后平滑延时淡出；
+- **窄道双闪透视**：低速通过狭窄路段开启双闪时，自动呼出左右双侧车身视野，精准观察轮毂距离；
+- **DOW (Door Open Warning) 开门防碰撞盲区辅助**：车辆停稳（车速 < 5 km/h）开启车门时，即时弹出对应侧后视窗预警，守护下车乘员及非机动车安全；
+- **GPU 车规视觉增强着色器**：内置 Brown-Conrady 广角光学畸变校正算法，以及专为阴雨、夜间调校的破雾透亮着色器 (Rain-Night / Fog Contrast Enhancement)，恶劣天气下视野清晰透彻。
+
+### 3. 高能回放与防误删存储生态
+- **四路毫秒级同步回放器 (`QuadSyncPlayerActivity`)**：四分屏全局同步检索 $\leftrightarrow$ 双击任意单摄全屏 $2\times$ 矩阵放大无缝切换；
+- **时间轴事件标记 (`MarkedSeekBar`)**：在播放进度条上直观打点紧急碰撞 (`Emergency`)、哨兵触发 (`Sentry`) 关键帧，支持“上一事件/下一事件”一键疾速穿梭；
+- **智能历史分类浏览器 (`RecordingHistoryActivity`)**：网格化时间线、多重筛选与缩略图极速缓存；
+- **U 盘测速与体检 (`UsbBenchmark`)**：大文件连续写速与小文件随机 IOPS 深度基准评测，精准预警掉速与介质老化；
+- **智能回收站缓冲池 (`.Trash/`)**：低存储空间时优先将最旧普通视频移入待删回收站暂存，支持一键还原与彻底粉碎，杜绝关键视频误删。
+
+### 4. 无感互联与全天候远程控制
+- **局域网免流 H5 共享传送门 (`LanShareServer`)**：手机扫码秒连车机 Wi-Fi / 热点，支持 HTTP 206 断点范围拖动秒播与批量免流打包下载；
+- **双向远程机器人控制**：原生支持 **Telegram Bot** 与 **企业飞书 (Feishu)** 机器人双向交互，支持远程车况状态查询、即时拍照抓拍、紧急视频片段调用回传；
+- **iOS 毫秒级低延迟推送**：支持 **Bark** 通知通道，哨兵异常毫秒级推送至车主手机。
+
+### 5. FlymeAuto 原生座舱体验
+- **Alive Design 深度融合**：严格遵循魅族 FlymeAuto 官方设计规范，深色座舱主题，高辨识度圆角律动视觉；
+- **状态栏灵动胶囊 (`Capsule`)**：录制状态与录制时长在系统顶栏常驻微卡片展示，支持点击展开快捷操作面板。
+
+---
+
+## 🏛️ 系统分层架构
 
 ```mermaid
 graph TD
-    subgraph 车机硬件与系统层
-        CAM[Camera2 API / HAL3]
-        CAN[VHAL / gRPC / ECARX 信号总线]
-        USB[外置 U 盘 / 车载存储]
+    subgraph 车机硬件与系统层 (Hardware & HAL)
+        CAM[Camera2 API / HAL3 四路摄像头]
+        CAN[VHAL / gRPC 车身信号总线]
+        USB[外置高速存储 U 盘]
     end
 
     subgraph 核心引擎层 (Sophon Core Service)
         HAL_MGR[多路摄像头采集管理器]
-        GPU_PIPE[EGL / OpenGL 多路渲染分发管线]
+        GPU_PIPE[OpenGL ES 3.0 FBO 合流与增强管线]
         CODEC[MediaCodec 硬件编码引擎]
         MUXER[容灾复用封装引擎]
-        STORAGE[环形缓冲与中转存储管理器]
-        SIGNAL[车身信号事件总线]
+        STORAGE[8MB 环形内存缓冲与存储调度器]
+        SIGNAL[只读车身信号事件总线]
     end
 
-    subgraph 业务守护层
-        SENTRY[哨兵与息屏监控守护]
-        BLIND[转向灯/开门盲区悬浮服务]
-        KEEPALIVE[车机多级防杀保活系统]
+    subgraph 业务守护层 (Guard & Services)
+        SENTRY[哨兵与驻车监控守护]
+        BLIND[转向灯 / 双闪 / DOW 盲区悬浮服务]
+        KEEPALIVE[车机多级保活与前台服务]
+        REMOTE_SRV[Telegram / 飞书 远程调度中心]
     end
 
-    subgraph 交互与呈现层 (UI Client)
-        MAIN_UI[主控与四路实时监看]
-        PLAYBACK[四路同屏画中画同步回放]
-        SETTINGS[车载参数与车型微调]
-        REMOTE[远程千里眼与扫码快传]
+    subgraph 交互与呈现层 (FlymeAuto UI)
+        MAIN_UI[主控与四路实时全景监看]
+        PLAYBACK[四路同步同屏回放 / 事件穿梭]
+        HISTORY[历史视频浏览器 / 回收站]
+        WEB_PORTAL[局域网免流 H5 播放与下载]
+        SETTINGS[U 盘测速体检与车载参数设定]
     end
 
     CAM --> HAL_MGR
@@ -74,35 +124,90 @@ graph TD
     SIGNAL --> SENTRY
 
     KEEPALIVE -.保活守护.-> 核心引擎层
-    核心引擎层 <== IPC / Binder / Flow ==> 交互与呈现层
+    REMOTE_SRV <==> 核心引擎层
+    核心引擎层 <== IPC / Flow ==> 交互与呈现层
 ```
 
 ---
 
-## 🗺️ 研发路线图 (Roadmap)
+## 📁 项目目录结构
 
-- [ ] **Phase 1: 基础设施与架构骨架**
-  - [x] 项目脚手架与命名确立（Sophon / 极视）
-  - [ ] Gradle 模块化配置与环境搭建
-  - [ ] 核心架构设计文档与接口定义 (`IVehicleSignalBus`, `IRecordingEngine`)
-- [ ] **Phase 2: 采集与编码流水线**
-  - [ ] Camera2 多摄像头并发调度与栅栏状态机
-  - [ ] OpenGL ES 2.0 / 3.0 多路帧分发与鱼眼矫正着色器
-  - [ ] MediaCodec H.264/H.265 自适应编码与容灾封装
-- [ ] **Phase 3: 车载信号与存储系统**
-  - [ ] 环形缓存 + 异步 U 盘中转写入
-  - [ ] 车身信号集成（转向灯、车门、车速、原厂全景避让）
-  - [ ] 盲区浮窗与副屏投屏渲染
-- [ ] **Phase 4: 交互与回放**
-  - [ ] 四路毫秒级同步回放播放器
-  - [ ] 智能座舱沉浸式 UI
-  - [ ] 本地 Wi-Fi 扫码高速传输
+```
+Sophon/
+├── app/
+│   ├── src/main/java/com/vongzh/sophon/
+│   │   ├── camera/            # Camera2 多摄调度与离屏 EGL 管线
+│   │   │   ├── GpuCompositorImpl.kt   # OpenGL ES 3.0 FBO 四路合成与着色器
+│   │   │   ├── SophonCameraEngine.kt  # 核心采集状态机
+│   │   │   └── CodecSurfaceRecorder.kt# MediaCodec 硬件编码器
+│   │   ├── service/           # 核心前台服务与盲区悬浮感知
+│   │   │   ├── SophonRecordingService.kt  # 主录制引擎服务
+│   │   │   ├── BlindSpotOverlayService.kt # 转向/双闪/DOW开门防碰撞盲区
+│   │   │   └── SophonOverlayManager.kt    # 悬浮窗渲染管理
+│   │   ├── vhal/              # 车身信号总线集成 (只读监听)
+│   │   │   ├── IVehicleSignalBus.kt
+│   │   │   └── VehicleSignalBusImpl.kt
+│   │   ├── storage/           # 存储调度、U 盘测速与防误删回收站
+│   │   │   ├── StorageVaultImpl.kt    # 环形缓冲、存储生命周期与 .Trash/
+│   │   │   └── UsbBenchmark.kt        # U 盘读写性能与健康体检
+│   │   ├── ui/                # FlymeAuto 原生座舱交互界面
+│   │   │   ├── MainActivity.kt            # 主控与四路实时全景监控
+│   │   │   ├── QuadSyncPlayerActivity.kt  # 四分屏/单路同步回放播放器
+│   │   │   ├── RecordingHistoryActivity.kt# 录制历史网格列表与回收站视图
+│   │   │   ├── LanShareActivity.kt        # 局域网高速扫码分享
+│   │   │   └── UsbBenchmarkActivity.kt    # 存储健康评测面板
+│   │   ├── widget/            # 车载定制交互控件
+│   │   │   └── MarkedSeekBar.kt           # 关键事件打点与穿梭时间轴
+│   │   ├── remote/            # 远程交互与机器人引擎
+│   │   │   ├── RemoteDispatcher.kt        # 远程指令分发中心
+│   │   │   ├── TelegramBotClient.kt       # Telegram 机器人端
+│   │   │   ├── FeishuBotClient.kt         # 飞书机器人双向通信
+│   │   │   └── BarkNotificationClient.kt  # Bark iOS 极速告警
+│   │   └── web/               # 车载局域网免流 Web 服务
+│   │       └── LanShareServer.kt          # HTTP 206 范围流媒体与批量下载
+│   ├── src/main/res/          # FlymeAuto 规范布局、深色主题与车规矢量图标
+│   └── build.gradle.kts       # 模块构建配置
+├── docs/                      # 架构设计与车载安全规范文档
+│   ├── ARCHITECTURE_DESIGN.md         # 核心系统架构设计
+│   └── SYSTEM_SAFETY_PRINCIPLES.md    # 车载系统安全最高准则
+├── gradle/                    # Gradle 包装器
+├── build.gradle.kts           # 顶级工程配置
+├── settings.gradle.kts        # 工程模块索引
+└── README.md                  # 项目总览说明文档
+```
 
 ---
 
-## 📜 许可证
+## 🛠️ 编译与构建说明
 
-本项目遵循 **GNU General Public License v3.0** 开源协议，全文见 [`LICENSE`](LICENSE)。
+### 编译环境要求
+- **操作系统**：Windows 10/11 / macOS / Linux
+- **JDK 版本**：OpenJDK 17 或更高版本 (推荐使用 Android Studio 内置 JBR 17)
+- **Android SDK**：API Level 35 (compileSdk: 35, minSdk: 28)
+- **Gradle 架构**：Kotlin DSL (`build.gradle.kts`)
+
+### 构建命令
+
+```bash
+# 1. 验证编译与依赖装配
+./gradlew check
+
+# 2. 编译 Debug 开发测试包
+./gradlew assembleDebug
+
+# 3. 编译 Release 车载签名发布包
+./gradlew assembleRelease
+```
+
+构建生成的 APK 文件路径：
+- Debug: `app/build/outputs/apk/debug/app-debug.apk`
+- Release: `app/build/outputs/apk/release/app-release.apk`
+
+---
+
+## 📜 开源协议
+
+本项目遵循 **GNU General Public License v3.0 (GPL-3.0)** 开源许可协议，完整文本请参阅项目根目录下的 [`LICENSE`](LICENSE)。
 
 ```
 Copyright (C) 2026 vongzh
@@ -118,24 +223,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 ```
 
-> ⚠️ **GPL-3.0 的传染性**：本项目参照 `EVCam`（同许可）的架构经验，并可能直接复用其部分实现。**任何再分发、二次开发或衍生作品都必须同样以 GPL-3.0 开源**，不得闭源分发或仅以二进制形式提供。
->
-> ⚠️ **车载安全边界**：本项目仅提供**记录与辅助感知**功能，**不参与任何车辆控制**。全部安全与稳定性红线见 [`docs/SYSTEM_SAFETY_PRINCIPLES.md`](docs/SYSTEM_SAFETY_PRINCIPLES.md)。
-
 ---
 
-## ⚖️ 免责与非关联声明
+## ⚖️ 免责声明
 
-本项目为**独立第三方开源项目**，与领克汽车、吉利汽车集团及其关联公司**无任何关联**，**非官方应用**，不代表、不模拟任何原厂功能。所有商标、产品名与功能名的权利归其各自所有者。
-
-本项目为**非商业性开源软件**，不提供服务、不收取费用、不售卖任何硬件。**在车内使用本软件前请确认符合当地法规，行车中请勿操作界面。**
-
----
-
-## 📚 文档索引
-
-| 文档 | 内容 |
-| :--- | :--- |
-| [`docs/SYSTEM_SAFETY_PRINCIPLES.md`](docs/SYSTEM_SAFETY_PRINCIPLES.md) | 车载系统安全与稳定性最高准则（**开发前必读**） |
-| [`docs/EVCAM_ANALYSIS.md`](docs/EVCAM_ANALYSIS.md) | EVCam 架构分析报告 |
-| [`docs/EVCAM_DEEP_ANALYSIS.md`](docs/EVCAM_DEEP_ANALYSIS.md) | EVCam 代码级深度技术分析与避坑白皮书 |
+1. 本项目为**独立开源技术研究与开发项目**，与吉利汽车集团、领克汽车、星纪魅族集团及其关联公司**无任何商业附属或官方授权关系**。文中提及之车型名称、操作系统及硬件芯片名称仅用于兼容性客观技术描述，其知识产权均归其对应权利人所有。
+2. 本项目仅提供**行车视听记录与驾驶盲区辅助感知功能**，**绝不直接介入或替代任何车辆动态驾驶控制**。驾驶员在行车过程中必须对行车安全负有完全责任。
+3. 行车过程中严禁手动操作车机界面。请确保在符合当地道路交通安全及个人隐私保护法律法规的前提下使用本软件。
