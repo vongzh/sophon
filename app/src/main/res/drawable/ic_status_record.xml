@@ -21,7 +21,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 3. 灵动录像核心红点 (Alive Red REC Pulse Dot) -->
+    <!--  3. 灵动录像核心红点 (Alive Red REC Pulse Dot) -->
     <path
         android:pathData="M 9.5,12 A 2.2,2.2 0 1,1 9.5,11.99 Z"
         android:fillColor="@color/accent_danger" />

@@ -113,7 +113,7 @@
         </aapt:attr>
     </path>
 
-    <!-- 8. 灵动星芒能量点 -->
+    <!--  8. 灵动星芒能量点 -->
     <path
         android:pathData="M 82,34 A 1.8,1.8 0 1,1 82,33.9 Z"
         android:fillColor="#FF00D4AA" />

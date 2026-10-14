@@ -55,6 +55,14 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
+        <!-- 哨兵事件复盘看板 (设计稿 S5) -->
+        <activity
+            android:name=".ui.sentry.SentryEventReviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Sophon"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
+
         <!-- 四路同步回放播放器 -->
         <activity
             android:name=".ui.playback.QuadSyncPlayerActivity"

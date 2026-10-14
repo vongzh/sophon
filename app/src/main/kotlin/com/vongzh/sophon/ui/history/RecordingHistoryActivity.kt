@@ -8,29 +8,34 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.vongzh.sophon.R
 import com.vongzh.sophon.SophonApp
 import com.vongzh.sophon.domain.model.RecordCategory
 import com.vongzh.sophon.ui.playback.QuadSyncPlayerActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
- * 车载历史录像文件资料库 (RecordingHistoryActivity)
+ * 车载历史录像文件资料库 (RecordingHistoryActivity) · 设计稿 S3 规范
  *
- * 【分日管理、防误删缓冲池与锁档操作】
+ * 【双栏架构：左侧片段列表 + 右侧 392dp 详情与即时预览面板】
  * 1. 扫描外置 U 盘 Normal/、Event/ 及 .Trash/ 待删回收站目录；
- * 2. 支持全部、常规循环、加锁事件、待删回收站多维度筛选；
- * 3. 待删回收站支持一键无损还原到 Normal/ 或彻底物理清除；
- * 4. 点击直达四路同步高能标记播放器。
+ * 2. 实时刷新列表，点击选中项同步驱动右侧 222dp 视频预览窗口与详细规格参数；
+ * 3. 联动右侧 4 联按钮（播放、加锁/解锁、删除/彻底清除）；
+ * 4. 严格遵循 "No USB, No Write" 及 1280x800 车机尺度规范。
  */
 class RecordingHistoryActivity : AppCompatActivity() {
 
@@ -45,19 +50,40 @@ class RecordingHistoryActivity : AppCompatActivity() {
         val category: ViewCategory,
         val timestampMs: Long,
         val formattedTime: String,
-        val sizeMb: String
+        val sizeMb: String,
+        val sizeBytes: Long
     )
 
     private lateinit var rvRecordings: RecyclerView
     private lateinit var tvEmpty: TextView
+    private lateinit var tvHistoryStats: TextView
     private lateinit var btnFilterAll: TextView
     private lateinit var btnFilterNormal: TextView
     private lateinit var btnFilterEvent: TextView
     private lateinit var btnFilterTrash: TextView
 
+    // 右侧 392dp 详情与预览组件
+    private lateinit var layoutDetailPanel: View
+    private lateinit var ivDetailPreview: ImageView
+    private lateinit var tvDetailCameraTag: TextView
+    private lateinit var tvDetailTimestamp: TextView
+    private lateinit var tvDetailDurationBadge: TextView
+    private lateinit var btnPreviewPlayCenter: FrameLayout
+    private lateinit var tvDetailTitle: TextView
+    private lateinit var tvDetailTriggerReason: TextView
+    private lateinit var tvSpecResolution: TextView
+    private lateinit var tvSpecCodec: TextView
+    private lateinit var tvSpecDuration: TextView
+    private lateinit var tvSpecSize: TextView
+    private lateinit var tvSpecLocation: TextView
+    private lateinit var btnActionPlay: TextView
+    private lateinit var btnActionLock: TextView
+    private lateinit var btnActionDelete: TextView
+
     private val allRecordings = mutableListOf<RecordingItem>()
     private val displayedRecordings = mutableListOf<RecordingItem>()
     private var currentFilter = 0 // 0: ALL, 1: NORMAL, 2: EVENT, 3: TRASH
+    private var selectedItem: RecordingItem? = null
 
     private val adapter = RecordingAdapter()
 
@@ -82,10 +108,29 @@ class RecordingHistoryActivity : AppCompatActivity() {
     private fun initViews() {
         rvRecordings = findViewById(R.id.rv_recording_list)
         tvEmpty = findViewById(R.id.tv_history_empty)
+        tvHistoryStats = findViewById(R.id.tv_history_stats)
         btnFilterAll = findViewById(R.id.btn_filter_all)
         btnFilterNormal = findViewById(R.id.btn_filter_normal)
         btnFilterEvent = findViewById(R.id.btn_filter_event)
         btnFilterTrash = findViewById(R.id.btn_filter_trash)
+
+        // 右侧面板
+        layoutDetailPanel = findViewById(R.id.layout_detail_panel)
+        ivDetailPreview = findViewById(R.id.iv_detail_preview)
+        tvDetailCameraTag = findViewById(R.id.tv_detail_camera_tag)
+        tvDetailTimestamp = findViewById(R.id.tv_detail_timestamp)
+        tvDetailDurationBadge = findViewById(R.id.tv_detail_duration_badge)
+        btnPreviewPlayCenter = findViewById(R.id.btn_preview_play_center)
+        tvDetailTitle = findViewById(R.id.tv_detail_title)
+        tvDetailTriggerReason = findViewById(R.id.tv_detail_trigger_reason)
+        tvSpecResolution = findViewById(R.id.tv_spec_resolution)
+        tvSpecCodec = findViewById(R.id.tv_spec_codec)
+        tvSpecDuration = findViewById(R.id.tv_spec_duration)
+        tvSpecSize = findViewById(R.id.tv_spec_size)
+        tvSpecLocation = findViewById(R.id.tv_spec_location)
+        btnActionPlay = findViewById(R.id.btn_action_play)
+        btnActionLock = findViewById(R.id.btn_action_lock)
+        btnActionDelete = findViewById(R.id.btn_action_delete)
 
         findViewById<TextView>(R.id.btn_history_back).setOnClickListener {
             finish()
@@ -98,21 +143,39 @@ class RecordingHistoryActivity : AppCompatActivity() {
         btnFilterNormal.setOnClickListener { setFilter(1) }
         btnFilterEvent.setOnClickListener { setFilter(2) }
         btnFilterTrash.setOnClickListener { setFilter(3) }
+
+        // 右侧 4 联按钮操作监听
+        btnActionPlay.setOnClickListener {
+            selectedItem?.let { playRecording(it) }
+        }
+        btnPreviewPlayCenter.setOnClickListener {
+            selectedItem?.let { playRecording(it) }
+        }
+        btnActionLock.setOnClickListener {
+            selectedItem?.let { toggleLock(it) }
+        }
+        btnActionDelete.setOnClickListener {
+            selectedItem?.let { deleteRecording(it) }
+        }
     }
 
     private fun setFilter(filterType: Int) {
         currentFilter = filterType
-        btnFilterAll.setBackgroundTintList(if (filterType == 0) getColorStateList(R.color.flyme_cyan) else null)
-        btnFilterAll.setTextColor(if (filterType == 0) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        val activeBg = getColorStateList(R.color.sp_acbg)
+        val activeText = getColor(R.color.sp_ac)
+        val inactiveText = getColor(R.color.sp_tx2)
 
-        btnFilterNormal.setBackgroundTintList(if (filterType == 1) getColorStateList(R.color.flyme_cyan) else null)
-        btnFilterNormal.setTextColor(if (filterType == 1) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnFilterAll.backgroundTintList = if (filterType == 0) activeBg else null
+        btnFilterAll.setTextColor(if (filterType == 0) activeText else inactiveText)
 
-        btnFilterEvent.setBackgroundTintList(if (filterType == 2) getColorStateList(R.color.flyme_cyan) else null)
-        btnFilterEvent.setTextColor(if (filterType == 2) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnFilterNormal.backgroundTintList = if (filterType == 1) activeBg else null
+        btnFilterNormal.setTextColor(if (filterType == 1) activeText else inactiveText)
 
-        btnFilterTrash.setBackgroundTintList(if (filterType == 3) getColorStateList(R.color.flyme_cyan) else null)
-        btnFilterTrash.setTextColor(if (filterType == 3) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnFilterEvent.backgroundTintList = if (filterType == 2) activeBg else null
+        btnFilterEvent.setTextColor(if (filterType == 2) activeText else inactiveText)
+
+        btnFilterTrash.backgroundTintList = if (filterType == 3) activeBg else null
+        btnFilterTrash.setTextColor(if (filterType == 3) activeText else inactiveText)
 
         applyCurrentFilter()
     }
@@ -122,12 +185,14 @@ class RecordingHistoryActivity : AppCompatActivity() {
         val usbRoot = SophonApp.storageVault.currentUsbRoot.value
         if (usbRoot == null || !SophonApp.storageVault.isUsbMounted.value) {
             tvEmpty.visibility = View.VISIBLE
+            updateDetailPanel(null)
             return
         }
 
         val baseDir = File(usbRoot, "SophonRecord")
         val normalDir = File(baseDir, RecordCategory.NORMAL.dirName)
         val eventDir = File(baseDir, RecordCategory.EVENT.dirName)
+        val sentryDir = File(baseDir, RecordCategory.SENTRY.dirName)
         val trashDir = File(baseDir, ".Trash")
 
         val parserFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
@@ -142,14 +207,15 @@ class RecordingHistoryActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         file.lastModified()
                     }
-                    val sizeMb = String.format("%.1f MB", file.length() / (1024.0 * 1024.0))
+                    val sizeMb = String.format(Locale.getDefault(), "%.1f MB", file.length() / (1024.0 * 1024.0))
                     allRecordings.add(
                         RecordingItem(
                             file = file,
                             category = cat,
                             timestampMs = timeMs,
                             formattedTime = displayFormat.format(Date(timeMs)),
-                            sizeMb = sizeMb
+                            sizeMb = sizeMb,
+                            sizeBytes = file.length()
                         )
                     )
                 }
@@ -158,6 +224,7 @@ class RecordingHistoryActivity : AppCompatActivity() {
 
         collectFiles(normalDir, ViewCategory.NORMAL)
         collectFiles(eventDir, ViewCategory.EVENT)
+        collectFiles(sentryDir, ViewCategory.EVENT)
         collectFiles(trashDir, ViewCategory.TRASH)
 
         allRecordings.sortByDescending { it.timestampMs }
@@ -175,6 +242,102 @@ class RecordingHistoryActivity : AppCompatActivity() {
 
         tvEmpty.visibility = if (displayedRecordings.isEmpty()) View.VISIBLE else View.GONE
         adapter.notifyDataSetChanged()
+
+        // 刷新页头统计文字 (S3 规范: 今日 X 段 · 占用 XX.X GB)
+        val totalBytes = displayedRecordings.sumOf { it.sizeBytes }
+        val totalGb = totalBytes / (1024.0 * 1024.0 * 1024.0)
+        tvHistoryStats.text = String.format(
+            Locale.getDefault(),
+            "共 %d 段 · 占用 %.1f GB · 循环覆盖已开启",
+            displayedRecordings.size,
+            totalGb
+        )
+
+        // 默认选中第一项或保持选中
+        if (displayedRecordings.isNotEmpty()) {
+            if (selectedItem == null || !displayedRecordings.contains(selectedItem)) {
+                updateDetailPanel(displayedRecordings[0])
+            }
+        } else {
+            updateDetailPanel(null)
+        }
+    }
+
+    /**
+     * 响应式刷新右侧 392dp 详情面板
+     */
+    private fun updateDetailPanel(item: RecordingItem?) {
+        selectedItem = item
+        if (item == null) {
+            layoutDetailPanel.alpha = 0.4f
+            tvDetailTitle.text = "暂无选中视频"
+            tvDetailTriggerReason.text = "--"
+            tvSpecResolution.text = "--"
+            tvSpecCodec.text = "--"
+            tvSpecDuration.text = "--"
+            tvSpecSize.text = "--"
+            tvSpecLocation.text = "--"
+            ivDetailPreview.setImageDrawable(null)
+            return
+        }
+
+        layoutDetailPanel.alpha = 1.0f
+        val timeDisplay = item.formattedTime.substringAfter(" ")
+        tvDetailTitle.text = "四路合成 · ${item.file.name.substringBefore(".mp4")}"
+        tvDetailTimestamp.text = timeDisplay
+        tvSpecResolution.text = "1920 × 1080 · 30fps"
+        tvSpecCodec.text = "H.264 · 10 Mbps"
+        tvSpecDuration.text = "01:00"
+        tvSpecSize.text = item.sizeMb
+        tvSpecLocation.text = item.file.parentFile?.name ?: "U盘根目录"
+
+        when (item.category) {
+            ViewCategory.EVENT -> {
+                tvDetailTriggerReason.text = "触发方式 · 碰撞加锁或手动标记"
+                tvDetailCameraTag.text = "🔒 加锁事件"
+                btnActionLock.text = "解锁"
+                btnActionLock.setTextColor(getColor(R.color.sp_tx2))
+                btnActionDelete.text = "删除"
+            }
+            ViewCategory.TRASH -> {
+                tvDetailTriggerReason.text = "触发方式 · 待删回收站缓冲池"
+                tvDetailCameraTag.text = "🗑 待清理"
+                btnActionLock.text = "还原"
+                btnActionLock.setTextColor(getColor(R.color.sp_ac))
+                btnActionDelete.text = "彻底清除"
+            }
+            ViewCategory.NORMAL -> {
+                tvDetailTriggerReason.text = "触发方式 · 连续循环录像切片"
+                tvDetailCameraTag.text = "全景 · 主摄"
+                btnActionLock.text = "加锁"
+                btnActionLock.setTextColor(getColor(R.color.sp_wn))
+                btnActionDelete.text = "删除"
+            }
+        }
+
+        // 异步提取视频缩略图渲染到右侧预览
+        lifecycleScope.launch(Dispatchers.IO) {
+            val thumb = try {
+                ThumbnailUtils.createVideoThumbnail(
+                    item.file.absolutePath,
+                    MediaStore.Images.Thumbnails.MINI_KIND
+                )
+            } catch (e: Exception) {
+                null
+            }
+            withContext(Dispatchers.Main) {
+                if (selectedItem == item) {
+                    ivDetailPreview.setImageBitmap(thumb)
+                }
+            }
+        }
+    }
+
+    private fun playRecording(item: RecordingItem) {
+        val intent = Intent(this, QuadSyncPlayerActivity::class.java).apply {
+            putExtra(QuadSyncPlayerActivity.EXTRA_VIDEO_PATH, item.file.absolutePath)
+        }
+        startActivity(intent)
     }
 
     private fun toggleLock(item: RecordingItem) {
@@ -213,7 +376,6 @@ class RecordingHistoryActivity : AppCompatActivity() {
 
     private fun deleteRecording(item: RecordingItem) {
         if (item.category == ViewCategory.TRASH) {
-            // 在回收站中彻底抹除
             if (item.file.delete()) {
                 Toast.makeText(this, "视频切片已彻底删除", Toast.LENGTH_SHORT).show()
                 loadRecordingsFromUsb()
@@ -221,7 +383,6 @@ class RecordingHistoryActivity : AppCompatActivity() {
                 Toast.makeText(this, "删除失败", Toast.LENGTH_SHORT).show()
             }
         } else {
-            // 普通列表中删除，先移入回收站缓冲池提供后悔药
             val usbRoot = SophonApp.storageVault.currentUsbRoot.value ?: return
             val trashDir = File(File(usbRoot, "SophonRecord"), ".Trash").apply { mkdirs() }
             val targetFile = File(trashDir, item.file.name)
@@ -245,32 +406,41 @@ class RecordingHistoryActivity : AppCompatActivity() {
             val item = displayedRecordings[position]
             holder.tvTime.text = item.formattedTime
 
+            // 高亮选中态 (Selected Item Highlight)
+            val isSelected = (selectedItem == item)
+            holder.itemView.setBackgroundResource(
+                if (isSelected) R.drawable.sp_bg_nav_item_active else R.drawable.sp_bg_card
+            )
+
             when (item.category) {
                 ViewCategory.EVENT -> {
-                    holder.tvDetails.text = "切片时长: 01:00  ·  大小: ${item.sizeMb}  ·  🔒 加锁保护"
+                    holder.tvDetails.text = "时长 01:00  ·  ${item.sizeMb}  ·  🔒 已加锁"
                     holder.tvBadgeLocked.visibility = View.VISIBLE
-                    holder.tvBadgeLocked.text = "🔒 已加锁"
-                    holder.btnLock.text = "🔓 解锁"
-                    holder.btnLock.setTextColor(getColor(R.color.text_secondary))
+                    holder.tvBadgeLocked.text = "🔒"
+                    holder.tvTagCategory.text = "加锁事件"
+                    holder.btnLock.text = "解锁"
+                    holder.btnLock.setTextColor(getColor(R.color.sp_tx2))
                     holder.btnLock.setOnClickListener { toggleLock(item) }
                     holder.btnDelete.text = "删除"
                     holder.btnDelete.setOnClickListener { deleteRecording(item) }
                 }
                 ViewCategory.TRASH -> {
-                    holder.tvDetails.text = "待删缓冲池  ·  大小: ${item.sizeMb}  ·  可还原"
+                    holder.tvDetails.text = "待删缓冲池  ·  ${item.sizeMb}  ·  可还原"
                     holder.tvBadgeLocked.visibility = View.VISIBLE
-                    holder.tvBadgeLocked.text = "🗑 待清理"
-                    holder.btnLock.text = "♻ 还原"
-                    holder.btnLock.setTextColor(getColor(R.color.flyme_cyan))
+                    holder.tvBadgeLocked.text = "🗑"
+                    holder.tvTagCategory.text = "回收站"
+                    holder.btnLock.text = "还原"
+                    holder.btnLock.setTextColor(getColor(R.color.sp_ac))
                     holder.btnLock.setOnClickListener { restoreFromTrash(item) }
-                    holder.btnDelete.text = "彻底清除"
+                    holder.btnDelete.text = "清除"
                     holder.btnDelete.setOnClickListener { deleteRecording(item) }
                 }
                 ViewCategory.NORMAL -> {
-                    holder.tvDetails.text = "切片时长: 01:00  ·  大小: ${item.sizeMb}  ·  四路全景"
+                    holder.tvDetails.text = "时长 01:00  ·  ${item.sizeMb}  ·  H.264"
                     holder.tvBadgeLocked.visibility = View.GONE
-                    holder.btnLock.text = "🔒 加锁"
-                    holder.btnLock.setTextColor(getColor(R.color.accent_warning))
+                    holder.tvTagCategory.text = "常规行车"
+                    holder.btnLock.text = "加锁"
+                    holder.btnLock.setTextColor(getColor(R.color.sp_wn))
                     holder.btnLock.setOnClickListener { toggleLock(item) }
                     holder.btnDelete.text = "删除"
                     holder.btnDelete.setOnClickListener { deleteRecording(item) }
@@ -278,10 +448,8 @@ class RecordingHistoryActivity : AppCompatActivity() {
             }
 
             holder.itemView.setOnClickListener {
-                val intent = Intent(this@RecordingHistoryActivity, QuadSyncPlayerActivity::class.java).apply {
-                    putExtra(QuadSyncPlayerActivity.EXTRA_VIDEO_PATH, item.file.absolutePath)
-                }
-                startActivity(intent)
+                updateDetailPanel(item)
+                notifyDataSetChanged()
             }
         }
 
@@ -292,6 +460,7 @@ class RecordingHistoryActivity : AppCompatActivity() {
         val tvTime: TextView = itemView.findViewById(R.id.tv_record_time)
         val tvDetails: TextView = itemView.findViewById(R.id.tv_record_details)
         val tvBadgeLocked: TextView = itemView.findViewById(R.id.tv_badge_locked)
+        val tvTagCategory: TextView = itemView.findViewById(R.id.tv_tag_category)
         val btnLock: TextView = itemView.findViewById(R.id.btn_record_lock_toggle)
         val btnDelete: TextView = itemView.findViewById(R.id.btn_record_delete)
         val ivThumb: ImageView = itemView.findViewById(R.id.iv_record_thumb)

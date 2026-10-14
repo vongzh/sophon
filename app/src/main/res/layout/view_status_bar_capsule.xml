@@ -3,7 +3,7 @@
     android:id="@+id/capsule_root"
     android:layout_width="wrap_content"
     android:layout_height="32dp"
-    android:background="@drawable/bg_capsule_pill"
+    android:background="@drawable/sp_bg_pill"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="10dp">
@@ -13,8 +13,8 @@
         android:id="@+id/view_rec_dot"
         android:layout_width="8dp"
         android:layout_height="8dp"
-        android:background="@drawable/bg_badge_pill"
-        android:backgroundTint="@color/accent_danger" />
+        android:background="@drawable/sp_bg_pill"
+        android:backgroundTint="@color/sp_dg" />
 
     <!-- 录制时间跑秒 -->
     <TextView
@@ -24,18 +24,18 @@
         android:layout_marginStart="6dp"
         android:fontFamily="monospace"
         android:text="00:00:00"
-        android:textColor="@color/text_primary"
-        android:textSize="12sp"
+        android:textColor="@color/sp_tx"
+        android:textSize="13sp"
         android:textStyle="bold" />
 
-    <!-- U盘状态指示 -->
+    <!--  U盘状态指示 -->
     <TextView
         android:id="@+id/tv_capsule_usb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:text="🖫"
-        android:textColor="@color/flyme_cyan"
-        android:textSize="11sp" />
+        android:textColor="@color/sp_ac"
+        android:textSize="12sp" />
 
 </LinearLayout>

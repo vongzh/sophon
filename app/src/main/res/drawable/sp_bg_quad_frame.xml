@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  四路画面外框：纯黑底色即砖格缝隙（真机多摄拼接即黑缝），20dp 外圆角 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/sp_r_quad" />
+    <solid android:color="@color/sp_quad_seam" />
+</shape>

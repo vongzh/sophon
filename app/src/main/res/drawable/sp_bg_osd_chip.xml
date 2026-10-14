@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  OSD 画面叠加标签：黑 40% 圆角底（恒暗，与主题无关），替代旧版渐变遮罩 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/sp_r_chip" />
+    <solid android:color="@color/sp_osd_bg" />
+</shape>

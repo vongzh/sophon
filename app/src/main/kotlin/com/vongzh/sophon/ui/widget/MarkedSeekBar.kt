@@ -30,22 +30,22 @@ class MarkedSeekBar @JvmOverloads constructor(
     private val markerList = mutableListOf<EventMarker>()
 
     private val paintEmergency = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.accent_danger)
+        color = ContextCompat.getColor(context, R.color.sp_dg)
         strokeWidth = 6f
     }
 
     private val paintWarning = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.accent_warning)
+        color = ContextCompat.getColor(context, R.color.sp_wn)
         strokeWidth = 6f
     }
 
     private val dotPaintEmergency = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.accent_danger)
+        color = ContextCompat.getColor(context, R.color.sp_dg)
         style = Paint.Style.FILL
     }
 
     private val dotPaintWarning = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ContextCompat.getColor(context, R.color.accent_warning)
+        color = ContextCompat.getColor(context, R.color.sp_wn)
         style = Paint.Style.FILL
     }
 

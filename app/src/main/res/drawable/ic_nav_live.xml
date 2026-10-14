@@ -46,7 +46,7 @@
         android:pathData="M 12,9.5 C 13.38,9.5 14.5,10.62 14.5,12 C 14.5,13.38 13.38,14.5 12,14.5 C 10.62,14.5 9.5,13.38 9.5,12 C 9.5,10.62 10.62,9.5 12,9.5 Z"
         android:fillColor="@color/flyme_cyan" />
 
-    <!-- 4. 镜头高光反射星芒 (Highlight Reflection) -->
+    <!--  4. 镜头高光反射星芒 (Highlight Reflection) -->
     <path
         android:pathData="M 13,10.8 A 0.8,0.8 0 1,1 13,10.79 Z"
         android:fillColor="#FFFFFFFF" />

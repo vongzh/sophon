@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  滑块圆钮（26dp）：车机触控友好尺寸 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <size
+        android:width="@dimen/sp_slider_thumb"
+        android:height="@dimen/sp_slider_thumb" />
+    <solid android:color="@color/sp_ac" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/sp_page" />
+</shape>

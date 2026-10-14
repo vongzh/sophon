@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  大面板 / 底部抽屉：24dp 外圆角，e-3 层 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/sp_r_sheet" />
+    <solid android:color="@color/sp_raise" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/sp_line2" />
+</shape>

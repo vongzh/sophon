@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  导航项：默认透明，选中态换为主色淡底 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/sp_bg_nav_item_active" android:state_selected="true" />
+    <item android:drawable="@drawable/sp_bg_nav_item_active" android:state_activated="true" />
+    <item android:drawable="@drawable/sp_bg_nav_item_pressed" android:state_pressed="true" />
+    <item android:drawable="@drawable/sp_bg_nav_item_pressed" android:state_focused="true" />
+    <item android:drawable="@android:color/transparent" />
+</selector>

@@ -1,195 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     Sophon 主控界面 · 设计稿 S1（docs/design/Sophon-UI-Design-v3.html）
+     结构：300dp 宽导航面板 + 顶部状态栏 + 四路紧拼砖格（黑缝）+ 底部快门行
+     视频为舞台，控件浮于其上；不使用卡片包边
+     =================================================================== -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_cockpit_dark"
+    android:background="@color/sp_page"
     android:orientation="horizontal">
 
-    <!-- 左侧常驻极客座舱导航栏 (FlymeAuto Cockpit Nav Rail) -->
+    <!-- ============ 左侧导航面板（车机宽面板，非手机细轨） ============ -->
     <LinearLayout
         android:id="@+id/layout_nav_rail"
-        android:layout_width="104dp"
+        android:layout_width="@dimen/sp_nav_width"
         android:layout_height="match_parent"
-        android:background="@color/bg_nav_rail"
-        android:gravity="center_horizontal"
+        android:background="@color/sp_surf"
         android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="@dimen/sp_s_20"
+        android:paddingBottom="@dimen/sp_s_20">
 
-        <!-- App Logo & Cockpit Brand Badge -->
+        <!-- 品牌区 -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/sp_s_20"
+            android:paddingEnd="@dimen/sp_s_16">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
-                android:text="SOPHON"
-                android:textColor="@color/text_primary"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_view_quad"
+                android:tint="@color/sp_ac" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="5dp"
-                    android:layout_height="5dp"
-                    android:layout_marginEnd="4dp"
-                    android:background="@drawable/bg_badge_pill_active" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="全维智瞳"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="10sp" />
+                    android:letterSpacing="0.06"
+                    android:text="SOPHON"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="极视 · 四向全维"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
             </LinearLayout>
         </LinearLayout>
 
         <View
-            android:layout_width="48dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="14dp"
-            android:background="@color/divider_line" />
+            android:layout_marginHorizontal="@dimen/sp_s_20"
+            android:layout_marginTop="@dimen/sp_s_16"
+            android:layout_marginBottom="@dimen/sp_s_12"
+            android:background="@color/sp_line" />
 
-        <!-- 导航菜单项 1: 实时视界 (选中激活态) -->
+        <!-- 导航项 1：实时监看（选中） -->
         <LinearLayout
             android:id="@+id/btn_nav_live"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/bg_nav_capsule_active"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="10dp">
+            style="@style/Widget.Sophon.NavItem"
+            android:background="@drawable/sp_bg_nav_item_active">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/nav_live"
                 android:src="@drawable/ic_nav_live" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nav_live"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="四路 · 录制中"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 导航项 2：行车视频 -->
+        <LinearLayout
+            android:id="@+id/btn_nav_driving"
+            style="@style/Widget.Sophon.NavItem"
+            android:background="@drawable/sp_bg_nav_item">
+
+            <ImageView
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/nav_driving"
+                android:src="@drawable/ic_nav_driving" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nav_driving"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="128 段 · 42.6 GB"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 导航项 3：哨兵事件 -->
+        <LinearLayout
+            android:id="@+id/btn_nav_sentry"
+            style="@style/Widget.Sophon.NavItem"
+            android:background="@drawable/sp_bg_nav_item">
+
+            <ImageView
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/nav_sentry"
+                android:src="@drawable/ic_nav_sentry" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nav_sentry"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="今日新增 2 条"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_live"
-                android:textColor="@color/flyme_cyan"
-                android:textSize="12sp"
+                android:background="@drawable/sp_bg_pill_accent"
+                android:paddingHorizontal="@dimen/sp_s_8"
+                android:paddingVertical="@dimen/sp_s_2"
+                android:text="2"
+                android:textColor="@color/sp_ac"
+                android:textSize="@dimen/sp_t_caption"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- 导航菜单项 2: 行车记录 -->
-        <LinearLayout
-            android:id="@+id/btn_nav_driving"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_nav_capsule_inactive"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="10dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/ic_nav_driving" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nav_driving"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- 导航菜单项 3: 全维哨兵 -->
-        <LinearLayout
-            android:id="@+id/btn_nav_sentry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_nav_capsule_inactive"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="10dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
-                android:src="@drawable/ic_nav_sentry" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nav_sentry"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- 导航菜单项 4: 抓拍图集 -->
+        <!-- 导航项 4：相册图库 -->
         <LinearLayout
             android:id="@+id/btn_nav_photos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_nav_capsule_inactive"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="10dp">
+            style="@style/Widget.Sophon.NavItem"
+            android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/nav_photos"
                 android:src="@drawable/ic_nav_photos" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/nav_photos"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nav_photos"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="36 张抓拍"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- 导航菜单项 5: 座舱设定 -->
+        <!-- 导航项 5：系统设置 -->
         <LinearLayout
             android:id="@+id/btn_nav_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_nav_capsule_inactive"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingVertical="10dp">
+            style="@style/Widget.Sophon.NavItem"
+            android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="4dp"
+                android:layout_width="@dimen/sp_icon_24"
+                android:layout_height="@dimen/sp_icon_24"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:contentDescription="@string/nav_settings"
                 android:src="@drawable/ic_nav_settings" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="设置"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nav_settings"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="固件 v1.4.0"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
         </LinearLayout>
 
         <View
@@ -197,233 +265,396 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- 底部 U 盘容量微缩圆环与车规健康指示卡片 -->
+        <!-- 底部 U 盘存储卡：环形容量 + 状态 + 分段条 + 图例 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/bg_cockpit_card_elevated"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingHorizontal="6dp"
-            android:paddingVertical="10dp">
+            android:layout_marginHorizontal="@dimen/sp_s_16"
+            android:background="@drawable/sp_bg_card"
+            android:elevation="@dimen/sp_elev_1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/sp_s_12">
 
             <com.vongzh.sophon.ui.widget.StorageCapacityRingView
                 android:id="@+id/view_storage_ring_mini"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginBottom="6dp" />
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="@dimen/sp_s_12" />
 
-            <TextView
-                android:id="@+id/tv_usb_status"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="U盘未就绪"
-                android:textColor="@color/accent_warning"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_usb_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="U盘未就绪"
+                    android:textColor="@color/sp_wn"
+                    android:textSize="@dimen/sp_t_label"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="@dimen/sp_s_6"
+                    android:background="@drawable/sp_bg_pill"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="38"
+                        android:background="@color/ring_driving" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="16"
+                        android:background="@color/ring_sentry" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="8"
+                        android:background="@color/ring_photos" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="38" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_6"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/sp_s_12"
+                        android:drawablePadding="4dp"
+                        android:text="行车"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="@dimen/sp_t_micro" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/sp_s_12"
+                        android:text="哨兵"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="@dimen/sp_t_micro" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="相册"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="@dimen/sp_t_micro" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- 精细垂直分割线 -->
+    <!-- 面板与主区的发丝分隔 -->
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:background="@color/divider_line" />
+        android:background="@color/sp_line2" />
 
-    <!-- 右侧主内容展示区 (FlymeAuto Cockpit Canvas) -->
+    <!-- ============ 右侧主内容区 ============ -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/sp_s_20">
 
-        <!-- 顶部座舱状态栏 (Cockpit Glass Status Bar) -->
+        <!-- 顶部状态栏 -->
         <LinearLayout
             android:id="@+id/layout_top_status_bar"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_cockpit_card_elevated"
+            android:layout_height="@dimen/sp_statusbar_h"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
+            android:orientation="horizontal">
 
-            <!-- 标题与 Alive 录像状态灯 -->
             <TextView
-                android:id="@+id/tv_status_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="四向全维实时监看"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:fontFamily="monospace"
+                android:text="14:02"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_title"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginHorizontal="@dimen/sp_s_12"
+                android:background="@color/sp_line2" />
+
+            <TextView
+                android:id="@+id/tv_telemetry_gear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:background="@drawable/bg_badge_pill"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="3dp">
+                android:text="P 挡"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
 
-                <View
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/bg_badge_pill_active"
-                    android:backgroundTint="@color/accent_danger" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginHorizontal="@dimen/sp_s_12"
+                android:background="@color/sp_line2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="REC 4K UHD"
-                    android:textColor="@color/text_primary"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/tv_telemetry_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="0 km/h"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginHorizontal="@dimen/sp_s_12"
+                android:background="@color/sp_line2" />
+
+            <TextView
+                android:id="@+id/tv_telemetry_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="24 ℃"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_subtitle" />
+
+            <TextView
+                android:id="@+id/tv_telemetry_gps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_s_12"
+                android:text="AGPS ±3 m"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_caption" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- 手机互联/免流快传 药丸按钮 -->
+            <!-- 免流快传 -->
             <LinearLayout
                 android:id="@+id/btn_top_lan_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/bg_badge_pill"
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_pill"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="5dp">
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginEnd="6dp"
-                    android:src="@drawable/ic_top_lan_share" />
+                    android:layout_width="@dimen/sp_icon_16"
+                    android:layout_height="@dimen/sp_icon_16"
+                    android:layout_marginEnd="@dimen/sp_s_6"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_top_lan_share"
+                    android:tint="@color/sp_ac" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="免流快传"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="12sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_label"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- 挡位 / 车速遥测微件 (HUD Telemetry Chips) -->
+            <!-- U 盘指示 -->
             <TextView
-                android:id="@+id/tv_telemetry_gear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="5dp"
-                android:text="P 挡"
-                android:textColor="@color/flyme_cyan"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:layout_marginEnd="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_pill"
+                android:drawablePadding="@dimen/sp_s_6"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
+                android:text="U 盘"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
 
-            <TextView
-                android:id="@+id/tv_telemetry_speed"
+            <!-- REC 录制胶囊：录制状态上浮到全局视野 -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="5dp"
-                android:text="0 km/h"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:background="@drawable/sp_bg_pill_rec"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_dot_rec" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="02:14:37"
+                    android:textColor="#FF1A1A1A"
+                    android:textSize="@dimen/sp_t_label"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- 四路画面四分屏监看区 (2x2 网格) -->
-        <GridLayout
-            android:id="@+id/grid_quad_view"
+        <!-- 页头 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/sp_s_16"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_status_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="四向全维实时监看"
+                    android:textAppearance="@style/TextAppearance.Sophon.Headline" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_2"
+                    android:text="四路同步录制 · 循环覆盖已启用 · 灵敏度中"
+                    android:textAppearance="@style/TextAppearance.Sophon.Caption" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_chip"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
+                android:text="1080P · 30fps"
+                android:textAppearance="@style/TextAppearance.Sophon.Label" />
+        </LinearLayout>
+
+        <!-- 视频主舞台 (S1 四路监看 / S2 单路全屏) -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:columnCount="2"
-            android:rowCount="2">
+            android:layout_weight="1">
 
-            <!-- 前视通道 CH1 -->
+            <!-- 四路紧拼砖格（黑缝，20dp 外圆角） -->
+            <GridLayout
+                android:id="@+id/grid_quad_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sp_bg_quad_frame"
+                android:columnCount="2"
+                android:rowCount="2">
+
+            <!-- CH1 前路 -->
             <FrameLayout
                 android:id="@+id/container_cam_front"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="6dp"
-                android:background="@drawable/bg_cockpit_card"
-                android:clipToOutline="true">
+                android:layout_rowWeight="1"
+                android:layout_margin="@dimen/sp_s_2">
 
                 <SurfaceView
                     android:id="@+id/surface_cam_front"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <!-- 顶部半透明遮罩保障文字车规级易读性 -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_cam_overlay_header" />
+                    android:layout_height="56dp"
+                    android:background="@drawable/sp_grad_top_scrim" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/sp_grad_bottom_scrim" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="CH1 · 前视超广角"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="11sp"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_4"
+                        android:text="前路 · 主摄"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
-                        android:text="● 30 FPS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="1920×1080 · 30fps · f/1.8"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginBottom="@dimen/sp_s_12"
+                    android:fontFamily="monospace"
+                    android:text="2026-10-14 14:02:37"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                    android:textSize="@dimen/sp_t_micro" />
             </FrameLayout>
 
-            <!-- 后视通道 CH2 -->
+            <!-- CH2 后路 -->
             <FrameLayout
                 android:id="@+id/container_cam_back"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="6dp"
-                android:background="@drawable/bg_cockpit_card"
-                android:clipToOutline="true">
+                android:layout_rowWeight="1"
+                android:layout_margin="@dimen/sp_s_2">
 
                 <SurfaceView
                     android:id="@+id/surface_cam_back"
@@ -432,54 +663,64 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_cam_overlay_header" />
+                    android:layout_height="56dp"
+                    android:background="@drawable/sp_grad_top_scrim" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/sp_grad_bottom_scrim" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="CH2 · 后视流媒体"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="11sp"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_4"
+                        android:text="后路 · 广角"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
-                        android:text="● 30 FPS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="1920×1080 · 30fps"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginBottom="@dimen/sp_s_12"
+                    android:fontFamily="monospace"
+                    android:text="2026-10-14 14:02:37"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                    android:textSize="@dimen/sp_t_micro" />
             </FrameLayout>
 
-            <!-- 左侧视通道 CH3 -->
+            <!-- CH3 左路 -->
             <FrameLayout
                 android:id="@+id/container_cam_left"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="6dp"
-                android:background="@drawable/bg_cockpit_card"
-                android:clipToOutline="true">
+                android:layout_rowWeight="1"
+                android:layout_margin="@dimen/sp_s_2">
 
                 <SurfaceView
                     android:id="@+id/surface_cam_left"
@@ -488,54 +729,64 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_cam_overlay_header" />
+                    android:layout_height="56dp"
+                    android:background="@drawable/sp_grad_top_scrim" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/sp_grad_bottom_scrim" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="CH3 · 左侧盲区"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="11sp"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_4"
+                        android:text="左路 · 盲区"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
-                        android:text="● 30 FPS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="1280×720 · 25fps"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginBottom="@dimen/sp_s_12"
+                    android:fontFamily="monospace"
+                    android:text="2026-10-14 14:02:37"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                    android:textSize="@dimen/sp_t_micro" />
             </FrameLayout>
 
-            <!-- 右侧视通道 CH4 -->
+            <!-- CH4 右路 -->
             <FrameLayout
                 android:id="@+id/container_cam_right"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="6dp"
-                android:background="@drawable/bg_cockpit_card"
-                android:clipToOutline="true">
+                android:layout_rowWeight="1"
+                android:layout_margin="@dimen/sp_s_2">
 
                 <SurfaceView
                     android:id="@+id/surface_cam_right"
@@ -544,45 +795,336 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_cam_overlay_header" />
+                    android:layout_height="56dp"
+                    android:background="@drawable/sp_grad_top_scrim" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/sp_grad_bottom_scrim" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="CH4 · 右侧盲区"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="11sp"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_4"
+                        android:text="右路 · 盲区"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1" />
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_pill"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
-                        android:text="● 30 FPS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="10sp" />
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="1280×720 · 25fps"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:layout_marginBottom="@dimen/sp_s_12"
+                    android:fontFamily="monospace"
+                    android:text="2026-10-14 14:02:37"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                    android:textSize="@dimen/sp_t_micro" />
             </FrameLayout>
 
         </GridLayout>
+
+            <!-- 垂直玻璃悬浮操作条 (.fabv 依据 v3 设计稿 S1/S2 规范) -->
+            <LinearLayout
+                android:id="@+id/layout_stage_fabv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/sp_s_16"
+                android:orientation="vertical">
+
+                <!-- 抓拍浮键 -->
+                <FrameLayout
+                    android:id="@+id/fab_snapshot"
+                    style="@style/Widget.Sophon.GlassButton"
+                    android:layout_marginBottom="@dimen/sp_s_12">
+                    <ImageView
+                        android:layout_width="@dimen/sp_icon_20"
+                        android:layout_height="@dimen/sp_icon_20"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_nav_photos"
+                        android:tint="@color/sp_tx" />
+                </FrameLayout>
+
+                <!-- 紧急加锁浮键 -->
+                <FrameLayout
+                    android:id="@+id/fab_lock"
+                    style="@style/Widget.Sophon.GlassButton"
+                    android:layout_marginBottom="@dimen/sp_s_12">
+                    <ImageView
+                        android:layout_width="@dimen/sp_icon_20"
+                        android:layout_height="@dimen/sp_icon_20"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_action_lock"
+                        android:tint="@color/sp_dg" />
+                </FrameLayout>
+
+                <!-- 麦克风录音浮键 -->
+                <FrameLayout
+                    android:id="@+id/fab_mic"
+                    style="@style/Widget.Sophon.GlassButton"
+                    android:layout_marginBottom="@dimen/sp_s_12">
+                    <ImageView
+                        android:id="@+id/iv_fab_mic"
+                        android:layout_width="@dimen/sp_icon_20"
+                        android:layout_height="@dimen/sp_icon_20"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_status_record"
+                        android:tint="@color/sp_tx" />
+                </FrameLayout>
+
+                <!-- 视角切换浮键 -->
+                <FrameLayout
+                    android:id="@+id/fab_view_mode"
+                    style="@style/Widget.Sophon.GlassButton"
+                    android:background="@drawable/sp_bg_pill_accent">
+                    <ImageView
+                        android:layout_width="@dimen/sp_icon_20"
+                        android:layout_height="@dimen/sp_icon_20"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_view_quad"
+                        android:tint="@color/sp_ac" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- S2 单路全屏专属密集 OSD 浮层 (由四路进入单路时呈现) -->
+            <FrameLayout
+                android:id="@+id/layout_single_cam_osd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <!-- 左下角：52sp 超大车速与路段限速 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="@dimen/sp_s_24"
+                    android:layout_marginBottom="32dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:baselineAligned="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_single_speed_num"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="42"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="52sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="km/h"
+                            android:textColor="#D0FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_single_road_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="限速 60 · 文一西路 · 余杭段"
+                        android:textColor="#A0FFFFFF"
+                        android:textSize="@dimen/sp_t_caption" />
+                </LinearLayout>
+
+                <!-- 右上角：密集曝光参数与 GPS 坐标 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|top"
+                    android:layout_marginTop="@dimen/sp_s_20"
+                    android:layout_marginEnd="88dp"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="f/1.8 · ISO 320 · 1/60s"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
+
+                    <TextView
+                        android:id="@+id/tv_single_gps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="GPS 30.2741°N 120.1552°E"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_4"
+                        android:background="@drawable/sp_bg_osd_chip"
+                        android:paddingHorizontal="@dimen/sp_s_8"
+                        android:paddingVertical="@dimen/sp_s_2"
+                        android:text="H.264 · 10 Mbps · 30fps"
+                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                        android:textSize="@dimen/sp_t_micro" />
+                </LinearLayout>
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <!-- 底部快门行 -->
+        <LinearLayout
+            android:id="@+id/layout_shutter_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sp_shutter_h"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- 最近片段入口 -->
+            <FrameLayout
+                android:id="@+id/btn_recent_clip"
+                android:layout_width="88dp"
+                android:layout_height="52dp"
+                android:background="@drawable/sp_bg_card"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_clip_scissors"
+                    android:tint="@color/sp_tx2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="@dimen/sp_s_4"
+                    android:background="@drawable/sp_bg_osd_chip"
+                    android:fontFamily="monospace"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="1dp"
+                    android:text="3:12"
+                    android:textColor="@color/sp_osd_tx"
+                    android:textSize="@dimen/sp_t_micro" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- 锁定当前片段 -->
+            <FrameLayout
+                android:id="@+id/btn_lock_current"
+                android:layout_width="@dimen/sp_glass_btn"
+                android:layout_height="@dimen/sp_glass_btn"
+                android:layout_marginEnd="@dimen/sp_s_16"
+                android:background="@drawable/sp_bg_glass_btn">
+
+                <ImageView
+                    android:layout_width="@dimen/sp_icon_20"
+                    android:layout_height="@dimen/sp_icon_20"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_action_lock"
+                    android:tint="@color/sp_tx" />
+            </FrameLayout>
+
+            <!-- 快门抓拍 -->
+            <FrameLayout
+                android:id="@+id/btn_shutter"
+                android:layout_width="@dimen/sp_shutter_btn"
+                android:layout_height="@dimen/sp_shutter_btn"
+                android:background="@drawable/sp_bg_shutter"
+                android:elevation="@dimen/sp_elev_2">
+
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/sp_bg_pill_rec" />
+            </FrameLayout>
+
+            <!-- 紧急录像 -->
+            <FrameLayout
+                android:id="@+id/btn_emergency"
+                android:layout_width="@dimen/sp_glass_btn"
+                android:layout_height="@dimen/sp_glass_btn"
+                android:layout_marginStart="@dimen/sp_s_16"
+                android:background="@drawable/sp_bg_glass_btn">
+
+                <ImageView
+                    android:layout_width="@dimen/sp_icon_20"
+                    android:layout_height="@dimen/sp_icon_20"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_status_record"
+                    android:tint="@color/sp_rec" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!--  视图切换 -->
+            <TextView
+                android:id="@+id/btn_view_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_pill"
+                android:drawablePadding="@dimen/sp_s_6"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:paddingVertical="@dimen/sp_s_8"
+                android:text="四路同屏"
+                android:textAppearance="@style/TextAppearance.Sophon.Label"
+                android:textColor="@color/sp_tx2" />
+        </LinearLayout>
 
     </LinearLayout>
 

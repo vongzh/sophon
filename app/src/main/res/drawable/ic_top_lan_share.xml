@@ -18,7 +18,7 @@
         android:strokeWidth="1.6"
         android:strokeLineCap="round" />
 
-    <!-- 高速 WiFi 6 广播波束 (High-Speed WiFi Wavefronts) -->
+    <!--  高速 WiFi 6 广播波束 (High-Speed WiFi Wavefronts) -->
     <path
         android:pathData="M 13.5,6 C 15.5,7 16.5,8.8 16.5,10.5"
         android:strokeColor="@color/flyme_cyan"

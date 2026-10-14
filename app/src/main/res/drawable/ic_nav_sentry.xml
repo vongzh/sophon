@@ -20,7 +20,7 @@
         android:strokeWidth="1.5"
         android:strokeLineCap="round" />
 
-    <!-- 3. 哨兵智瞳警戒核心 (Sentry Core) -->
+    <!--  3. 哨兵智瞳警戒核心 (Sentry Core) -->
     <path
         android:pathData="M 12,11.5 C 10.3,11.5 9,12.8 9,14.5 C 9,16.2 10.3,17.5 12,17.5 C 13.7,17.5 15,16.2 15,14.5 C 15,12.8 13.7,11.5 12,11.5 Z"
         android:strokeColor="@color/text_secondary"

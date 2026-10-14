@@ -1,131 +1,490 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     行车视频资料库 · 设计稿 S3（docs/design/Sophon-UI-Design-v3.html）
+     结构：页头 + 双栏布局（左侧片段列表 + 右侧 392dp 详情与即时预览面板）
+     每行三段信息：标题 / 时长 / 容量与格式；被锁定的片段带锁角标
+     =================================================================== -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_cockpit_dark"
+    android:background="@color/sp_page"
     android:orientation="vertical">
 
-    <!-- 顶部状态与筛选栏 (FlymeAuto History Top Bar) -->
+    <!-- 页头 (Page Header) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/bg_nav_rail"
+        android:layout_height="72dp"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/sp_s_20"
+        android:paddingEnd="@dimen/sp_s_20">
 
         <TextView
             android:id="@+id/btn_history_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
+            android:layout_marginEnd="@dimen/sp_s_16"
+            android:background="@drawable/sp_bg_pill"
             android:drawableStart="@drawable/ic_action_back"
-            android:drawablePadding="6dp"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_ac"
             android:gravity="center_vertical"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="7dp"
+            android:paddingHorizontal="@dimen/sp_s_16"
+            android:paddingVertical="@dimen/sp_s_8"
             android:text="返回"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="13sp"
+            android:textColor="@color/sp_ac"
+            android:textSize="@dimen/sp_t_label"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_history_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="行车视频资料库"
-            android:textColor="@color/text_primary"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-
-        <View
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <!-- 过滤器单选药丸组 (FlymeAuto Segmented Controls) -->
+            <TextView
+                android:id="@+id/tv_history_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="行车视频"
+                android:textAppearance="@style/TextAppearance.Sophon.Headline" />
+
+            <TextView
+                android:id="@+id/tv_history_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_2"
+                android:text="今日 18 段 · 占用 82.4 GB · 循环覆盖已开启"
+                android:textAppearance="@style/TextAppearance.Sophon.Caption" />
+        </LinearLayout>
+
+        <!-- 分段筛选控件 -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_cockpit_card_elevated"
+            android:background="@drawable/sp_bg_card"
+            android:elevation="@dimen/sp_elev_1"
             android:orientation="horizontal"
-            android:padding="3dp">
+            android:padding="@dimen/sp_s_4">
 
             <TextView
                 android:id="@+id/btn_filter_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="5dp"
+                android:background="@drawable/sp_bg_pill_accent"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:paddingVertical="@dimen/sp_s_8"
                 android:text="全部"
-                android:textColor="@color/bg_cockpit_dark"
-                android:textSize="12sp"
+                android:textColor="@color/sp_ac"
+                android:textSize="@dimen/sp_t_label"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btn_filter_normal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:paddingVertical="@dimen/sp_s_8"
                 android:text="常规循环"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
 
             <TextView
                 android:id="@+id/btn_filter_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:paddingVertical="@dimen/sp_s_8"
                 android:text="加锁事件"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
 
             <TextView
                 android:id="@+id/btn_filter_trash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:paddingVertical="@dimen/sp_s_8"
                 android:text="回收站"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
         </LinearLayout>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider_line" />
+        android:background="@color/sp_line" />
 
-    <!-- 列表展示区 -->
-    <FrameLayout
+    <!-- 主体：S3 左右双栏分栏 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/sp_s_20"
+        android:paddingVertical="@dimen/sp_s_16">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_recording_list"
-            android:layout_width="match_parent"
+        <!-- 左侧：卡片列表容器 -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="12dp"
-            android:paddingBottom="24dp" />
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/sp_s_16"
+            android:background="@drawable/sp_bg_card"
+            android:elevation="@dimen/sp_elev_1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_history_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="U 盘未检测到视频或暂无录像文件"
-            android:textColor="@color/text_tertiary"
-            android:textSize="14sp"
-            android:visibility="gone" />
-    </FrameLayout>
+            <!-- 列表分区子表头 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:background="@color/sp_surf2"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/sp_s_16">
+
+                <TextView
+                    android:id="@+id/tv_section_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="今天 · 录像切片列表"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/sp_line" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_recording_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="@dimen/sp_s_8"
+                    android:paddingBottom="@dimen/sp_s_8" />
+
+                <TextView
+                    android:id="@+id/tv_history_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="U 盘未检测到视频或暂无录像文件"
+                    android:textAppearance="@style/TextAppearance.Sophon.Subtitle"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- 右侧：392dp 详情与即时预览面板 -->
+        <LinearLayout
+            android:id="@+id/layout_detail_panel"
+            android:layout_width="392dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- 顶部 222dp 即时视频小预览窗口 -->
+            <FrameLayout
+                android:id="@+id/container_preview_box"
+                android:layout_width="match_parent"
+                android:layout_height="222dp"
+                android:background="@drawable/sp_bg_quad_frame"
+                android:clipToOutline="true"
+                android:elevation="@dimen/sp_elev_2">
+
+                <ImageView
+                    android:id="@+id/iv_detail_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/sp_dim"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/sp_grad_top_scrim" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/sp_grad_bottom_scrim" />
+
+                <!-- 镜头方位标识 -->
+                <TextView
+                    android:id="@+id/tv_detail_camera_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+                    android:layout_margin="@dimen/sp_s_12"
+                    android:background="@drawable/sp_bg_osd_chip"
+                    android:paddingHorizontal="@dimen/sp_s_8"
+                    android:paddingVertical="@dimen/sp_s_4"
+                    android:text="前路 · 主摄"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
+                    android:textStyle="bold" />
+
+                <!-- 时间戳 -->
+                <TextView
+                    android:id="@+id/tv_detail_timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|top"
+                    android:layout_margin="@dimen/sp_s_12"
+                    android:background="@drawable/sp_bg_osd_chip"
+                    android:fontFamily="monospace"
+                    android:paddingHorizontal="@dimen/sp_s_8"
+                    android:paddingVertical="@dimen/sp_s_4"
+                    android:text="14:02:18"
+                    android:textAppearance="@style/TextAppearance.Sophon.Osd" />
+
+                <!-- 时长角标 -->
+                <TextView
+                    android:id="@+id/tv_detail_duration_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|bottom"
+                    android:layout_margin="@dimen/sp_s_12"
+                    android:background="@drawable/sp_bg_pill_rec"
+                    android:fontFamily="monospace"
+                    android:paddingHorizontal="@dimen/sp_s_8"
+                    android:paddingVertical="@dimen/sp_s_2"
+                    android:text="01:00"
+                    android:textColor="#FF1A1A1A"
+                    android:textSize="@dimen/sp_t_micro"
+                    android:textStyle="bold" />
+
+                <!-- 居中播放控制 -->
+                <FrameLayout
+                    android:id="@+id/btn_preview_play_center"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/sp_bg_shutter"
+                    android:backgroundTint="@color/sp_ac"
+                    android:clickable="true"
+                    android:elevation="6dp"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_view_quad"
+                        android:tint="#FFFFFFFF" />
+                </FrameLayout>
+            </FrameLayout>
+
+            <!-- 下方：文件详情卡片 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/sp_bg_card"
+                android:elevation="@dimen/sp_elev_1"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="文件详情"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_detail_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_8"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="前路 · 主摄 · 14:02:18"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_detail_trigger_reason"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_2"
+                    android:text="触发方式 · 连续循环录像"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="@dimen/sp_s_12"
+                    android:background="@color/sp_line" />
+
+                <!-- 详细参数行 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="@dimen/sp_s_4">
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="分辨率"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_label" />
+                        <TextView
+                            android:id="@+id/tv_spec_resolution"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1920 × 1080 · 30fps"
+                            android:textAppearance="@style/TextAppearance.Sophon.Mono" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="@dimen/sp_s_4">
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="编码"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_label" />
+                        <TextView
+                            android:id="@+id/tv_spec_codec"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="H.264 · 10 Mbps"
+                            android:textAppearance="@style/TextAppearance.Sophon.Mono" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="@dimen/sp_s_4">
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="时长"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_label" />
+                        <TextView
+                            android:id="@+id/tv_spec_duration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="01:00"
+                            android:textAppearance="@style/TextAppearance.Sophon.Mono" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="@dimen/sp_s_4">
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="容量"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_label" />
+                        <TextView
+                            android:id="@+id/tv_spec_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="74.2 MB"
+                            android:textAppearance="@style/TextAppearance.Sophon.Mono" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="@dimen/sp_s_4">
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="存储位置"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_label" />
+                        <TextView
+                            android:id="@+id/tv_spec_location"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="middle"
+                            android:maxLines="1"
+                            android:text="/SophonRecord/Normal"
+                            android:textAppearance="@style/TextAppearance.Sophon.Mono" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <!-- 4 联动作按钮行 (播放、剪辑导出、加锁、删除) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btn_action_play"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/sp_bg_pill_accent"
+                        android:gravity="center"
+                        android:text="播放"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btn_action_lock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:background="@drawable/sp_bg_pill"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/sp_s_16"
+                        android:text="加锁"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btn_action_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:background="@drawable/sp_bg_pill"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/sp_s_16"
+                        android:text="删除"
+                        android:textColor="@color/sp_dg"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

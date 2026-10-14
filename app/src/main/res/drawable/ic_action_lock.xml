@@ -19,7 +19,7 @@
         android:strokeWidth="1.6"
         android:strokeLineJoin="round" />
 
-    <!-- 锁孔 -->
+    <!--  锁孔 -->
     <path
         android:pathData="M 10,10.5 L 10,13.5"
         android:strokeColor="@color/accent_warning"

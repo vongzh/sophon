@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>极视 Sophon · UI Design v3 · 双主题</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --paper:#FBFCFE; --ink:#111620; --ink-2:#5A6675; --ink-3:#8B97A8;
+  --line:#E4E9F0; --line-2:#D3DCE6; --chip:#F2F5F9; --blue:#2F62E0; --blue-bg:#EAF1FF;
+  --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+  --sh-doc:0 18px 44px rgba(16,24,40,.10),0 4px 12px rgba(16,24,40,.06);
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6;
+  font-family:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+/* ============ 评审页外壳（中性，不参与设计对象） ============ */
+.shell{display:flex;align-items:flex-start}
+.sidebar{width:214px;flex:none;position:sticky;top:0;height:100vh;padding:26px 18px;border-right:1px solid var(--line);overflow:auto}
+.brand{font-size:14px;font-weight:700;letter-spacing:.02em}
+.brand span{display:block;font-size:10.5px;letter-spacing:.16em;color:var(--ink-3);font-weight:600;margin-top:2px}
+.sidebar nav{margin-top:22px;display:flex;flex-direction:column;gap:1px}
+.sidebar nav a{padding:7px 10px;border-radius:8px;color:var(--ink-2);text-decoration:none;font-size:12.5px;
+  font-weight:560;border-left:2px solid transparent}
+.sidebar nav a:hover{background:var(--chip);color:var(--ink)}
+.sidebar nav a.on{color:var(--blue);background:var(--blue-bg);border-left-color:var(--blue);font-weight:640}
+.sidebar .sf{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3);line-height:1.7}
+main{flex:1;min-width:0;padding:30px 40px 60px;max-width:1300px}
+.hero{padding-bottom:26px;margin-bottom:34px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue);font-weight:680}
+.hero h1{font-size:29px;font-weight:680;letter-spacing:-.6px;margin:8px 0 10px}
+.hero p{color:var(--ink-2);font-size:13.5px;max-width:880px}
+.switchbar{display:flex;align-items:center;gap:14px;margin-top:16px;flex-wrap:wrap}
+.sw1{display:inline-flex;background:#fff;border:1px solid var(--line-2);border-radius:10px;padding:3px;gap:2px;
+  box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.sw1 button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--ink-2);
+  padding:6px 15px;border-radius:7px;cursor:pointer}
+.sw1 button.on{background:var(--ink);color:#fff}
+.sw1 button:hover:not(.on){background:var(--chip);color:var(--ink)}
+.hint{font-size:12.5px;color:var(--ink-3)}
+section{margin:0 0 52px;scroll-margin-top:20px}
+section>h2{font-size:20px;font-weight:680;letter-spacing:-.3px;margin:0 0 4px}
+section>.sub{color:var(--ink-2);font-size:13.5px;margin-bottom:18px;max-width:900px}
+.pr{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.pr .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-bg);border-radius:6px;padding:2px 6px;font-weight:640}
+.pr h3{font-size:15px;font-weight:660;margin:10px 0 7px;letter-spacing:-.15px}
+.pr p{font-size:12.5px;color:var(--ink-2);line-height:1.65}
+.pr .tag{font-size:11px;color:var(--ink-3);margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-family:var(--mono)}
+.note{margin:16px 0 0;padding:13px 15px;background:var(--blue-bg);border:1px solid #D7E4FF;border-radius:11px;
+  font-size:12.5px;color:#274690;line-height:1.65}
+.note b{font-weight:660}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--chip);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);font-weight:680}
+tr:last-child td{border-bottom:0}
+td.m,th.m{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:1080px){.grid3,.grid2{grid-template-columns:1fr}}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.sw{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.sw i{display:block;height:54px}
+.sw div{padding:8px 10px}
+.sw b{display:block;font-size:12px;font-weight:640}
+.sw small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:1px}
+.cmpgrid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.cmpgrid>.frame{padding:16px 17px;min-width:0}
+.cmpgrid>.frame:first-child{border-right:1px solid var(--line)}
+.cmpgrid .tt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:680;color:var(--sp-tx3);margin:0 0 10px}
+.cmpgrid .rr{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.cmpcap{font-size:12.5px;color:var(--ink-2);margin:20px 0 8px;display:flex;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--line);padding-bottom:7px}
+.cmpcap b{color:var(--ink);font-weight:660;font-size:13px}
+@media(max-width:1120px){.cmpgrid{grid-template-columns:1fr}.cmpgrid>.frame:first-child{border-right:0;border-bottom:1px solid var(--line)}}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ===================================================================
+   设计对象：Sophon 主题 token（车机尺度）
+   度量基准取自盯盯车 SurCamX 1.4.6 的 aapt2 实测资源：
+   main_preview_corner_radius 24dp / page_header_title 36sp
+   nav_rail_collapsed_width 384dp / nav_rail_text_size 32sp
+   settings_hub_tile_elevation 28dp / seekbar thumb 44dp track 28dp
+   =================================================================== */
+.frame{
+  --sp-page:#E8ECF1;
+  --sp-surf:#FFFFFF; --sp-surf2:#F5F7FA; --sp-surf3:#EBEFF4; --sp-raise:#FFFFFF;
+  --sp-line:#E4E9F0; --sp-line2:#D3DCE6;
+  --sp-tx:#111620; --sp-tx2:#5A6675; --sp-tx3:#8B97A8; --sp-tx4:#A7B1C0;
+  --sp-ac:#3572F4; --sp-ac2:#2557C8; --sp-acbg:#E8F0FF; --sp-acln:#C7DBFF; --sp-acring:rgba(53,114,244,.20);
+  --sp-ok:#0E9B4E; --sp-wn:#B2670A; --sp-dg:#D92D20; --sp-rec:#E5372F;
+  --sp-sh1:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
+  --sp-sh2:0 2px 6px rgba(16,24,40,.06),0 10px 24px rgba(16,24,40,.07);
+  --sp-sh3:0 10px 24px rgba(16,24,40,.09),0 28px 60px rgba(16,24,40,.11);
+  --sp-top:inset 0 1px 0 rgba(255,255,255,.95);
+  --sp-glass:rgba(255,255,255,.80); --sp-hair:rgba(255,255,255,.62);
+  --sp-dim:rgba(10,15,22,.34); --sp-linew:rgba(255,255,255,.14);
+}
+.frame.t-dark{
+  --sp-page:#11151B;
+  --sp-surf:#1A2029; --sp-surf2:#222932; --sp-surf3:#2B3340; --sp-raise:#212834;
+  --sp-line:#2A323D; --sp-line2:#384150;
+  --sp-tx:#F2F5F8; --sp-tx2:#A3AEBD; --sp-tx3:#6E7989; --sp-tx4:#58626F;
+  --sp-ac:#5B9BFF; --sp-ac2:#7FB2FF; --sp-acbg:#16253F; --sp-acln:#274066; --sp-acring:rgba(91,155,255,.26);
+  --sp-ok:#34C76A; --sp-wn:#F0A62E; --sp-dg:#FF5A4E; --sp-rec:#FF4E45;
+  --sp-sh1:0 1px 2px rgba(0,0,0,.44),0 1px 3px rgba(0,0,0,.30);
+  --sp-sh2:0 4px 10px rgba(0,0,0,.42),0 14px 30px rgba(0,0,0,.38);
+  --sp-sh3:0 12px 28px rgba(0,0,0,.48),0 34px 68px rgba(0,0,0,.50);
+  --sp-top:inset 0 1px 0 rgba(255,255,255,.055);
+  --sp-glass:rgba(26,32,41,.76); --sp-hair:rgba(255,255,255,.10);
+  --sp-dim:rgba(8,12,18,.44); --sp-linew:rgba(255,255,255,.11);
+}
+.screen{position:relative;width:1280px;height:800px;flex:none;overflow:hidden;
+  background:var(--sp-page);color:var(--sp-tx);border-radius:16px;box-shadow:var(--sh-doc);
+  font-size:14px;line-height:1.45;transform-origin:top left}
+.screen svg:not(.scn){fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.screen svg.fil{fill:currentColor;stroke:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+.wrap2{position:relative;overflow:hidden;border-radius:16px}
+.ey{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:680;color:var(--sp-tx4)}
+/* 状态栏 */
+.stbar{height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;
+  background:var(--sp-surf);border-bottom:1px solid var(--sp-line);font-size:12.5px;font-weight:620;color:var(--sp-tx2)}
+.stbar .l,.stbar .r{display:flex;align-items:center;gap:12px}
+.stbar .l b{font-family:var(--mono);font-size:14px;font-weight:660;color:var(--sp-tx)}
+.stbar svg{width:15px;height:15px}
+.stbar .sep{width:1px;height:13px;background:var(--sp-line2)}
+.stbar .dp{width:6px;height:6px;border-radius:50%;background:var(--sp-ok);display:block}
+/* 主体 + 导航面板 */
+.app{display:flex;height:756px}
+.rail{width:300px;flex:none;background:var(--sp-surf);border-right:1px solid var(--sp-line);
+  display:flex;flex-direction:column;padding:18px 16px 16px;overflow:hidden}
+.brand2{display:flex;align-items:center;gap:11px;padding:4px 8px 16px}
+.brand2 .mk{width:38px;height:38px;border-radius:11px;flex:none;position:relative;
+  background:linear-gradient(145deg,var(--sp-ac) 0%,var(--sp-ac2) 100%);box-shadow:0 4px 12px var(--sp-acring)}
+.brand2 .mk svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:21px;height:21px;stroke:#fff;stroke-width:2}
+.brand2 b{display:block;font-size:15.5px;font-weight:700;letter-spacing:.10em;line-height:1.15}
+.brand2 span{display:block;font-size:10.5px;letter-spacing:.14em;color:var(--sp-tx3);font-weight:600;margin-top:2px}
+.rail .ey{margin:2px 0 7px;padding-left:12px}
+.rl-item{display:flex;align-items:center;gap:12px;height:54px;padding:0 12px;border-radius:13px;cursor:pointer;margin-bottom:3px}
+.rl-item .ico{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:var(--sp-surf2);color:var(--sp-tx2)}
+.rl-item .ico svg{width:19px;height:19px}
+.rl-item .tx{flex:1;min-width:0}
+.rl-item .tx b{display:block;font-size:14.5px;font-weight:620;line-height:1.3}
+.rl-item .tx small{display:block;font-size:11.5px;color:var(--sp-tx3);line-height:1.35;margin-top:1px}
+.rl-item .ct{flex:none;font-family:var(--mono);font-size:12px;font-weight:660;color:var(--sp-tx3);
+  background:var(--sp-surf3);border-radius:8px;padding:3px 8px;min-width:30px;text-align:center}
+.rl-item.on{background:var(--sp-acbg);box-shadow:inset 0 0 0 1px var(--sp-acln)}
+.rl-item.on .ico{background:var(--sp-ac);color:#fff;box-shadow:0 3px 8px var(--sp-acring)}
+.frame.t-dark .rl-item.on .ico{color:#0E1420}
+.rl-item.on .tx b{color:var(--sp-ac)}
+.rl-item.on .ct{background:var(--sp-ac);color:#fff}
+.frame.t-dark .rl-item.on .ct{color:#0E1420}
+.rail .spc{flex:1}
+.rl-foot{background:var(--sp-surf2);border:1px solid var(--sp-line);border-radius:16px;padding:13px 14px;flex:none}
+.rl-foot .fx{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.rl-foot .fx b{display:block;font-size:13.5px;font-weight:640;line-height:1.3}
+.rl-foot .fx small{display:block;font-size:11.5px;color:var(--sp-tx3);margin-top:1px}
+.rl-foot .sb{display:flex;height:8px;border-radius:999px;overflow:hidden;gap:2px;margin-bottom:10px}
+.rl-foot .sb i{display:block;height:100%}
+.rl-foot .lg{display:flex;flex-wrap:wrap;gap:4px 11px}
+.rl-foot .lg span{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sp-tx2)}
+.rl-foot .lg i{width:8px;height:8px;border-radius:3px;display:block}
+/* 内容区 */
+.pane{flex:1;min-width:0;display:flex;flex-direction:column;padding:20px 26px 22px;gap:16px;overflow:hidden}
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex:none}
+.phead h4{font-size:26px;font-weight:680;letter-spacing:-.5px;line-height:1.15}
+.phead .sub{font-size:12.5px;color:var(--sp-tx3);margin-top:3px;display:flex;align-items:center;gap:8px}
+.phead .sub i{width:3px;height:3px;border-radius:50%;background:var(--sp-tx4);display:block}
+.phead .acts{display:flex;align-items:center;gap:8px;flex:none}
+/* 按钮 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:42px;padding:0 16px;border-radius:13px;
+  border:1px solid var(--sp-line2);background:var(--sp-surf);color:var(--sp-tx);font-size:13.5px;font-weight:600;
+  cursor:pointer;box-shadow:var(--sp-sh1);white-space:nowrap}
+.btn svg{width:16px;height:16px}
+.btn:hover{border-color:var(--sp-ac);color:var(--sp-ac)}
+.btn.pri{background:var(--sp-ac);border-color:var(--sp-ac);color:#fff;box-shadow:0 3px 10px var(--sp-acring)}
+.frame.t-dark .btn.pri{color:#0E1420}
+.btn.pri:hover{color:#fff}
+.frame.t-dark .btn.pri:hover{color:#0E1420}
+.btn.gh{border-color:transparent;background:var(--sp-surf2);box-shadow:none}
+.btn.ico{width:42px;padding:0}
+/* 胶囊 / 分段 */
+.pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;
+  background:var(--sp-surf2);border:1px solid var(--sp-line);font-size:12px;font-weight:620;color:var(--sp-tx2);
+  white-space:nowrap;flex:none}
+.pill svg{width:13px;height:13px}
+.pill.ac{background:var(--sp-acbg);color:var(--sp-ac);border-color:var(--sp-acln)}
+.pill.sld{background:var(--sp-ac);color:#fff;border-color:transparent}
+.frame.t-dark .pill.sld{color:#0E1420}
+.pill.ok{background:rgba(14,155,78,.11);color:var(--sp-ok);border-color:transparent}
+.pill.wn{background:rgba(178,103,10,.12);color:var(--sp-wn);border-color:transparent}
+.pill.dg{background:rgba(217,45,32,.11);color:var(--sp-dg);border-color:transparent}
+.pill.rec{background:rgba(229,55,47,.13);color:var(--sp-rec);border-color:transparent}
+.seg{display:inline-flex;background:var(--sp-surf3);border:1px solid var(--sp-line);border-radius:13px;padding:3px;gap:2px;flex:none}
+.seg button{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:620;color:var(--sp-tx2);
+  padding:7px 14px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--sp-raise);color:var(--sp-ac);box-shadow:var(--sp-sh1),var(--sp-top)}
+.choice{display:inline-flex;background:var(--sp-surf3);border:1px solid var(--sp-line);border-radius:13px;padding:3px;gap:2px}
+.choice button{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:620;color:var(--sp-tx2);
+  padding:7px 14px;border-radius:10px;cursor:pointer}
+.choice button.on{background:var(--sp-raise);color:var(--sp-ac);box-shadow:var(--sp-sh1),var(--sp-top)}
+/* 卡片 / 瓷砖 / KPI */
+.card{background:var(--sp-surf);border:1px solid var(--sp-line);border-radius:18px;box-shadow:var(--sp-sh1),var(--sp-top)}
+.tile{background:linear-gradient(158deg,var(--sp-raise) 0%,var(--sp-surf2) 100%);border:1px solid var(--sp-line);
+  border-radius:20px;padding:17px 18px;box-shadow:var(--sp-sh2);cursor:pointer;position:relative;overflow:hidden}
+.tile .ico{width:42px;height:42px;border-radius:13px;background:var(--sp-acbg);color:var(--sp-ac);
+  display:flex;align-items:center;justify-content:center;margin-bottom:13px;box-shadow:inset 0 0 0 1px var(--sp-acln)}
+.tile .ico svg{width:22px;height:22px}
+.tile b{display:block;font-size:15px;font-weight:660;letter-spacing:-.1px}
+.tile small{display:block;color:var(--sp-tx3);font-size:12.5px;margin-top:3px;line-height:1.55}
+.tile .tr{position:absolute;right:16px;top:16px}
+.kpi{background:var(--sp-raise);border:1px solid var(--sp-line);border-radius:18px;padding:15px 17px;
+  box-shadow:var(--sp-sh2);display:flex;flex-direction:column;gap:9px}
+.kpi .hd{display:flex;align-items:center;gap:9px}
+.kpi .hd .ico{width:30px;height:30px;border-radius:9px;background:var(--sp-surf3);color:var(--sp-tx2);
+  display:flex;align-items:center;justify-content:center;flex:none}
+.kpi .hd .ico svg{width:16px;height:16px}
+.kpi .hd span{font-size:12px;font-weight:620;color:var(--sp-tx2)}
+.kpi .vl{display:flex;align-items:baseline;gap:5px}
+.kpi .vl b{font-family:var(--mono);font-size:30px;font-weight:680;letter-spacing:-1.2px;line-height:1}
+.kpi .vl u{font-size:12.5px;color:var(--sp-tx3);text-decoration:none;font-weight:600}
+.kpi .ft{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kpi .dl{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:640;font-family:var(--mono)}
+.kpi .dl.up{color:var(--sp-ok)}
+.kpi .dl.dn{color:var(--sp-dg)}
+.kpi .dl svg{width:12px;height:12px}
+.kpi .spark{width:90px;height:24px;display:block;flex:none}
+/* 列表行 */
+.row{display:flex;align-items:center;gap:14px;padding:11px 14px;border-bottom:1px solid var(--sp-line)}
+.row:last-child{border-bottom:0}
+.row.sel{background:var(--sp-acbg);box-shadow:inset 2px 0 0 var(--sp-ac)}
+.thm{width:126px;height:71px;border-radius:11px;flex:none;position:relative;overflow:hidden;background:#0A0F16;box-shadow:var(--sp-sh1)}
+.thm .cap{position:absolute;right:5px;bottom:5px;background:rgba(8,12,18,.72);color:#fff;font-family:var(--mono);
+  font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:6px}
+.thm .lk{position:absolute;left:5px;top:5px;width:20px;height:20px;border-radius:6px;background:rgba(8,12,18,.66);
+  display:flex;align-items:center;justify-content:center}
+.thm .lk svg{width:12px;height:12px;stroke:#FFD86B}
+.thm .tag{position:absolute;left:5px;bottom:5px;background:rgba(8,12,18,.74);color:#fff;font-size:9.5px;
+  font-weight:660;letter-spacing:.08em;padding:2px 6px;border-radius:6px;line-height:1.3;
+  text-shadow:0 1px 1px rgba(0,0,0,.5)}
+.row .mt{flex:1;min-width:0}
+.row .mt b{display:block;font-size:13.5px;font-weight:620;line-height:1.35}
+.row .mt small{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--sp-tx3);margin-top:2px}
+.row .mt small i{width:3px;height:3px;border-radius:50%;background:var(--sp-tx4);display:block;flex:none}
+.row .mt small span{font-family:var(--mono)}
+.row .ac{flex:none;display:flex;align-items:center;gap:4px;color:var(--sp-tx3)}
+.row .ac i{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.row .ac i svg{width:15px;height:15px}
+.row .ac .lk i{background:rgba(178,103,10,.14)}
+/* 开关 · 滑块 · 进度 */
+.sw2{width:52px;height:30px;border-radius:999px;background:var(--sp-surf3);border:1px solid var(--sp-line2);
+  position:relative;cursor:pointer;flex:none}
+.sw2::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;
+  box-shadow:0 1px 3px rgba(16,24,40,.30)}
+.frame.t-dark .sw2::after{background:#C4CEDC}
+.sw2.on{background:var(--sp-ac);border-color:var(--sp-ac)}
+.sw2.on::after{transform:translateX(22px)}
+.bar{height:8px;border-radius:999px;background:var(--sp-surf3);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--sp-ac)}
+.seek{height:14px;border-radius:999px;background:var(--sp-surf3);position:relative;box-shadow:inset 0 1px 2px rgba(16,24,40,.06)}
+.seek .fl{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--sp-ac2),var(--sp-ac))}
+.seek .kn{position:absolute;top:50%;width:26px;height:26px;border-radius:50%;background:var(--sp-raise);
+  border:1px solid var(--sp-line2);transform:translate(-50%,-50%);box-shadow:0 2px 7px rgba(16,24,40,.22)}
+.seek .kn::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:8px;height:8px;border-radius:50%;background:var(--sp-ac)}
+.seek .tk{position:absolute;top:50%;width:2px;height:22px;background:var(--sp-surf2);transform:translate(-50%,-50%)}
+.ring{width:var(--sz);height:var(--sz);border-radius:50%;flex:none;position:relative;
+  background:conic-gradient(var(--sp-ac) calc(var(--p)*1%),var(--sp-surf3) 0);
+  display:flex;align-items:center;justify-content:center}
+.ring::after{content:"";position:absolute;inset:11%;border-radius:50%;background:var(--sp-surf)}
+.ring span{position:relative;font-family:var(--mono);font-size:calc(var(--sz)*.26);font-weight:680;letter-spacing:-.5px}
+/* 视频舞台 */
+.stage{position:relative;flex:1;min-height:0}
+.quad{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+  gap:4px;background:#0A0F16;border-radius:20px;overflow:hidden;box-shadow:var(--sp-sh3)}
+.cam{position:relative;overflow:hidden;background:#080C12}
+.feed{position:absolute;inset:0}
+.screen .scn,.scn{position:absolute;inset:0;width:100%;height:100%;display:block;stroke:none;fill:none;stroke-width:0}
+.feed::after{content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 4px);
+  mix-blend-mode:overlay;opacity:.8}
+.vig{position:absolute;inset:0;box-shadow:inset 0 0 52px 2px rgba(0,0,0,.34),inset 0 -52px 56px -40px rgba(0,0,0,.42)}
+.gll{position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);pointer-events:none;z-index:3}
+.horz{position:absolute;left:0;right:0;top:44%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent)}
+.road{position:absolute;left:0;right:0;bottom:0;height:56%;overflow:hidden}
+.road i{position:absolute;left:50%;bottom:-12%;width:2px;height:116%;transform-origin:bottom center;border-radius:2px}
+.osd{position:absolute;left:14px;top:12px;z-index:4;display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+.osd2{position:absolute;right:14px;top:12px;z-index:4;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+.osd3{position:absolute;left:14px;bottom:12px;z-index:4;display:flex;align-items:center;gap:8px}
+.osd4{position:absolute;right:14px;bottom:12px;z-index:4}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--sp-dim);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--sp-linew);border-radius:10px;padding:6px 10px;color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.55);box-shadow:0 1px 3px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.10)}
+.chip svg{width:14px;height:14px}
+.chip b{font-size:12.5px;font-weight:620;letter-spacing:.02em}
+.chip s{font-family:var(--mono);font-size:10.5px;color:rgba(255,255,255,.72);text-decoration:none;letter-spacing:.02em}
+.chip.rec{background:rgba(255,255,255,.93);color:#14181F;text-shadow:none;border-color:transparent}
+.frame.t-dark .chip.rec{background:rgba(20,26,34,.86);color:#fff;border-color:var(--sp-linew)}
+.chip.rec i{width:9px;height:9px;border-radius:50%;background:var(--sp-rec);flex:none;box-shadow:0 0 0 3px rgba(229,55,47,.20)}
+.chip.rec u{font-family:var(--mono);font-size:12px;font-weight:680;text-decoration:none}
+.cam.on .gll{box-shadow:inset 0 0 0 2px var(--sp-ac),inset 0 0 44px rgba(53,114,244,.18)}
+.corner{position:absolute;width:16px;height:16px;border:2px solid var(--sp-ac);z-index:5}
+.corner.tl{left:9px;top:9px;border-right:0;border-bottom:0;border-radius:5px 0 0 0}
+.corner.tr{right:9px;top:9px;border-left:0;border-bottom:0;border-radius:0 5px 0 0}
+.corner.bl{left:9px;bottom:9px;border-right:0;border-top:0;border-radius:0 0 0 5px}
+.corner.br{right:9px;bottom:9px;border-left:0;border-top:0;border-radius:0 0 5px 0}
+/* 浮层控件 */
+.fab{width:52px;height:52px;border-radius:17px;border:1px solid var(--sp-hair);background:var(--sp-glass);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;
+  color:var(--sp-tx);box-shadow:var(--sp-sh2),var(--sp-top);cursor:pointer;flex:none}
+.fab svg{width:22px;height:22px}
+.fab.dg2{color:var(--sp-dg)}
+.fab.on{background:var(--sp-ac);border-color:var(--sp-ac);color:#fff}
+.frame.t-dark .fab.on{color:#0E1420}
+.fabv{position:absolute;right:16px;top:50%;transform:translateY(-50%);z-index:9;display:flex;flex-direction:column;gap:10px}
+.shut{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.85);background:rgba(229,55,47,.92);
+  display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex:none;
+  box-shadow:0 6px 22px rgba(229,55,47,.34),inset 0 0 0 4px rgba(255,255,255,.16)}
+.shut svg{width:26px;height:26px;stroke-width:2.2}
+/* 播放器 / 时间轴 */
+.ply{display:flex;align-items:center;gap:16px;flex:none}
+.ply button{width:44px;height:44px;border-radius:14px;border:1px solid var(--sp-line2);background:var(--sp-surf);
+  color:var(--sp-tx);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sp-sh1);flex:none}
+.ply button svg{width:18px;height:18px}
+.ply button.pl{background:var(--sp-ac);border-color:var(--sp-ac);color:#fff;width:52px;height:52px;border-radius:17px;
+  box-shadow:0 4px 14px var(--sp-acring)}
+.frame.t-dark .ply button.pl{color:#0E1420}
+.ply .tm{font-family:var(--mono);font-size:13.5px;font-weight:660;flex:none}
+.ply .tm s{color:var(--sp-tx3);text-decoration:none;font-weight:600}
+.tl{position:relative;height:84px}
+.tl .st{position:absolute;left:0;right:0;top:0;height:18px;display:flex;gap:2px;padding:0 12px}
+.tl .st i{flex:1;border-radius:3px;background:var(--sp-surf3);position:relative;overflow:hidden}
+.tl .st i u{position:absolute;left:0;bottom:0;top:0;display:block;border-radius:3px}
+.tl .b2{position:absolute;left:12px;right:12px;top:46px;height:14px;border-radius:999px;background:var(--sp-surf3)}
+.tl .f2{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--sp-ac2),var(--sp-ac))}
+.tl .k2{position:absolute;top:50%;width:20px;height:20px;border-radius:50%;background:var(--sp-raise);
+  border:1px solid var(--sp-line2);transform:translate(-50%,-50%);box-shadow:0 2px 7px rgba(16,24,40,.22)}
+.tl .mk{position:absolute;top:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;z-index:2}
+.tl .mk i{width:2px;height:7px;background:var(--sp-rec);border-radius:2px;display:block}
+.tl .mk em{font-family:var(--mono);font-size:9.5px;color:var(--sp-tx3);font-style:normal;white-space:nowrap}
+.tl .tt2{position:absolute;top:66px;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;color:var(--sp-tx4)}
+/* 设置行 */
+.srow{display:flex;align-items:center;gap:16px;padding:13px 16px;border-bottom:1px solid var(--sp-line)}
+.srow:last-child{border-bottom:0}
+.srow .tx{flex:1;min-width:0}
+.srow .tx b{display:block;font-size:14px;font-weight:620;line-height:1.35}
+.srow .tx small{display:block;font-size:12px;color:var(--sp-tx3);margin-top:2px;line-height:1.5}
+.srow .ctl{flex:none;display:flex;align-items:center;gap:10px}
+.donut{display:flex;align-items:center;gap:22px}
+.donut .lg2{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px}
+.li{display:flex;align-items:center;gap:10px}
+.li i{width:10px;height:10px;border-radius:3.5px;flex:none}
+.li b{flex:1;font-size:12.5px;font-weight:600;color:var(--sp-tx2)}
+.li span{font-family:var(--mono);font-size:12.5px;font-weight:640}
+/* 屏幕外壳 */
+.duo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1080px){.duo-wrap{grid-template-columns:1fr}}
+.cap2{font-size:12.5px;color:var(--ink-2);margin:0 0 8px}
+.spec{display:flex;flex-wrap:wrap;gap:6px 20px;margin:16px 0 26px;padding:13px 16px;background:var(--chip);
+  border:1px solid var(--line);border-radius:11px;font-size:12.5px;color:var(--ink-2)}
+.spec span{font-family:var(--mono);font-size:11.5px;color:var(--blue)}
+h3.sid{margin:38px 0 3px;font-size:16.5px;font-weight:680;letter-spacing:-.2px;scroll-margin-top:20px}
+h3.sid .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:var(--blue-bg);
+  border-radius:6px;padding:3px 6px;margin-right:9px;font-weight:660}
+.sid-sub{font-size:12.5px;color:var(--ink-2);margin:0 0 12px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">极视 SOPHON<span>UI DESIGN V3</span></div>
+    <nav>
+      <a href="#rev">本版修订</a>
+      <a href="#lang">构成法则</a>
+      <a href="#color">色彩 Token</a>
+      <a href="#type">字阶 · 圆角 · 投影</a>
+      <a href="#comp">组件库</a>
+      <a href="#screens">界面稿 ×6</a>
+      <a href="#next">落地映射</a>
+    </nav>
+    <div class="sf">画布 1280 × 800 dp<br>强制横屏（同 Sophon manifest）<br><br>基准：盯盯车 SurCamX 1.4.6<br>com.sunslin.surcamx</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Car HMI Design System · Four-Channel DVR</div>
+      <h1>极视 Sophon · 双主题界面设计 v3</h1>
+      <p>针对「细节不如盯盯车精致」重做。问题不在配色，而在<b>尺度</b>：上一版沿用移动端基线（15px 正文、8px 圆角、单层投影），在车机一米视距下必然单薄。本版以盯盯车 SurCamX 1.4.6 反编译实测的度量值为基准重建整套 token。</p>
+      <div class="switchbar">
+        <div id="themeSwitch" class="sw1">
+          <button data-t="light" class="on">浅色</button>
+          <button data-t="dark">深色</button>
+          <button data-t="duo">并排对比</button>
+        </div>
+        <span class="hint">所有界面稿共用同一份 HTML/CSS token，切换即时生效</span>
+      </div>
+    </header>
+
+    <section id="rev">
+      <h2>本版修订明细</h2>
+      <p class="sub">每张界面稿重写时同步校准的参数，右侧「依据」列是盯盯车 APK 中真实存在的资源名与实测值。</p>
+      <table>
+        <tr><th>维度</th><th>v2 旧值</th><th class="m">v3 新值</th><th class="m">盯盯车实测依据</th></tr>
+        <tr><td>主画面圆角</td><td class="m">8dp 分格</td><td class="m">20dp 外框 + 内格直角</td><td class="m">main_preview_corner_radius = 24dp</td></tr>
+        <tr><td>页面标题</td><td class="m">19px</td><td class="m">26px / 680</td><td class="m">page_header_title = 36sp</td></tr>
+        <tr><td>导航面板</td><td class="m">104px 图标竖轨</td><td class="m">300px 宽面板 · 双行信息 + 计数</td><td class="m">nav_rail_collapsed_width = 384dp</td></tr>
+        <tr><td>导航字号</td><td class="m">11.5px 单行</td><td class="m">14.5px + 11.5px 副行</td><td class="m">nav_rail_text_size = 32sp</td></tr>
+        <tr><td>瓷砖投影</td><td class="m">单层 1px</td><td class="m">双层 ambient + key</td><td class="m">settings_hub_tile_elevation = 28dp</td></tr>
+        <tr><td>滑块</td><td class="m">高 8px 无滑块</td><td class="m">轨 14px + 26px 滑块 + 刻度</td><td class="m">seekbar track 28dp / thumb 44dp</td></tr>
+        <tr><td>开关</td><td class="m">44 × 26</td><td class="m">52 × 30</td><td class="m">flyme_sb_switch 104 × 52dp</td></tr>
+        <tr><td>REC 标识</td><td class="m">单行胶囊</td><td class="m">呼吸点 + 计时 + 独立时间戳</td><td class="m">rec_dot 14dp / label 20sp</td></tr>
+        <tr><td>列表行</td><td class="m">缩略图 + 单行</td><td class="m">126×71 + 时长角标 + 锁定锁 + 三段元数据</td><td class="m">trip_summary_* 多档字阶</td></tr>
+        <tr><td>信息密度</td><td class="m">每项 1 层</td><td class="m">每项 2–3 层（主 / 副 / 数值）</td><td class="m">KPI value 32sp + unit 14sp</td></tr>
+      </table>
+      <div class="note"><b>取舍说明：</b>盯盯车部分页面偏安卓 CardView 表格观感，这部分不借鉴。只吸收它的<b>视频层处理</b>、<b>浮层控制</b>与<b>车机尺度</b>；信息结构与层次保持 Sophon 自己的秩序。</div>
+    </section>
+
+    <section id="lang">
+      <h2>构成法则</h2>
+      <p class="sub">六条规则决定这套界面是否耐看，也是所有 token 的约束来源。</p>
+      <div class="grid3">
+        <div class="pr"><span class="no">01</span><h3>视频永远是主角</h3>
+          <p>画面铺满可用区域，不给它套卡片壳。UI 全部浮在画面之上，用毛玻璃 + 内高光与画面分离；画面之间只有 3px 细缝，靠缝而非留白分隔。</p>
+          <div class="tag">preview → stage · UI → overlay</div></div>
+        <div class="pr"><span class="no">02</span><h3>一米视距的字阶</h3>
+          <p>车机不是手机。最小可读 11.5px、正文 13.5px、标题 26px、关键数值 30px。所有数值走等宽 tabular 数字，避免跳动。</p>
+          <div class="tag">11.5 / 13.5 / 26 / 30</div></div>
+        <div class="pr"><span class="no">03</span><h3>每个模块至少两层信息</h3>
+          <p>主信息 + 副说明 + 数值或徽标。列表行必带时长与容量，设置项必带副标题，省掉「查看详情」这一层操作。</p>
+          <div class="tag">title / sub / meta / badge</div></div>
+        <div class="pr"><span class="no">04</span><h3>层级靠投影不靠描边</h3>
+          <p>取消粗描边。层级由双层投影（ambient + key）加顶部 1px 内高光表达；深色模式改用抬升背景色而非加重描边。</p>
+          <div class="tag">sh-1 / sh-2 / sh-3 + inset top</div></div>
+        <div class="pr"><span class="no">05</span><h3>单一强调色</h3>
+          <p>全站只有一个强调色。青色彻底移除，红色只留给录制、删除、紧急三类语义——滥用会稀释告警权重。</p>
+          <div class="tag">#3572F4 / #5B9BFF</div></div>
+        <div class="pr"><span class="no">06</span><h3>触控目标 ≥ 52px</h3>
+          <p>行车场景手指不稳，可点元素不小于 52×52，危险操作间距额外增加。这是安全底线，不是风格选择。</p>
+          <div class="tag">min target 52dp</div></div>
+      </div>
+    </section>
+
+    <section id="color">
+      <h2>色彩 Token</h2>
+      <p class="sub">语义化命名，深浅两套同构。深色不是把浅色反转，而是重新校准：背景降到 #11151B，抬升面用 #1A2029 而非纯黑。</p>
+      <div class="grid2">
+        <div>
+          <div class="cap2">浅色 · Light（建议用于强日照白天）</div>
+          <div class="pal">
+            <div class="sw"><i style="background:#E8ECF1"></i><div><b>Page</b><small>#E8ECF1</small></div></div>
+            <div class="sw"><i style="background:#FFFFFF"></i><div><b>Surface</b><small>#FFFFFF</small></div></div>
+            <div class="sw"><i style="background:#F5F7FA"></i><div><b>Surface-2</b><small>#F5F7FA</small></div></div>
+            <div class="sw"><i style="background:#EBEFF4"></i><div><b>Surface-3</b><small>#EBEFF4</small></div></div>
+            <div class="sw"><i style="background:#E4E9F0"></i><div><b>Line</b><small>#E4E9F0</small></div></div>
+            <div class="sw"><i style="background:#3572F4"></i><div><b>Accent</b><small>#3572F4</small></div></div>
+            <div class="sw"><i style="background:#111620"></i><div><b>Text</b><small>#111620</small></div></div>
+            <div class="sw"><i style="background:#5A6675"></i><div><b>Text-2</b><small>#5A6675</small></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="cap2">深色 · Dark（建议作为默认）</div>
+          <div class="pal">
+            <div class="sw"><i style="background:#11151B"></i><div><b>Page</b><small>#11151B</small></div></div>
+            <div class="sw"><i style="background:#1A2029"></i><div><b>Surface</b><small>#1A2029</small></div></div>
+            <div class="sw"><i style="background:#222932"></i><div><b>Surface-2</b><small>#222932</small></div></div>
+            <div class="sw"><i style="background:#2B3340"></i><div><b>Surface-3</b><small>#2B3340</small></div></div>
+            <div class="sw"><i style="background:#2A323D"></i><div><b>Line</b><small>#2A323D</small></div></div>
+            <div class="sw"><i style="background:#5B9BFF"></i><div><b>Accent</b><small>#5B9BFF</small></div></div>
+            <div class="sw"><i style="background:#F2F5F8"></i><div><b>Text</b><small>#F2F5F8</small></div></div>
+            <div class="sw"><i style="background:#A3AEBD"></i><div><b>Text-2</b><small>#A3AEBD</small></div></div>
+          </div>
+        </div>
+      </div>
+      <table style="margin-top:16px">
+        <tr><th>语义</th><th class="m">浅色</th><th class="m">深色</th><th class="m">深色对比度</th><th>用途</th></tr>
+        <tr><td>Text 主文本</td><td class="m">#111620</td><td class="m">#F2F5F8</td><td class="m">13.8 : 1</td><td>标题、数值</td></tr>
+        <tr><td>Text-2 次文本</td><td class="m">#5A6675</td><td class="m">#A3AEBD</td><td class="m">6.9 : 1</td><td>副说明</td></tr>
+        <tr><td>Text-3 弱文本</td><td class="m">#8B97A8</td><td class="m">#6E7989</td><td class="m">3.2 : 1</td><td>仅元数据，不成句</td></tr>
+        <tr><td>Accent 强调</td><td class="m">#3572F4</td><td class="m">#5B9BFF</td><td class="m">7.1 : 1</td><td>选中、主按钮</td></tr>
+        <tr><td>Danger 危险</td><td class="m">#D92D20</td><td class="m">#FF5A4E</td><td class="m">5.4 : 1</td><td>删除、紧急锁定</td></tr>
+        <tr><td>Rec 录制</td><td class="m">#E5372F</td><td class="m">#FF4E45</td><td class="m">5.9 : 1</td><td>REC 指示、事件打点</td></tr>
+      </table>
+    </section>
+
+    <section id="type">
+      <h2>字阶 · 圆角 · 投影</h2>
+      <p class="sub">单位换算到 1280 × 800 画布。数值类一律 <code class="num">JetBrains Mono</code> + tabular-nums。</p>
+      <table>
+        <tr><th style="width:130px">层级</th><th class="m">字号 / 字重</th><th style="width:200px">用途</th><th>样例</th></tr>
+        <tr><td>Eyebrow</td><td class="m">10.5 / 680 · +0.13em</td><td>分区眉标</td><td><span style="font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;font-weight:680;color:#8B97A8">file detail</span></td></tr>
+        <tr><td>Meta</td><td class="m">11.5 / 500</td><td>元数据副行</td><td><span style="font-size:11.5px;color:#5A6675">前路 · 1920×1080 · 186 MB</span></td></tr>
+        <tr><td>Body</td><td class="m">13.5 / 620</td><td>列表标题</td><td><span style="font-size:13.5px;font-weight:620">前路 · 主摄</span></td></tr>
+        <tr><td>Lead</td><td class="m">15 / 660</td><td>瓷砖标题</td><td><span style="font-size:15px;font-weight:660">四向画质</span></td></tr>
+        <tr><td>Title</td><td class="m">26 / 680 · -0.5px</td><td>页标题</td><td><span style="font-size:26px;font-weight:680;letter-spacing:-.5px">实时监控</span></td></tr>
+        <tr><td>Number</td><td class="m">30 / 680 mono</td><td>KPI 数值</td><td><span class="num" style="font-size:30px;font-weight:680">62<span style="font-size:12.5px;color:#8B97A8"> %</span></span></td></tr>
+      </table>
+      <div class="grid3" style="margin-top:16px">
+        <div class="pr"><h3>圆角</h3><p>主画面外框 20 · 卡片瓷砖 18–20 · 控件 13 · 玻璃方键 17 · 小 Chip 10 · 胶囊 999。遵循外层大、内层小的同心规则。</p><div class="tag">20 / 18 / 13 / 10 / 999</div></div>
+        <div class="pr"><h3>投影</h3><p>sh-1 贴地、sh-2 浮层、sh-3 模态（主画面用，28dp 等效）。每条含 ambient + key 两层，避免单点硬阴影。</p><div class="tag">sh-1 / sh-2 / sh-3</div></div>
+        <div class="pr"><h3>毛玻璃</h3><p>浮层控件统一 blur(18px) + 半透明底 + 顶部内高光；OSD 文字标签用 34% 黑底 + 14% 白描边 + 文字投影，保证在任何画面上都可读。</p><div class="tag">blur 18 / dim 34%</div></div>
+      </div>
+    </section>
+
+    <section id="comp">
+      <h2>组件库 · 双主题</h2>
+      <p class="sub">同一份 HTML，仅切换 <code class="num">.t-dark</code> 生效。左右两列是实时渲染，不是截图。</p>
+
+      <div class="cmpcap"><b>按钮 · Button</b><span>42px 高 · 13px 圆角</span></div>
+      <div class="cmpgrid">
+        <div class="frame" data-slot="a">
+          <p class="tt">Light</p>
+          <div class="rr"><span class="btn pri">开始录制</span><span class="btn">导出 <svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/></svg></span><span class="btn gh">取消</span><span class="btn ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+          <div class="rr"><span class="btn" style="opacity:.45">禁用</span></div>
+        </div>
+        <div class="frame t-dark" data-slot="b">
+          <p class="tt">Dark</p>
+          <div class="rr"><span class="btn pri">开始录制</span><span class="btn">导出 <svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/></svg></span><span class="btn gh">取消</span><span class="btn ico"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+          <div class="rr"><span class="btn" style="opacity:.45">禁用</span></div>
+        </div>
+      </div>
+
+      <div class="cmpcap"><b>徽标 · 分段 · 开关</b><span>状态表达，不与强调色竞争</span></div>
+      <div class="cmpgrid">
+        <div class="frame" data-slot="a">
+          <p class="tt">Light</p>
+          <div class="rr"><span class="pill rec"><i style="width:8px;height:8px;border-radius:50%;background:currentColor"></i>REC 02:14</span><span class="pill ac">已锁定</span><span class="pill ok">U 盘正常</span><span class="pill wn">高温 42℃</span><span class="pill">#4 路</span></div>
+          <div class="rr"><span class="seg"><button class="on">全部</button><button>今日</button><button>本周</button></span><span class="sw2 on"></span><span class="sw2"></span><span class="pill sld">同步中</span></div>
+        </div>
+        <div class="frame t-dark" data-slot="b">
+          <p class="tt">Dark</p>
+          <div class="rr"><span class="pill rec"><i style="width:8px;height:8px;border-radius:50%;background:currentColor"></i>REC 02:14</span><span class="pill ac">已锁定</span><span class="pill ok">U 盘正常</span><span class="pill wn">高温 42℃</span><span class="pill">#4 路</span></div>
+          <div class="rr"><span class="seg"><button class="on">全部</button><button>今日</button><button>本周</button></span><span class="sw2 on"></span><span class="sw2"></span><span class="pill sld">同步中</span></div>
+        </div>
+      </div>
+
+      <div class="cmpcap"><b>瓷砖 · Tile</b><span>28dp 等效投影 · 20px 圆角</span></div>
+      <div class="cmpgrid">
+        <div class="frame" data-slot="a">
+          <p class="tt">Light</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <div class="tile"><span class="pill ac tr">4K</span><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="8.5" cy="12" r="1.6"/></svg></div><b>四向画质</b><small>1920×1080 · 30fps</small></div>
+            <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6z"/></svg></div><b>哨兵模式</b><small>熄火后持续布防</small></div>
+            <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21V7"/><circle cx="12" cy="4.5" r="2.2"/><path d="M8 11l-2 3.5h3V21M16 11l2 3.5h-3V21"/></svg></div><b>存储策略</b><small>循环覆盖 · 保留 3 天</small></div>
+          </div>
+        </div>
+        <div class="frame t-dark" data-slot="b">
+          <p class="tt">Dark</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+            <div class="tile"><span class="pill ac tr">4K</span><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="8.5" cy="12" r="1.6"/></svg></div><b>四向画质</b><small>1920×1080 · 30fps</small></div>
+            <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6z"/></svg></div><b>哨兵模式</b><small>熄火后持续布防</small></div>
+            <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21V7"/><circle cx="12" cy="4.5" r="2.2"/><path d="M8 11l-2 3.5h3V21M16 11l2 3.5h-3V21"/></svg></div><b>存储策略</b><small>循环覆盖 · 保留 3 天</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cmpcap"><b>滑块 · 进度 · 数值</b><span>轨 14px + 26px 滑块 + tabular 数值</span></div>
+      <div class="cmpgrid">
+        <div class="frame" data-slot="a">
+          <p class="tt">Light</p>
+          <div class="rr" style="width:100%"><div class="seek" style="flex:1"><i class="fl" style="width:62%"></i><span class="tk" style="left:25%"></span><span class="tk" style="left:50%"></span><span class="tk" style="left:75%"></span><span class="kn" style="left:62%"></span></div><span class="num" style="font-size:13.5px;font-weight:660">62%</span></div>
+          <div class="rr" style="width:100%;gap:12px">
+            <div class="ring" style="--p:62;--sz:56px"><span>62%</span></div>
+            <div style="flex:1"><div class="bar" style="margin-bottom:6px"><i style="width:38%"></i></div><div class="bar" style="margin-bottom:6px"><i style="width:64%;background:#B2670A"></i></div><div class="bar"><i style="width:22%;background:#0E9B4E"></i></div></div>
+          </div>
+        </div>
+        <div class="frame t-dark" data-slot="b">
+          <p class="tt">Dark</p>
+          <div class="rr" style="width:100%"><div class="seek" style="flex:1"><i class="fl" style="width:62%"></i><span class="tk" style="left:25%"></span><span class="tk" style="left:50%"></span><span class="tk" style="left:75%"></span><span class="kn" style="left:62%"></span></div><span class="num" style="font-size:13.5px;font-weight:660">62%</span></div>
+          <div class="rr" style="width:100%;gap:12px">
+            <div class="ring" style="--p:62;--sz:56px"><span>62%</span></div>
+            <div style="flex:1"><div class="bar" style="margin-bottom:6px"><i style="width:38%"></i></div><div class="bar" style="margin-bottom:6px"><i style="width:64%;background:#F0A62E"></i></div><div class="bar"><i style="width:22%;background:#34C76A"></i></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screens">
+      <h2>界面稿 ×6</h2>
+      <p class="sub">1280 × 800 dp 车机横屏，等比缩放显示。切到「并排对比」可逐屏核对深浅两套的差异。</p>
+      <div class="spec">
+        <b>画布</b> <span>1280 × 800 dp</span>
+        <b>导航面板</b> <span>300 dp</span>
+        <b>最小触控</b> <span>52 dp</span>
+        <b>画面圆角</b> <span>20 dp</span>
+        <b>玻璃浮层</b> <span>blur 18px</span>
+      </div>
+
+      <!-- ============ S1 ============ -->
+      <h3 class="sid" id="s1"><span class="no">S1</span>主控 · 四向监看</h3>
+      <p class="sid-sub">默认落地页。四路画面紧拼成 2×2 舞台占满可用区，UI 全部浮在画面之上；左侧面板承担全部导航与设备状态。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:02"></div>
+        <div class="app">
+          <div data-rail="live"></div>
+          <div class="pane">
+            <div class="phead">
+              <div><h4>实时监控</h4>
+                <div class="sub">行驶中<i></i><span class="num">42 km/h</span><i></i>四路录制中<i></i>循环覆盖已开启</div></div>
+              <div class="acts">
+                <span class="pill ac">码率 24 Mbps</span>
+                <button class="btn ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></button>
+                <button class="btn pri">全屏 <svg viewBox="0 0 24 24"><path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M4 15v4a1 1 0 0 0 1 1h4"/></svg></button>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="quad" data-cams="live"></div>
+              <div class="fabv">
+                <div class="fab"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg></div>
+                <div class="fab dg2"><svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div>
+                <div class="fab"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></div>
+                <div class="fab on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/></svg></div>
+              </div>
+            </div>
+            <div class="ply" style="justify-content:center">
+              <div class="thm" style="width:52px;height:52px;border-radius:13px;background:#37485C;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden"><div data-scene="front" style="position:absolute;inset:0;opacity:.9"></div><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;stroke-width:2.2;position:relative;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))"><path d="M9 6.5l9 5.5-9 5.5z"/></svg><span class="cap" style="font-size:9px;padding:1px 5px;border-radius:5px">3:12</span></div>
+              <div class="shut"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg></div>
+              <div style="display:flex;gap:10px">
+                <div class="fab"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6z"/></svg></div>
+                <div class="fab"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l4.5-4.5 3.5 3.5 3-3 5 5"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <!-- ============ S2 ============ -->
+      <h3 class="sid" id="s2"><span class="no">S2</span>单路全屏</h3>
+      <p class="sid-sub">由 S1 点击任一画面进入，独占整个内容区。OSD 信息随之加密——补上 GPS 坐标、曝光参数、限速路段。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:03"></div>
+        <div class="app">
+          <div data-rail="live"></div>
+          <div class="pane" style="padding:0">
+            <div class="stage" style="flex:1">
+              <div class="cam" style="position:absolute;inset:0">
+                <div class="feed" data-scene="front"></div>
+                <div class="vig"></div>
+                <svg viewBox="0 0 120 66" style="position:absolute;left:31%;top:51%;width:126px;opacity:.85;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))"><rect x="18" y="4" width="84" height="24" rx="10" fill="#222E3E" stroke="rgba(255,255,255,.16)"/><rect x="8" y="20" width="104" height="36" rx="13" fill="#1B2532" stroke="rgba(255,255,255,.22)"/><rect x="14" y="32" width="92" height="4" rx="2" fill="rgba(255,255,255,.09)"/><rect x="26" y="43" width="17" height="7" rx="3.5" fill="#D95550"/><rect x="77" y="43" width="17" height="7" rx="3.5" fill="#D95550"/><rect x="40" y="26" width="40" height="12" rx="4" fill="rgba(160,190,220,.30)"/></svg>
+                <div class="osd2" style="right:24px;top:auto;bottom:200px;align-items:flex-end"><span class="chip" style="padding:5px 9px"><i style="width:6px;height:6px;border-radius:50%;background:#63D98B;flex:none"></i><s>同车道 · 车距 12 m</s></span></div>
+                <div class="gll"></div>
+                <div class="osd" style="left:24px;top:20px">
+                  <span class="chip"><svg viewBox="0 0 24 24"><path d="M4 15.5V12l2-5h12l2 5v3.5"/></svg><b>前路 · 主摄</b><s>4K · 30fps</s></span>
+                </div>
+                <div class="osd2" style="right:24px;top:20px">
+                  <span class="chip"><s>f/1.8 · ISO 320 · 1/60s</s></span>
+                  <span class="chip"><s>GPS 30.2741°N 120.1552°E</s></span>
+                  <span class="chip"><s>H.265 · 24 Mbps</s></span>
+                </div>
+                <div style="position:absolute;left:24px;bottom:74px;color:#fff">
+                  <div style="display:flex;align-items:baseline;gap:7px">
+                    <span class="num" style="font-size:52px;font-weight:680;letter-spacing:-2px;line-height:1">42</span>
+                    <span style="font-size:15px;font-weight:620;opacity:.85">km/h</span>
+                  </div>
+                  <div style="font-size:11.5px;opacity:.75;margin-top:3px">限速 60 · 文一西路 · 余杭段</div>
+                </div>
+                <div class="osd3" style="left:24px;bottom:22px">
+                  <span class="chip rec"><i></i><u>02:14:37</u></span>
+                  <span class="chip"><s>2026-10-14 14:03:12</s></span>
+                </div>
+                <div class="osd4" style="right:24px;bottom:22px"><span class="chip"><s>剩余可录 3 天 7 小时</s></span></div>
+                <div class="fabv" style="right:24px">
+                  <div class="fab"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></div>
+                  <div class="fab"><svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg></div>
+                  <div class="fab dg2"><svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></div>
+                  <div class="fab"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/></svg></div>
+                  <div class="fab"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <!-- ============ S3 ============ -->
+      <h3 class="sid" id="s3"><span class="no">S3</span>行车视频 · 归档列表</h3>
+      <p class="sid-sub">左列表右预览的分栏。每行三段信息：标题 / 时长 / 容量与格式；被锁定的片段带锁角标。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:04"></div>
+        <div class="app">
+          <div data-rail="video"></div>
+          <div class="pane">
+            <div class="phead">
+              <div><h4>行车视频</h4>
+                <div class="sub">今日 <span class="num">18</span> 段<i></i>本周 <span class="num">128</span> 段<i></i>占用 <span class="num">82.4 GB</span></div></div>
+              <div class="acts">
+                <span class="seg"><button class="on">全部</button><button>锁定 6</button><button>紧急 2</button></span>
+                <button class="btn ico"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/></svg></button>
+                <button class="btn ico"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;flex:1;min-height:0">
+              <div class="card" style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden">
+                <div style="padding:8px 14px;border-bottom:1px solid var(--sp-line);background:var(--sp-surf2)">
+                  <span class="ey">今天 · 10 月 14 日</span>
+                </div>
+                <div style="flex:1;overflow:hidden"><div data-clips></div></div>
+              </div>
+              <div style="width:392px;flex:none;display:flex;flex-direction:column;gap:14px">
+                <div class="cam" style="height:222px;border-radius:18px;overflow:hidden;box-shadow:var(--sp-sh2)">
+                  <div class="feed" data-scene="front" style="background:#37485C"></div>
+                  <div class="horz"></div><div class="road" data-road></div><div class="vig"></div><div class="gll"></div>
+                  <div class="osd"><span class="chip"><b>前路 · 主摄</b></span></div>
+                  <div class="osd2"><span class="chip"><s>14:02:18</s></span></div>
+                  <div class="osd3"><span class="chip rec"><u>00:03:12</u></span></div>
+                  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:12px;align-items:center">
+                    <div class="fab"><svg viewBox="0 0 24 24"><path d="M18 5v14L8 12zM5 5v14"/></svg></div>
+                    <div class="fab on" style="width:60px;height:60px;border-radius:20px"><svg class="fil" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></svg></div>
+                    <div class="fab"><svg viewBox="0 0 24 24"><path d="M6 5v14l10-7zM19 5v14"/></svg></div>
+                  </div>
+                </div>
+                <div class="card" style="padding:14px 16px;flex:1;overflow:hidden">
+                  <span class="ey">文件详情</span>
+                  <div style="margin-top:11px">
+                    <div style="font-size:15px;font-weight:660">前路 · 主摄 · 14:02:18</div>
+                    <div style="font-size:12px;color:var(--sp-tx3);margin-top:2px">触发方式 · 碰撞抖动自动锁定</div>
+                  </div>
+                  <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:12.5px">
+                    <div style="display:flex"><span style="width:92px;color:var(--sp-tx3);flex:none">分辨率</span><span class="num">1920 × 1080 · 30fps</span></div>
+                    <div style="display:flex"><span style="width:92px;color:var(--sp-tx3);flex:none">编码</span><span class="num">H.265 · 24 Mbps</span></div>
+                    <div style="display:flex"><span style="width:92px;color:var(--sp-tx3);flex:none">时长</span><span class="num">00:03:12</span></div>
+                    <div style="display:flex"><span style="width:92px;color:var(--sp-tx3);flex:none">容量</span><span class="num">186 MB</span></div>
+                    <div style="display:flex"><span style="width:92px;color:var(--sp-tx3);flex:none">位置</span><span class="num">30.2741°N 120.1552°E</span></div>
+                  </div>
+                  <div style="display:flex;gap:8px;margin-top:14px">
+                    <span class="btn pri" style="flex:1">播放 <svg viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></svg></span>
+                    <span class="btn ico"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/></svg></span>
+                    <span class="btn ico"><svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+                    <span class="btn ico" style="color:var(--sp-dg)"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.8h5V7M6.5 7l1 12.2h9l1-12.2"/></svg></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <!-- ============ S4 ============ -->
+      <h3 class="sid" id="s4"><span class="no">S4</span>四路同步回放</h3>
+      <p class="sid-sub">单条时间轴同时驱动四路画面。四路多轨缩略在轴上方，事件打点直接标注在轴上。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:05"></div>
+        <div class="app">
+          <div data-rail="video"></div>
+          <div class="pane">
+            <div class="phead">
+              <div><h4>同步回放</h4>
+                <div class="sub">2026-10-14<i></i>总长 <span class="num">03:47:20</span><i></i>四路已对齐，误差 &lt; <span class="num">16 ms</span></div></div>
+              <div class="acts">
+                <span class="pill ac">同步锁定</span>
+                <span class="btn">导出四格合片 <svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/></svg></span>
+              </div>
+            </div>
+            <div class="stage"><div class="quad" data-cams="sync"></div></div>
+            <div class="card" style="padding:12px 16px;flex:none"><div class="tl" data-timeline></div></div>
+            <div class="ply">
+              <div style="display:flex;gap:8px;align-items:center">
+                <button style="width:44px;height:44px;border-radius:14px;border:1px solid var(--sp-line2);background:var(--sp-surf);color:var(--sp-tx);display:flex;align-items:center;justify-content:center;box-shadow:var(--sp-sh1)"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 5v14L8 12zM5 5v14"/></svg></button>
+                <button style="width:52px;height:52px;border-radius:17px;border:1px solid var(--sp-ac);background:var(--sp-ac);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px var(--sp-acring)"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke-width:2.2"><path d="M8.5 5v14M15.5 5v14"/></svg></button>
+                <button style="width:44px;height:44px;border-radius:14px;border:1px solid var(--sp-line2);background:var(--sp-surf);color:var(--sp-tx);display:flex;align-items:center;justify-content:center;box-shadow:var(--sp-sh1)"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 5v14l10-7zM19 5v14"/></svg></button>
+              </div>
+              <div class="tm"><span class="num">00:02:14</span> <s>/ 03:47:20</s></div>
+              <div style="flex:1"></div>
+              <span class="seg"><button>0.5×</button><button class="on">1×</button><button>2×</button><button>4×</button></span>
+              <div style="display:flex;gap:8px">
+                <div class="fab" style="width:44px;height:44px;border-radius:14px"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M13.5 3L5 13.5h5.5L9.5 21 19 10.5h-5.5z"/></svg></div>
+                <div class="fab" style="width:44px;height:44px;border-radius:14px"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></div>
+                <div class="fab" style="width:44px;height:44px;border-radius:14px"><svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M15 5l-7 7 7 7"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <!-- ============ S5 ============ -->
+      <h3 class="sid" id="s5"><span class="no">S5</span>哨兵模式 · 事件复盘</h3>
+      <p class="sid-sub">顶部三条 KPI 带趋势线；下方左右分栏，右侧用车辆俯视图标出触发方位。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:06"></div>
+        <div class="app">
+          <div data-rail="shield"></div>
+          <div class="pane">
+            <div class="phead">
+              <div><h4>哨兵事件</h4>
+                <div class="sub">熄火布防 <span class="num">7 小时 22 分</span><i></i>今日新增 <span class="num">2</span> 条<i></i>灵敏度 · 中</div></div>
+              <div class="acts">
+                <span class="seg"><button class="on">全部 6</button><button>碰撞 1</button><button>靠近 3</button><button>震动 2</button></span>
+                <span class="btn ico"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/></svg></span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:none">
+              <div class="kpi">
+                <div class="hd"><div class="ico"><svg viewBox="0 0 24 24"><path d="M13.5 3L5 13.5h5.5L9.5 21 19 10.5h-5.5z"/></svg></div><span>今日事件</span></div>
+                <div class="vl"><b>6</b><u>条</u></div>
+                <div class="ft"><span class="dl up"><svg viewBox="0 0 24 24"><path d="M12 20V5M6 11l6-6 6 6"/></svg>2 较昨日</span><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,20 14,18 28,21 42,15 56,17 70,10 100,6" fill="none" stroke="#0E9B4E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="kpi">
+                <div class="hd"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6z"/></svg></div><span>布防时长</span></div>
+                <div class="vl"><b>7.4</b><u>小时</u></div>
+                <div class="ft"><span class="dl dn"><svg viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6"/></svg>0.6</span><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,6 14,9 28,8 42,13 56,12 70,17 100,20" fill="none" stroke="#D92D20" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+              <div class="kpi">
+                <div class="hd"><div class="ico"><svg viewBox="0 0 24 24"><path d="M13.5 3L5 13.5h5.5L9.5 21 19 10.5h-5.5z"/></svg></div><span>哨兵耗电</span></div>
+                <div class="vl"><b>4.1</b><u>% SOC</u></div>
+                <div class="ft"><span class="dl up"><svg viewBox="0 0 24 24"><path d="M12 20V5M6 11l6-6 6 6"/></svg>安全</span><svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0,22 14,21 28,19 42,18 56,16 70,14 100,12" fill="none" stroke="#3572F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;flex:1;min-height:0">
+              <div class="card" style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden">
+                <div style="padding:8px 14px;border-bottom:1px solid var(--sp-line);background:var(--sp-surf2)"><span class="ey">事件时间线</span></div>
+                <div style="flex:1;overflow:hidden"><div data-events></div></div>
+              </div>
+              <div class="card" style="width:404px;flex:none;padding:16px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span class="ey">触发方位 · 左路 / 后路盲区</span>
+                  <span class="pill dg">高危</span>
+                </div>
+                <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--sp-surf2);border-radius:14px;padding:6px">
+                  <svg viewBox="0 0 180 300" style="width:auto;height:100%;max-height:224px;stroke-width:1.6">
+                    <rect x="42" y="34" width="96" height="232" rx="30" fill="var(--sp-surf3)" stroke="var(--sp-line2)"/>
+                    <rect x="54" y="52" width="72" height="54" rx="12" fill="var(--sp-surf)" stroke="var(--sp-line2)"/>
+                    <rect x="54" y="194" width="72" height="54" rx="12" fill="var(--sp-surf)" stroke="var(--sp-line2)"/>
+                    <circle cx="90" cy="252" r="15" fill="var(--sp-acbg)" stroke="var(--sp-ac)"/>
+                    <circle cx="90" cy="252" r="5" fill="var(--sp-ac)" stroke="none"/>
+                    <path d="M42 96h96" stroke="var(--sp-line2)"/>
+                    <circle cx="14" cy="70" r="19" fill="none" stroke="var(--sp-dg)" opacity=".38" stroke-dasharray="2.5 3.5"/>
+                    <circle cx="14" cy="70" r="25" fill="none" stroke="var(--sp-dg)" opacity=".16" stroke-dasharray="2.5 3.5"/>
+                    <circle cx="14" cy="70" r="13" fill="var(--sp-dg)" stroke="none" opacity=".18"/>
+                    <circle cx="14" cy="70" r="7" fill="var(--sp-dg)" stroke="none"/>
+                    <circle cx="168" cy="150" r="18" fill="none" stroke="var(--sp-wn)" opacity=".40" stroke-dasharray="2.5 3.5"/>
+                    <circle cx="168" cy="150" r="24" fill="none" stroke="var(--sp-wn)" opacity=".16" stroke-dasharray="2.5 3.5"/>
+                    <circle cx="168" cy="150" r="11" fill="var(--sp-wn)" stroke="none" opacity=".2"/>
+                    <circle cx="168" cy="150" r="5.5" fill="var(--sp-wn)" stroke="none"/>
+                    <circle cx="26" cy="238" r="16" fill="none" stroke="var(--sp-ac)" opacity=".38" stroke-dasharray="2.5 3.5"/>
+                    <circle cx="26" cy="238" r="9" fill="var(--sp-ac)" stroke="none" opacity=".2"/>
+                    <circle cx="26" cy="238" r="4.5" fill="var(--sp-ac)" stroke="none"/>
+                    <path d="M27 70h15M92 150h76M41 238h13" stroke="var(--sp-tx4)" stroke-dasharray="3 4"/>
+                  </svg>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div class="li"><i style="background:var(--sp-dg)"></i><b>碰撞 / 剐蹭</b><span>1</span></div>
+                  <div class="li"><i style="background:var(--sp-wn)"></i><b>人员靠近</b><span>3</span></div>
+                  <div class="li"><i style="background:var(--sp-ac)"></i><b>异常震动</b><span>2</span></div>
+                </div>
+                <span class="btn" style="width:100%">查看完整录像 <svg viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+
+      <!-- ============ S6 ============ -->
+      <h3 class="sid" id="s6"><span class="no">S6</span>系统设置</h3>
+      <p class="sid-sub">独立两栏分区。每条设置项都是「标题 + 副说明 + 控件」三层，避免用户猜参数含义。</p>
+      <div class="solo-wrap"><div class="wrap2"><div class="frame screen" data-slot="a">
+        <div data-bar="14:07"></div>
+        <div class="app">
+          <div data-setpanel></div>
+          <div class="pane">
+            <div class="phead">
+              <div><h4>循环录制</h4>
+                <div class="sub">最后修改于 <span class="num">2026-10-12 09:41</span></div></div>
+              <div class="acts"><span class="btn">恢复默认</span><span class="btn pri">保存</span></div>
+            </div>
+            <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;overflow:hidden">
+              <div class="card" style="overflow:hidden;flex:none">
+                <div class="srow"><div class="tx"><b>循环录制</b><small>存储空间不足时自动覆盖最早的未锁定片段</small></div><div class="ctl"><span class="sw2 on"></span></div></div>
+                <div class="srow"><div class="tx"><b>录制分辨率</b><small>四路总码率约 24 Mbps，每小时约 10.8 GB</small></div><div class="ctl"><span class="choice"><button>720p</button><button class="on">1080p</button><button>1440p</button></span></div></div>
+                <div class="srow"><div class="tx"><b>单段时长</b><small>超过设定时长后自动切分为新文件</small></div><div class="ctl"><span class="choice"><button>1 分钟</button><button class="on">3 分钟</button><button>5 分钟</button></span></div></div>
+                <div class="srow"><div class="tx"><b>车内录音</b><small>关闭后视频不含音频轨，仅保留画面</small></div><div class="ctl"><span class="sw2"></span></div></div>
+              </div>
+              <div class="card" style="padding:16px 18px;flex:none">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                  <span class="ey">碰撞灵敏度</span>
+                  <span class="pill ac">中 · 适合城市道路</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:16px">
+                  <span style="font-size:12.5px;color:var(--sp-tx3)">低</span>
+                  <div class="seek" style="flex:1"><i class="fl" style="width:56%"></i>
+                    <span class="tk" style="left:20%"></span><span class="tk" style="left:40%"></span>
+                    <span class="tk" style="left:60%"></span><span class="tk" style="left:80%"></span>
+                    <span class="kn" style="left:56%"></span></div>
+                  <span style="font-size:12.5px;color:var(--sp-tx3)">高</span>
+                  <span class="num" style="font-size:13.5px;font-weight:660;width:36px;text-align:right">56%</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:11.5px;color:var(--sp-tx4)">
+                  <span>静止</span><span>轻微</span><span>标准</span><span>增强</span><span>竞技</span>
+                </div>
+              </div>
+              <div class="card" style="padding:16px 18px;flex:none">
+                <div class="donut">
+                  <div class="ring" style="--p:62;--sz:112px"><span>62%</span></div>
+                  <div class="lg2">
+                    <div style="display:flex;align-items:baseline;justify-content:space-between">
+                      <span class="ey">存储占用</span>
+                      <span class="num" style="font-size:12.5px;color:var(--sp-tx3)">79.4 GB / 128 GB</span>
+                    </div>
+                    <div style="height:14px;border-radius:999px;overflow:hidden;display:flex;gap:2px;background:var(--sp-surf3)">
+                      <i style="width:38%;background:var(--sp-ac);display:block"></i>
+                      <i style="width:16%;background:var(--sp-wn);display:block"></i>
+                      <i style="width:8%;background:var(--sp-ok);display:block"></i>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:7px;margin-top:2px">
+                      <div class="li"><i style="background:var(--sp-ac)"></i><b>行车视频</b><span>48.6 GB</span></div>
+                      <div class="li"><i style="background:var(--sp-wn)"></i><b>哨兵事件</b><span>20.3 GB</span></div>
+                      <div class="li"><i style="background:var(--sp-ok)"></i><b>相册图库</b><span>10.5 GB</span></div>
+                      <div class="li"><i style="background:var(--sp-surf3)"></i><b>剩余可用</b><span>48.6 GB</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div></div>
+    </section>
+
+    <section id="next">
+      <h2>落地映射</h2>
+      <p class="sub">设计稿确认后即可产出资源文件。当前未改动 <code class="num">app/src/main/res</code> 下任何文件。</p>
+      <table>
+        <tr><th style="width:280px">产出物</th><th>内容</th><th style="width:160px">状态</th></tr>
+        <tr><td class="m">values/colors.xml</td><td>浅色语义色：page / surface / text / accent / rec</td><td>待确认后生成</td></tr>
+        <tr><td class="m">values-night/colors.xml</td><td>深色校准版，非简单反转</td><td>待确认后生成</td></tr>
+        <tr><td class="m">values/dimens.xml</td><td>字阶 / 圆角 / 投影 / 触控尺寸</td><td>待确认后生成</td></tr>
+        <tr><td class="m">values/themes.xml</td><td>双主题接管现有 Theme.Sophon</td><td>待确认后生成</td></tr>
+        <tr><td class="m">drawable/*.xml</td><td>主画面边框、玻璃浮层、REC 胶囊、KPI 卡</td><td>待确认后生成</td></tr>
+        <tr><td class="m">layout/activity_main.xml</td><td>改写为「视频底 + 浮层控件」结构</td><td>待确认后生成</td></tr>
+      </table>
+      <div class="note"><b>需要拍板两点：</b>① 是否接受 Flyme 蓝作为唯一强调色；② 默认主题建议用<b>深色</b>，并跟随车机日夜模式自动切换。另外界面稿中的文案在落地时需替换为 <code class="num">strings.xml</code> 中的真实字符串。</div>
+    </section>
+
+    <footer>
+      <div>极视 Sophon · UI Design v3 · 双主题设计稿</div>
+      <div>度量基准：盯盯车 SurCamX 1.4.6（aapt2 dump 实测）</div>
+    </footer>
+  </main>
+</div>
+<script>
+/* ================= 图标 ================= */
+var ICONS={
+  live:'<circle cx="12" cy="12" r="3.2"/><path d="M4.6 7.6a10 10 0 0 0 0 8.8M19.4 7.6a10 10 0 0 1 0 8.8M2 5a14 14 0 0 0 0 14M22 5a14 14 0 0 1 0 14"/>',
+  video:'<rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="8.5" cy="12" r="1.6"/>',
+  shield:'<path d="M12 3l7 3v6c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/>',
+  image:'<rect x="3" y="4.5" width="18" height="15" rx="2.5"/><circle cx="8.5" cy="10" r="1.6"/><path d="M4 17l4.5-4.5 3.5 3.5 3-3 5 5"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.2 14.4a7.6 7.6 0 0 0 0-4.8l2-1.5-2-3.4-2.3 1a7.7 7.7 0 0 0-4.1-2.4L12.4 1h-3.9l-.4 2.3a7.7 7.7 0 0 0-4.1 2.4l-2.3-1-2 3.4 2 1.5a7.6 7.6 0 0 0 0 4.8l-2 1.5 2 3.4 2.3-1a7.7 7.7 0 0 0 4.1 2.4l.4 2.3h3.9l.4-2.3a7.7 7.7 0 0 0 4.1-2.4l2.3 1 2-3.4z"/>',
+  camera:'<path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/>',
+  expand:'<path d="M9 4H5a1 1 0 0 0-1 1v4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M4 15v4a1 1 0 0 0 1 1h4"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>',
+  play:'<path d="M7 4.5l12 7.5-12 7.5z"/>',
+  prev:'<path d="M18 5v14L8 12zM5 5v14"/>',
+  next:'<path d="M6 5v14l10-7zM19 5v14"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  lock:'<rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+  trash:'<path d="M4 7h16M9.5 7V4.8h5V7M6.5 7l1 12.2h9l1-12.2"/>',
+  usb:'<path d="M12 21V7"/><circle cx="12" cy="4.5" r="2.2"/><path d="M8 11l-2 3.5h3V21M16 11l2 3.5h-3V21"/>',
+  bolt:'<path d="M13.5 3L5 13.5h5.5L9.5 21 19 10.5h-5.5z"/>',
+  car:'<path d="M4 15.5V12l2-5h12l2 5v3.5"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="16.5" cy="16.5" r="2"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  grid:'<rect x="4" y="4" width="7" height="7" rx="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.6"/><rect x="13" y="13" width="7" height="7" rx="1.6"/>',
+  download:'<path d="M12 4v11M7.5 11l4.5 4.5L16.5 11M5 19.5h14"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/>',
+  filter:'<path d="M4 6h16M7 12h10M10 18h4"/>',
+  wifi:'<path d="M2.5 9a15 15 0 0 1 19 0M6 12.5a10 10 0 0 1 12 0M9.5 16a5 5 0 0 1 5 0"/><circle cx="12" cy="19.5" r="1.2" class="fil"/>'
+};
+function ic(n,cls){return '<svg viewBox="0 0 24 24"'+(cls?' class="'+cls+'"':'')+'>'+(ICONS[n]||'')+'</svg>';}
+
+/* ================= 路面透视 ================= */
+var ROAD=[-31,-18,-6,6,18,31];
+document.querySelectorAll('[data-road]').forEach(function(el){
+  var h='';
+  ROAD.forEach(function(a,i){
+    var strong=(a===-6||a===6);
+    h+='<i style="transform:rotate('+a+'deg);'
+      +'background:linear-gradient(to top,rgba(255,255,255,'+(strong?'.62':'.34')+'),rgba(255,255,255,0));'
+      +'width:'+(strong?3:2)+'px;height:'+(strong?'124%':'116%')+'"></i>';
+  });
+  el.innerHTML=h;
+});
+
+/* ================= 状态栏 ================= */
+function barHtml(t){
+  return '<div class="stbar"><div class="l"><b>'+t+'</b><span class="sep"></span>'
+    +ic('car')+'<span>P 挡</span><span class="sep"></span><span class="num">24℃</span><span class="sep"></span>'
+    +'<span style="display:inline-flex;align-items:center;gap:6px">'+ic('wifi')+'<span class="num" style="font-weight:600">AGPS ±3 m</span></span></div>'
+    +'<div class="r">'+ic('usb')+'<span>U 盘</span><span class="sep"></span>'
+    +'<span class="pill rec" style="gap:7px;padding:0 11px"><i style="width:7px;height:7px;border-radius:50%;background:var(--sp-rec);box-shadow:0 0 0 3px rgba(229,55,47,.18)"></i>'
+    +'<span class="num" style="font-weight:680;letter-spacing:.02em">REC 02:14:37</span></span></div></div>';
+}
+document.querySelectorAll('[data-bar]').forEach(function(el){
+  el.outerHTML=barHtml(el.getAttribute('data-bar'));
+});
+
+/* ================= 导航面板 ================= */
+var RAIL=[
+  ['live','实时监控','',''],
+  ['video','行车视频','128','已归档 128 段'],
+  ['shield','哨兵事件','6','今日新增 2 条'],
+  ['image','相册图库','','共 214 张'],
+  ['settings','系统设置','','固件 v1.4.2']
+];
+var SETS=[
+  ['video','循环录制','','时长 · 画质 · 音频'],
+  ['shield','哨兵模式','','灵敏度 · 布防时段'],
+  ['usb','存储管理','','U 盘 · 覆盖策略'],
+  ['download','网络与升级','1','固件 v1.5.0 可更新'],
+  ['lock','隐私与权限','','位置水印 · 数据']
+];
+function railHtml(active,items,groups,foot){
+  var h='<div class="rail"><div class="brand2"><div class="mk">'+ic('camera')+'</div>'
+    +'<div><b>SOPHON</b><span>极视 · 四向全维</span></div></div>';
+  items.forEach(function(it,i){
+    if(groups&&i===groups) h+='<div class="ey">设置分区</div>';
+    h+='<div class="rl-item'+(it[0]===active?' on':'')+'"><div class="ico">'+ic(it[0])+'</div>'
+      +'<div class="tx"><b>'+it[1]+'</b>'+(it[3]?'<small>'+it[3]+'</small>':'')+'</div>'
+      +(it[2]?'<span class="ct">'+it[2]+'</span>':'')+'</div>';
+  });
+  foot=foot||{p:62,t:'U 盘已用',s:'79.4 GB / 128 GB',bar:[['38%','var(--sp-ac)'],['16%','var(--sp-wn)'],['8%','var(--sp-ok)']],
+    lg:[['行车','var(--sp-ac)'],['哨兵','var(--sp-wn)'],['相册','var(--sp-ok)']]};
+  h+='<div class="spc"></div><div class="rl-foot">'
+    +'<div class="fx"><div class="ring" style="--p:'+foot.p+';--sz:52px"><span>'+foot.p+'%</span></div>'
+    +'<div style="flex:1;min-width:0"><b>'+foot.t+'</b><small>'+foot.s+'</small></div></div>'
+    +'<div class="sb">'+foot.bar.map(function(b){return '<i style="width:'+b[0]+';background:'+b[1]+'"></i>';}).join('')+'</div>'
+    +(foot.lg?'<div class="lg">'+foot.lg.map(function(l){return '<span><i style="background:'+l[1]+'"></i>'+l[0]+'</span>';}).join('')+'</div>':'')
+    +'</div></div>';
+  return h;
+}
+document.querySelectorAll('[data-rail]').forEach(function(el){
+  var k=el.getAttribute('data-rail');
+  el.outerHTML=railHtml(k,RAIL,0);
+});
+document.querySelectorAll('[data-setpanel]').forEach(function(el){
+  el.outerHTML=railHtml('video',SETS,2,
+    {p:38,t:'固件下载中',s:'v1.5.0 · 62.4 MB / 164 MB',bar:[['38%','var(--sp-ac)']],lg:null});
+});
+
+/* ================= 四路画面 ================= */
+/* ================= 视频场景：真实感合成 ================= */
+var GRAD={front:'#37485C',rear:'#26333F',left:'#2C3A48',cabin:'#141B24'};
+var VP=160,HZ=97,VB=103;
+var CITY=[[6,20,32],[28,14,46],[44,17,28],[63,21,40],[86,15,26],[103,17,52],[122,19,34],[143,15,42],[160,21,30],[183,17,48],[202,23,36],[227,15,26],[244,19,44],[265,17,32],[284,22,40],[308,14,30]];
+function pn(a){return Math.round(a*10)/10;}
+/* 透视路面标线：X0=近端横向偏移，dash=1 则虚线 */
+function scnStrip(X0,col,op,w,dash){
+  var d='',i,n,a,b,s0,s1,y0,y1,x0,x1,h0,h1;
+  n=dash?6:1;
+  for(i=0;i<n;i++){
+    if(dash){a=0.10+i*0.145;b=a+0.085;}else{a=0.03;b=1;}
+    s0=Math.pow(a,1.55); s1=Math.pow(b,1.55);
+    y0=HZ+s0*VB; y1=HZ+s1*VB;
+    x0=VP+X0*s0; x1=VP+X0*s1;
+    h0=1+s0*w;   h1=1+s1*w;
+    d+='<path d="M'+pn(x0-h0/2)+' '+pn(y0)+'L'+pn(x0+h0/2)+' '+pn(y0)
+      +'L'+pn(x1+h1/2)+' '+pn(y1)+'L'+pn(x1-h1/2)+' '+pn(y1)+'Z" fill="'+col+'" opacity="'+op+'"/>';
+  }
+  return d;
+}
+function scnWindows(list){
+  var g='<g stroke="#fff" stroke-width=".8" opacity=".12">',i,b,x;
+  for(i=0;i<list.length;i++){
+    b=list[i];
+    for(x=b[0]+3;x<b[0]+b[1]-2;x+=4.5)
+      g+='<path d="M'+x+' '+(96-b[2]+4)+'V'+(92)+'"/>';
+  }
+  return g+'</g>';
+}
+function scene(k){
+  var s='';
+  if(k==='front'){
+    s='<defs><linearGradient id="gsf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#527FB6"/><stop offset="48%" stop-color="#9CC1E0"/><stop offset="100%" stop-color="#D4E4F0"/></linearGradient>'
+     +'<linearGradient id="grf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C646F"/><stop offset="38%" stop-color="#474F5A"/><stop offset="100%" stop-color="#2E353F"/></linearGradient></defs>'
+     +'<rect width="320" height="200" fill="url(#gsf)"/>'
+     +'<ellipse cx="72" cy="30" rx="54" ry="7" fill="#fff" opacity=".38"/><ellipse cx="238" cy="22" rx="60" ry="6" fill="#fff" opacity=".28"/><ellipse cx="166" cy="48" rx="42" ry="5" fill="#fff" opacity=".20"/>'
+     +'<g fill="#4A698B" opacity=".50">'+CITY.map(function(b){return '<rect x="'+b[0]+'" y="'+(96-b[2])+'" width="'+b[1]+'" height="'+b[2]+'"/>';}).join('')+'</g>'
+     +scnWindows(CITY)
+     +'<rect x="0" y="92" width="320" height="6" fill="#3A473C" opacity=".9"/>'
+     +'<path d="M0 97 H136 L14 200 H0 Z" fill="#3D463E"/><path d="M184 97 H320 V200 H306 Z" fill="#3D463E"/>'
+     +'<path d="M136 97 H184 L306 200 H14 Z" fill="url(#grf)"/>'
+     +scnStrip(-46,'#E6EDF4','.72',5,1)+scnStrip(16,'#E6EDF4','.72',5,1)
+     +scnStrip(-104,'#DDE6EE','.55',4.5,0)+scnStrip(104,'#DDE6EE','.55',4.5,0)
+     +'<path d="M297 99V44q0-6-9-6" stroke="#5C6B7A" stroke-width="2.6" fill="none" opacity=".7"/><rect x="279" y="35" width="14" height="4.5" rx="2.2" fill="#6E7D8C" opacity=".75"/>'
+     +'<g><ellipse cx="118" cy="151" rx="27" ry="5" fill="#111722" opacity=".4"/>'
+     +'<path d="M100 149v-17q0-5 5-7l5-8h18l5 8q5 2 5 7v17z" fill="#38475A"/>'
+     +'<path d="M106 125l4-8h12l4 8z" fill="#5C7187"/><rect x="100" y="131" width="30" height="2" rx="1" fill="#6E8398" opacity=".5"/>'
+     +'<rect x="104" y="136" width="9" height="4.6" rx="1.8" fill="#BE403A"/><rect x="118" y="136" width="9" height="4.6" rx="1.8" fill="#BE403A"/>'
+     +'<rect x="108" y="145" width="14" height="3" rx="1" fill="#1B232D"/></g>'
+     +'<g><ellipse cx="214" cy="128" rx="14" ry="2.6" fill="#111722" opacity=".3"/><path d="M205 127v-9q0-3 3-4l2-4h6l2 4q3 1 3 4v9z" fill="#364453"/><rect x="205" y="122" width="14" height="1.6" rx=".8" fill="#6E8398" opacity=".45"/></g>';
+  }else if(k==='rear'){
+    s='<defs><linearGradient id="gsr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4472A8"/><stop offset="60%" stop-color="#93B8DA"/><stop offset="100%" stop-color="#CBDCEC"/></linearGradient>'
+     +'<linearGradient id="grr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#545C67"/><stop offset="40%" stop-color="#424A55"/><stop offset="100%" stop-color="#2B323C"/></linearGradient></defs>'
+     +'<rect x="0" y="24" width="320" height="176" fill="url(#gsr)"/>'
+     +'<ellipse cx="96" cy="50" rx="48" ry="7" fill="#fff" opacity=".30"/><ellipse cx="252" cy="38" rx="56" ry="6" fill="#fff" opacity=".24"/>'
+     +'<g fill="#4A698B" opacity=".42">'+CITY.slice(0,11).map(function(b){var H=Math.round(b[2]*.8);return '<rect x="'+b[0]+'" y="'+(96-H)+'" width="'+b[1]+'" height="'+H+'"/>';}).join('')+'</g>'
+     +scnWindows(CITY.slice(0,11))
+     +'<rect x="0" y="92" width="320" height="6" fill="#3A473C" opacity=".7"/>'
+     +'<path d="M0 97 H132 L10 200 H0 Z" fill="#3D463E"/><path d="M188 97 H320 V200 H310 Z" fill="#3D463E"/>'
+     +'<path d="M132 97 H188 L310 200 H10 Z" fill="url(#grr)"/>'
+     +scnStrip(-44,'#E6EDF4','.70',5,1)+scnStrip(20,'#E6EDF4','.70',5,1)
+     +scnStrip(-100,'#DDE6EE','.50',4.5,0)+scnStrip(106,'#DDE6EE','.50',4.5,0)
+     +'<g><ellipse cx="168" cy="163" rx="46" ry="7" fill="#111722" opacity=".42"/>'
+     +'<path d="M124 160v-22q0-6 7-9l14-9 12-5h10l12 5 14 9 7 9v22z" fill="#3C4B5E"/>'
+     +'<path d="M138 139l12-8h22l12 8v10h-46z" fill="#5E7286" opacity=".9"/>'
+     +'<rect x="126" y="146" width="14" height="6" rx="2.6" fill="#E7D9A8"/><rect x="182" y="146" width="14" height="6" rx="2.6" fill="#E7D9A8"/>'
+     +'<rect x="150" y="152" width="22" height="5" rx="1.5" fill="#2B3542"/>'
+     +'<rect x="130" y="123" width="60" height="3" rx="1.5" fill="#7C90A6" opacity=".5"/></g>'
+     +'<rect width="320" height="26" fill="#1A232E"/><rect x="0" y="26" width="320" height="5" fill="#28313D"/>'
+     +'<rect x="0" y="186" width="320" height="14" fill="#161E28"/><rect x="126" y="189" width="68" height="3.4" rx="1.7" fill="#C0433C" opacity=".72"/>';
+  }else if(k==='left'){
+    s='<defs><linearGradient id="gsl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5480B4"/><stop offset="72%" stop-color="#A3C2DE"/></linearGradient>'
+     +'<linearGradient id="grl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#565E69"/><stop offset="45%" stop-color="#434B56"/><stop offset="100%" stop-color="#2C333D"/></linearGradient></defs>'
+     +'<rect width="320" height="200" fill="url(#gsl)"/>'
+     +'<ellipse cx="110" cy="24" rx="58" ry="7" fill="#fff" opacity=".30"/>'
+     +'<rect x="0" y="60" width="320" height="8" fill="#3A473C" opacity=".7"/>'
+     +'<path d="M0 74 H320" stroke="#7E8A98" stroke-width="3.5" opacity=".8"/><path d="M0 84 H320" stroke="#6E7A88" stroke-width="3" opacity=".6"/>'
+     +'<g fill="#66727F" opacity=".7">'+[20,80,140,200,260].map(function(x){return '<rect x="'+x+'" y="73" width="6" height="19"/>';}).join('')+'</g>'
+     +'<path d="M0 90 H320 V200 H0 Z" fill="url(#grl)"/>'
+     +scnStrip(-30,'#E6EDF4','.60',5,1)+scnStrip(70,'#DDE6EE','.45',4.5,0)
+     +'<g><ellipse cx="196" cy="176" rx="76" ry="9" fill="#111722" opacity=".4"/>'
+     +'<path d="M96 174v-28q0-8 12-11l40-12q10-3 20 0l40 12 12 11v28z" fill="#3A4859"/>'
+     +'<path d="M118 148l38-11h30l38 11v22h-106z" fill="#5A6E84" opacity=".85"/>'
+     +'<rect x="98" y="159" width="10" height="7" rx="3" fill="#D8594F"/><rect x="212" y="159" width="10" height="7" rx="3" fill="#D8594F"/>'
+     +'<circle cx="112" cy="175" r="7" fill="#161D27"/><circle cx="228" cy="175" r="7" fill="#161D27"/></g>';
+  }else{
+    s='<rect width="320" height="200" fill="#0E141C"/>'
+     +'<path d="M18 42 H302 V152 H18 Z" fill="#141E2A"/>'
+     +'<g><circle cx="72" cy="94" r="9" fill="#E9C98C" opacity=".18"/><circle cx="72" cy="94" r="2.6" fill="#F0D6A0" opacity=".95"/></g>'
+     +'<g><circle cx="238" cy="98" r="7" fill="#E9C98C" opacity=".14"/><circle cx="238" cy="98" r="2.1" fill="#F0D6A0" opacity=".8"/></g>'
+     +'<g><circle cx="152" cy="88" r="5" fill="#E9C98C" opacity=".12"/><circle cx="152" cy="88" r="1.6" fill="#F0D6A0" opacity=".7"/></g>'
+     +'<circle cx="188" cy="120" r="1.8" fill="#E05A52" opacity=".85"/><circle cx="197" cy="121" r="1.5" fill="#E05A52" opacity=".6"/>'
+     +'<path d="M108 152 H212 L268 200 H52 Z" fill="#232C38" opacity=".8"/>'
+     +'<path d="M0 30 L46 200 H16 L0 118 Z" fill="#0C1219"/><path d="M320 30 L274 200 H304 L320 118 Z" fill="#0C1219"/>'
+     +'<path d="M0 172 Q80 154 160 152 Q240 154 320 172 V200 H0 Z" fill="#121A24"/>'
+     +'<rect x="42" y="157" width="88" height="35" rx="6" fill="#1C2836"/><rect x="47" y="162" width="78" height="25" rx="4" fill="#223147"/>'
+     +'<path d="M54 170h44M54 179h32" stroke="#4A6A94" stroke-width="2.6" stroke-linecap="round" opacity=".9"/>'
+     +'<rect x="238" y="157" width="52" height="30" rx="6" fill="#151E29"/><rect x="246" y="163" width="36" height="3" rx="1.5" fill="#223042"/><rect x="246" y="171" width="28" height="3" rx="1.5" fill="#1C2838"/>'
+     +'<path d="M0 174 Q80 156 160 154 Q240 156 320 174" stroke="#1E2833" stroke-width="2.4" fill="none" opacity=".9"/>'
+     +'<ellipse cx="160" cy="214" rx="66" ry="58" fill="none" stroke="#1C2632" stroke-width="11"/>'
+     +'<ellipse cx="160" cy="214" rx="66" ry="58" fill="none" stroke="#2A3644" stroke-width="2" opacity=".55"/>'
+     +'<rect x="126" y="32" width="68" height="14" rx="6" fill="#111923"/>';
+  }
+  return '<svg class="scn" viewBox="0 0 320 200" preserveAspectRatio="none">'+s+'</svg>';
+}
+var LIVE=[
+  {n:'前路 · 主摄',g:'front',meta:'1920×1080 · 30fps · f/1.8 · ISO 320',ft:'2026-10-14 14:02:37',on:1},
+  {n:'后路 · 广角',g:'rear',meta:'1920×1080 · 30fps · f/2.0',ft:'GPS 30.2741°N'},
+  {n:'左路 · 盲区',g:'left',meta:'1280×720 · 25fps · f/2.2',ft:'24.0 ℃'},
+  {n:'内舱 · 红外',g:'cabin',meta:'1280×720 · 25fps · 940nm',ft:'夜间模式'}
+];
+var SYNC=[
+  {n:'前路',g:'front',meta:'1080p'},
+  {n:'后路',g:'rear',meta:'1080p'},
+  {n:'左路',g:'left',meta:'720p'},
+  {n:'内舱',g:'cabin',meta:'720p'}
+];
+function camHtml(o,mode){
+  var h='<div class="cam'+(o.on?' on':'')+'">'
+    +'<div class="feed" style="background:'+GRAD[o.g]+'">'+scene(o.g)+'</div>'
+    +'<div class="vig"></div>';
+  if(o.on) h+='<span class="corner tl"></span><span class="corner tr"></span>'
+    +'<span class="corner bl"></span><span class="corner br"></span>';
+  h+='<div class="gll"></div>';
+  if(mode==='sync'){
+    h+='<div class="osd"><span class="chip"><b>'+o.n+'</b><s>'+o.meta+'</s></span></div>'
+      +'<div class="osd4"><span class="chip"><s>00:02:14</s></span></div>';
+  }else{
+    h+='<div class="osd"><span class="chip">'+ic('car')+'<b>'+o.n+'</b></span>'
+      +'<span class="chip"><s>'+o.meta+'</s></span></div>'
+      +'<div class="osd3"><span class="chip rec"><i></i><u>02:14:37</u></span></div>'
+      +'<div class="osd4" style="right:82px"><span class="chip"><s>'+o.ft+'</s></span></div>';
+  }
+  return h+'</div>';
+}
+document.querySelectorAll('[data-scene]').forEach(function(el){
+  var k=el.getAttribute('data-scene');
+  el.style.background=GRAD[k]; el.innerHTML=scene(k);
+});
+document.querySelectorAll('[data-cams]').forEach(function(el){
+  var mode=el.getAttribute('data-cams'), arr=(mode==='sync')?SYNC:LIVE, h='';
+  arr.forEach(function(o){h+=camHtml(o,mode);});
+  el.innerHTML=h;
+  el.querySelectorAll('.road').forEach(function(rd){
+    var s='';
+    ROAD.forEach(function(a){
+      var strong=(a===-6||a===6);
+      s+='<i style="transform:rotate('+a+'deg);'
+        +'background:linear-gradient(to top,rgba(255,255,255,'+(strong?'.62':'.34')+'),rgba(255,255,255,0));'
+        +'width:'+(strong?3:2)+'px;height:'+(strong?'124%':'116%')+'"></i>';
+    });
+    rd.innerHTML=s;
+  });
+});
+
+/* ================= S3 片段列表 ================= */
+var CLIPS=[
+  ['前路 · 主摄','14:02:18','00:03:12','186 MB',1,1],
+  ['前路 · 主摄','13:41:05','00:03:00','179 MB',0,0],
+  ['内舱 · 红外','13:20:52','00:01:48','62 MB',1,0],
+  ['后路 · 广角','12:58:31','00:03:00','164 MB',0,0],
+  ['左路 · 盲区','12:22:07','00:00:36','31 MB',1,0]
+];
+var GRADS=['front','front','cabin','rear','left'];
+document.querySelectorAll('[data-clips]').forEach(function(el){
+  var h='';
+  CLIPS.forEach(function(c,i){
+    h+='<div class="row'+(i===0?' sel':'')+'">'
+      +'<div class="thm" style="background:'+GRAD[GRADS[i]]+'">'+scene(GRADS[i])
+      +'<span class="cap">'+c[2]+'</span>'
+      +(c[4]?'<span class="lk">'+ic('lock')+'</span>':'')
+      +'<span class="tag">'+c[0].slice(0,1)+'</span></div>'
+      +'<div class="mt"><b>'+c[0]+' · '+c[1]+'</b>'
+      +'<small><span>'+c[2]+'</span><i></i><span>1080p</span><i></i><span>'+c[3]+'</span>'
+      +'<i></i>'+(c[4]?'已锁定':'未锁定')+'</small></div>'
+      +'<div class="ac"><i>'+ic('download')+'</i><i>'+ic('trash')+'</i></div></div>';
+  });
+  el.innerHTML=h+'<div style="padding:12px 14px;text-align:center;font-size:12px;color:var(--sp-tx3)">'
+    +'显示 <span class="num">5</span> / <span class="num">18</span> 段 · 上滑加载更多</div>';
+});
+var MARKS=[[8,'急刹'],[24,'碰撞'],[41,'行人'],[63,'并线'],[79,'哨兵']];
+document.querySelectorAll('[data-timeline]').forEach(function(el){
+  var h='<div class="st">';
+  for(var i=0;i<26;i++){
+    var lit=(i/26*100)<62;
+    var lock=(lit&&(i===5||i===14||i===21));
+    h+='<i><u style="width:'+(lit?'100%':'0')+';background:var(--sp-ac);'
+      +(lock?'box-shadow:inset 0 -3px 0 rgba(227,169,60,.95);':'')+'"></u></i>';
+  }
+  h+='</div><div class="b2"><div class="f2" style="width:62%"></div><div class="k2" style="left:62%"></div></div>';
+  function at(p){return 'left:calc(12px + (100% - 24px) * '+(p/100).toFixed(4)+')';}
+  MARKS.forEach(function(m){
+    h+='<div class="mk" style="'+at(m[0])+'"><i></i><em>'+m[1]+'</em></div>';
+  });
+  [[0,'00:00'],[25,'00:56'],[50,'01:53'],[75,'02:50'],[100,'03:47']].forEach(function(p){
+    h+='<div class="tt2" style="'+at(p[0])+'">'+p[1]+'</div>';
+  });
+  el.innerHTML=h;
+});
+
+/* ================= S5 事件列表 ================= */
+var EVENTS=[
+  ['前方碰撞预警','14:02:18','前路 · 主摄','dg','碰撞'],
+  ['左侧人员靠近','13:47:52','左路 · 盲区','wn','靠近'],
+  ['车身异常震动','12:15:04','四向合成','ac','震动'],
+  ['尾随车辆贴近','11:38:20','后路 · 广角','wn','靠近']
+];
+var EGRAD=['front','left','cabin','rear'];
+document.querySelectorAll('[data-events]').forEach(function(el){
+  var h='';
+  EVENTS.forEach(function(e,i){
+    h+='<div class="row'+(i===0?' sel':'')+'">'
+      +'<div class="thm" style="background:'+GRAD[EGRAD[i]]+'">'+scene(EGRAD[i])
+      +'<span class="cap">00:00:'+(12+i*9)+'</span>'
+      +'<span class="tag">'+e[2].slice(0,1)+'</span></div>'
+      +'<div class="mt"><b>'+e[0]+'</b>'
+      +'<small><span>'+e[1]+'</span><i></i><span>'+e[2]+'</span><i></i>'+e[4]+'</small></div>'
+      +'<div class="ac"><span class="pill '+e[3]+'">'+['高危','注意','提示','注意'][i]+'</span>'
+      +'<i>'+ic('download')+'</i></div></div>';
+  });
+  el.innerHTML=h;
+});
+
+/* ================= 主题切换 ================= */
+function applyTheme(mode){
+  document.querySelectorAll('.frame').forEach(function(f){
+    if(f.hasAttribute('data-fixed')) return;
+    if(mode==='duo') f.classList.toggle('t-dark', f.getAttribute('data-slot')==='b');
+    else f.classList.toggle('t-dark', mode==='dark');
+  });
+  document.querySelectorAll('.duo-wrap').forEach(function(w){w.style.display=(mode==='duo')?'':'none';});
+  document.querySelectorAll('.solo-wrap').forEach(function(w){w.style.display=(mode==='duo')?'none':'';});
+  document.querySelectorAll('#themeSwitch button').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-t')===mode);
+  });
+  fitScreens();
+}
+document.querySelectorAll('#themeSwitch button').forEach(function(b){
+  b.addEventListener('click',function(){applyTheme(b.getAttribute('data-t'));});
+});
+
+/* ================= 并排副本 ================= */
+document.querySelectorAll('.solo-wrap > .wrap2').forEach(function(w){
+  var src=w.querySelector('.frame');
+  if(!src) return;
+  var duo=document.createElement('div');
+  duo.className='duo-wrap';
+  [['浅色 · Light',false],['深色 · Dark',true]].forEach(function(p){
+    var cell=document.createElement('div');
+    var cap=document.createElement('div'); cap.className='cap2'; cap.textContent=p[0];
+    var wr=document.createElement('div'); wr.className='wrap2';
+    var cl=src.cloneNode(true);
+    cl.setAttribute('data-slot', p[1]?'b':'a');
+    cl.classList.toggle('t-dark', p[1]);
+    wr.appendChild(cl); cell.appendChild(cap); cell.appendChild(wr);
+    duo.appendChild(cell);
+  });
+  w.parentNode.insertBefore(duo, w);
+});
+
+/* ================= 缩放 ================= */
+function fitScreens(){
+  document.querySelectorAll('.wrap2').forEach(function(w){
+    var el=w.querySelector('.screen');
+    if(!el) return;
+    var s=Math.min(1, w.clientWidth/1280);
+    el.style.transform='scale('+s+')';
+    w.style.height=Math.round(800*s)+'px';
+  });
+}
+window.addEventListener('resize', fitScreens);
+applyTheme('light');
+(function(){
+  var q=new URLSearchParams(location.search), t0=q.get('t');
+  if(t0==='dark'||t0==='duo') applyTheme(t0);
+})();
+window.addEventListener('load', function(){
+  fitScreens();
+  if(location.hash){
+    var t=document.querySelector(location.hash);
+    if(t) setTimeout(function(){t.scrollIntoView();},60);
+  }
+});
+fitScreens();
+
+/* ================= 侧栏高亮 ================= */
+var links=document.querySelectorAll('.sidebar nav a');
+var secs=[].map.call(links,function(a){return document.querySelector(a.getAttribute('href'));});
+window.addEventListener('scroll',function(){
+  var y=window.scrollY+140, idx=0;
+  secs.forEach(function(s,i){ if(s&&s.offsetTop<=y) idx=i; });
+  links.forEach(function(a,i){a.classList.toggle('on', i===idx);});
+},{passive:true});
+</script>
+</body>
+</html>

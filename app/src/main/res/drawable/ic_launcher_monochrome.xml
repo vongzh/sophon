@@ -41,7 +41,7 @@
         android:strokeWidth="2.8"
         android:strokeLineCap="round" />
 
-    <!-- 7. 灵动星点 -->
+    <!--  7. 灵动星点 -->
     <path
         android:pathData="M 82,34 A 1.8,1.8 0 1,1 82,33.9 Z"
         android:fillColor="#FFFFFFFF" />

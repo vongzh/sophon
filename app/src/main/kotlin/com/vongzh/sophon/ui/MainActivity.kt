@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -80,6 +81,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var isSingleCamMode = false
+
     private fun initViews() {
         tvStatusTitle = findViewById(R.id.tv_status_title)
         tvTelemetryGear = findViewById(R.id.tv_telemetry_gear)
@@ -95,10 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btn_nav_sentry).setOnClickListener {
-            val intent = Intent(this, com.vongzh.sophon.ui.history.RecordingHistoryActivity::class.java).apply {
-                putExtra(com.vongzh.sophon.ui.history.RecordingHistoryActivity.EXTRA_FILTER, com.vongzh.sophon.ui.history.RecordingHistoryActivity.FILTER_EVENT)
-            }
-            startActivity(intent)
+            startActivity(Intent(this, com.vongzh.sophon.ui.sentry.SentryEventReviewActivity::class.java))
         }
 
         findViewById<View>(R.id.btn_nav_photos).setOnClickListener {
@@ -111,6 +111,88 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btn_top_lan_share).setOnClickListener {
             com.vongzh.sophon.ui.lan.LanShareDialog(this).show()
+        }
+
+        // 快门与悬浮控制条
+        findViewById<View>(R.id.btn_shutter)?.setOnClickListener { triggerSnapshot() }
+        findViewById<View>(R.id.fab_snapshot)?.setOnClickListener { triggerSnapshot() }
+        findViewById<View>(R.id.btn_lock_current)?.setOnClickListener { triggerEmergencyLock() }
+        findViewById<View>(R.id.fab_lock)?.setOnClickListener { triggerEmergencyLock() }
+        findViewById<View>(R.id.btn_emergency)?.setOnClickListener { triggerEmergencyLock() }
+
+        findViewById<View>(R.id.btn_recent_clip)?.setOnClickListener {
+            startActivity(Intent(this, com.vongzh.sophon.ui.history.RecordingHistoryActivity::class.java))
+        }
+
+        findViewById<View>(R.id.btn_view_toggle)?.setOnClickListener { toggleQuadSingleView() }
+        findViewById<View>(R.id.fab_view_mode)?.setOnClickListener { toggleQuadSingleView() }
+        findViewById<View>(R.id.fab_mic)?.setOnClickListener { toggleMic() }
+
+        // 点击四路任一机位进入单路全屏
+        val camContainers = listOf(
+            R.id.container_cam_front,
+            R.id.container_cam_back,
+            R.id.container_cam_left,
+            R.id.container_cam_right
+        )
+        camContainers.forEach { resId ->
+            findViewById<View>(resId)?.setOnClickListener {
+                toggleQuadSingleView()
+            }
+        }
+    }
+
+    private fun triggerSnapshot() {
+        val intent = Intent(this, SophonCoreService::class.java).apply {
+            action = SophonCoreService.ACTION_TRIGGER_SNAPSHOT
+        }
+        startService(intent)
+        android.widget.Toast.makeText(this, "📷 已触发全维四路原图抓拍", android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private fun triggerEmergencyLock() {
+        val intent = Intent(this, SophonCoreService::class.java).apply {
+            action = SophonCoreService.ACTION_TRIGGER_LOCK
+        }
+        startService(intent)
+        android.widget.Toast.makeText(this, "🔒 已紧急锁定当前行车切片", android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private fun toggleQuadSingleView() {
+        isSingleCamMode = !isSingleCamMode
+        val singleCamOsd = findViewById<View>(R.id.layout_single_cam_osd)
+        val btnViewToggle = findViewById<TextView>(R.id.btn_view_toggle)
+
+        val camBack = findViewById<View>(R.id.container_cam_back)
+        val camLeft = findViewById<View>(R.id.container_cam_left)
+        val camRight = findViewById<View>(R.id.container_cam_right)
+
+        if (isSingleCamMode) {
+            singleCamOsd?.visibility = View.VISIBLE
+            btnViewToggle?.text = "返回四路"
+            camBack?.visibility = View.GONE
+            camLeft?.visibility = View.GONE
+            camRight?.visibility = View.GONE
+            tvStatusTitle.text = "前路 · 主摄全屏监看"
+        } else {
+            singleCamOsd?.visibility = View.GONE
+            btnViewToggle?.text = "四路同屏"
+            camBack?.visibility = View.VISIBLE
+            camLeft?.visibility = View.VISIBLE
+            camRight?.visibility = View.VISIBLE
+            tvStatusTitle.text = "四向全维实时监看"
+        }
+    }
+
+    private fun toggleMic() {
+        val ivMic = findViewById<ImageView>(R.id.iv_fab_mic)
+        val isMuted = ivMic?.alpha == 0.4f
+        if (isMuted) {
+            ivMic?.alpha = 1.0f
+            android.widget.Toast.makeText(this, "🎙 车内录音已开启", android.widget.Toast.LENGTH_SHORT).show()
+        } else {
+            ivMic?.alpha = 0.4f
+            android.widget.Toast.makeText(this, "🔇 车内录音已静音", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -173,6 +255,7 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     bus.vehicleSpeed.collectLatest { speed ->
                         tvTelemetrySpeed.text = String.format("%.0f km/h", speed)
+                        findViewById<TextView>(R.id.tv_single_speed_num)?.text = String.format("%.0f", speed)
                     }
                 }
 
@@ -180,11 +263,11 @@ class MainActivity : AppCompatActivity() {
                     storage.isUsbMounted.collectLatest { isMounted ->
                         if (isMounted) {
                             tvUsbStatus.text = "U盘已挂载"
-                            tvUsbStatus.setTextColor(getColor(R.color.flyme_cyan))
+                            tvUsbStatus.setTextColor(getColor(R.color.sp_ac))
                             storageRingMini.updateBreakdown(storage.queryStorageBreakdown())
                         } else {
                             tvUsbStatus.text = "U盘未就绪"
-                            tvUsbStatus.setTextColor(getColor(R.color.accent_warning))
+                            tvUsbStatus.setTextColor(getColor(R.color.sp_wn))
                         }
                     }
                 }

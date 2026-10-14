@@ -26,7 +26,7 @@
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.4" />
 
-    <!-- 4. 几何公路山脉线条 (Scenic Trajectory Curves) -->
+    <!--  4. 几何公路山脉线条 (Scenic Trajectory Curves) -->
     <path
         android:pathData="M 4.5,18 L 8.5,13.5 C 9.2,12.7 10.4,12.7 11.1,13.5 L 14,17 L 15.2,15.6 C 15.8,14.9 16.9,14.9 17.5,15.6 L 18,16.2"
         android:strokeColor="@color/text_secondary"

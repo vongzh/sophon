@@ -13,7 +13,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 2. 右下角悬浮流媒体画中画小窗 (Floating PiP Sub-window) -->
+    <!--  2. 右下角悬浮流媒体画中画小窗 (Floating PiP Sub-window) -->
     <path
         android:pathData="M 11,11 C 11,10.4 11.4,10 12,10 L 18,10 C 18.6,10 19,10.4 19,11 L 19,16 C 19,16.6 18.6,17 18,17 L 12,17 C 11.4,17 11,16.6 11,16 Z"
         android:fillColor="@color/flyme_cyan_subtle"

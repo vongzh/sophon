@@ -1,35 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- FlymeAuto Cockpit Dark Palette (车规级深空极客座舱色系) -->
-    <color name="bg_cockpit_dark">#FF0B1117</color>
-    <color name="bg_cockpit_top">#FF0E1620</color>
-    <color name="bg_nav_rail">#FF0D131B</color>
-    <color name="bg_card_dark">#FF131D28</color>
-    <color name="bg_card_elevated">#FF182433</color>
-    <color name="bg_card_inner">#FF0E1622</color>
+    <!-- ===================================================================
+         Sophon Design System v3 · Light (day) Palette
+         来源：docs/design/Sophon-UI-Design-v3.html —— .frame 浅色 token
+         单一强调色 = Flyme 蓝 #3572F4；青色已彻底移除
+         =================================================================== -->
 
-    <!-- Flyme 灵动主色 & 状态强调色 -->
-    <color name="flyme_cyan">#FF1AE5A3</color>
-    <color name="flyme_cyan_glow">#331AE5A3</color>
-    <color name="flyme_cyan_subtle">#1A1AE5A3</color>
-    <color name="flyme_blue">#FF0A84FF</color>
-    <color name="accent_warning">#FFFFB020</color>
-    <color name="accent_danger">#FFFF5252</color>
+    <!-- 页面 / 表面 -->
+    <color name="sp_page">#FFE8ECF1</color>
+    <color name="sp_surf">#FFFFFFFF</color>
+    <color name="sp_surf2">#FFF5F7FA</color>
+    <color name="sp_surf3">#FFEBEFF4</color>
+    <color name="sp_raise">#FFFFFFFF</color>
 
-    <!-- 高对比文字层级 (WCAG AA 车规级清晰度) -->
-    <color name="text_primary">#FFF2F6FA</color>
-    <color name="text_secondary">#FF8B9DAE</color>
-    <color name="text_tertiary">#FF4A5C6F</color>
+    <!-- 描边 / 分隔 -->
+    <color name="sp_line">#FFE4E9F0</color>
+    <color name="sp_line2">#FFD3DCE6</color>
 
-    <!-- 建筑感描边与分割线 -->
-    <color name="divider_line">#FF1E2D3D</color>
-    <color name="divider_line_subtle">#FF16212E</color>
-    <color name="stroke_glass_card">#FF233446</color>
-    <color name="stroke_glass_highlight">#FF37506D</color>
+    <!-- 文字层级 (WCAG AA) -->
+    <color name="sp_tx">#FF111620</color>
+    <color name="sp_tx2">#FF5A6675</color>
+    <color name="sp_tx3">#FF8B97A8</color>
+    <color name="sp_tx4">#FFA7B1C0</color>
 
-    <!-- U盘环形存储容量图例 -->
-    <color name="ring_driving">#FF1AE5A3</color>
-    <color name="ring_sentry">#FFFFB020</color>
-    <color name="ring_photos">#FF0A84FF</color>
-    <color name="ring_free">#FF1A2736</color>
+    <!-- 强调色 -->
+    <color name="sp_ac">#FF3572F4</color>
+    <color name="sp_ac2">#FF2557C8</color>
+    <color name="sp_acbg">#FFE8F0FF</color>
+    <color name="sp_acln">#FFC7DBFF</color>
+    <color name="sp_acring">#333572F4</color>
+
+    <!-- 语义状态色 -->
+    <color name="sp_ok">#FF0E9B4E</color>
+    <color name="sp_wn">#FFB2670A</color>
+    <color name="sp_dg">#FFD92D20</color>
+    <color name="sp_rec">#FFE5372F</color>
+
+    <!-- 玻璃 / 遮罩 / 高光 (含 alpha) -->
+    <color name="sp_glass">#CCFFFFFF</color>
+    <color name="sp_hair">#9EFFFFFF</color>
+    <color name="sp_dim">#570A0F16</color>
+    <color name="sp_linew">#24FFFFFF</color>
+    <color name="sp_top_hi">#F2FFFFFF</color>
+
+    <!-- 视频层专用（与主题无关，恒为暗调） -->
+    <color name="sp_quad_seam">#FF0A0F16</color>
+    <color name="sp_osd_bg">#660A0F16</color>
+    <color name="sp_osd_tx">#FFFFFFFF</color>
+
+    <!-- ===================================================================
+         兼容别名：保留旧色名以免未迁移的引用编译失败
+         新代码请直接使用 sp_* 语义 token
+         =================================================================== -->
+    <color name="bg_cockpit_dark">@color/sp_page</color>
+    <color name="bg_cockpit_top">@color/sp_surf2</color>
+    <color name="bg_nav_rail">@color/sp_surf</color>
+    <color name="bg_card_dark">@color/sp_surf</color>
+    <color name="bg_card_elevated">@color/sp_raise</color>
+    <color name="bg_card_inner">@color/sp_surf2</color>
+
+    <color name="flyme_cyan">@color/sp_ac</color>
+    <color name="flyme_cyan_glow">@color/sp_acring</color>
+    <color name="flyme_cyan_subtle">@color/sp_acbg</color>
+    <color name="flyme_blue">@color/sp_ac</color>
+    <color name="accent_warning">@color/sp_wn</color>
+    <color name="accent_danger">@color/sp_dg</color>
+
+    <color name="text_primary">@color/sp_tx</color>
+    <color name="text_secondary">@color/sp_tx2</color>
+    <color name="text_tertiary">@color/sp_tx3</color>
+
+    <color name="divider_line">@color/sp_line2</color>
+    <color name="divider_line_subtle">@color/sp_line</color>
+    <color name="stroke_glass_card">@color/sp_line2</color>
+    <color name="stroke_glass_highlight">@color/sp_acln</color>
+
+    <!--  存储容量图例 -->
+    <color name="ring_driving">@color/sp_ac</color>
+    <color name="ring_sentry">@color/sp_wn</color>
+    <color name="ring_photos">@color/sp_ok</color>
+    <color name="ring_free">@color/sp_surf3</color>
 </resources>

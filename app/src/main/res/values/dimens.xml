@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===================================================================
+         Sophon Design System v3 · 尺度体系
+         基准来自盯盯车实测 dimen（main_preview_corner_radius=24dp、
+         nav_rail=384dp、hub_tile_elevation=28dp、page_header_title=36sp）
+         并按 Sophon 1280×800 横屏车机画布收敛
+         =================================================================== -->
+
+    <!-- 圆角层级：外框 / 瓷砖 / 卡片 / 控件 / chip -->
+    <dimen name="sp_r_quad">20dp</dimen>
+    <dimen name="sp_r_sheet">24dp</dimen>
+    <dimen name="sp_r_tile">20dp</dimen>
+    <dimen name="sp_r_card">16dp</dimen>
+    <dimen name="sp_r_ctrl">12dp</dimen>
+    <dimen name="sp_r_chip">8dp</dimen>
+    <dimen name="sp_r_pill">100dp</dimen>
+
+    <!-- 间距栅格（4dp 基准） -->
+    <dimen name="sp_s_2">2dp</dimen>
+    <dimen name="sp_s_4">4dp</dimen>
+    <dimen name="sp_s_6">6dp</dimen>
+    <dimen name="sp_s_8">8dp</dimen>
+    <dimen name="sp_s_12">12dp</dimen>
+    <dimen name="sp_s_16">16dp</dimen>
+    <dimen name="sp_s_20">20dp</dimen>
+    <dimen name="sp_s_24">24dp</dimen>
+    <dimen name="sp_s_32">32dp</dimen>
+
+    <!-- 车机字阶（等比放大，非手机尺度） -->
+    <dimen name="sp_t_display">32sp</dimen>
+    <dimen name="sp_t_headline">26sp</dimen>
+    <dimen name="sp_t_title">20sp</dimen>
+    <dimen name="sp_t_subtitle">15sp</dimen>
+    <dimen name="sp_t_body">14sp</dimen>
+    <dimen name="sp_t_label">13sp</dimen>
+    <dimen name="sp_t_caption">12sp</dimen>
+    <dimen name="sp_t_micro">11sp</dimen>
+
+    <!-- 结构尺寸 -->
+    <dimen name="sp_nav_width">300dp</dimen>
+    <dimen name="sp_nav_item_h">64dp</dimen>
+    <dimen name="sp_statusbar_h">56dp</dimen>
+    <dimen name="sp_shutter_h">96dp</dimen>
+    <dimen name="sp_touch_min">48dp</dimen>
+    <dimen name="sp_quad_seam">4dp</dimen>
+    <dimen name="sp_icon_24">24dp</dimen>
+    <dimen name="sp_icon_20">20dp</dimen>
+    <dimen name="sp_icon_16">16dp</dimen>
+
+    <!-- 投影层级（对应 sh1 / sh2 / sh3） -->
+    <dimen name="sp_elev_1">2dp</dimen>
+    <dimen name="sp_elev_2">6dp</dimen>
+    <dimen name="sp_elev_3">12dp</dimen>
+
+    <!--  控件 -->
+    <dimen name="sp_slider_track">14dp</dimen>
+    <dimen name="sp_slider_thumb">26dp</dimen>
+    <dimen name="sp_shutter_btn">88dp</dimen>
+    <dimen name="sp_glass_btn">48dp</dimen>
+</resources>

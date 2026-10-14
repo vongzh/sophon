@@ -78,10 +78,10 @@ class SophonNotificationManager(
         // 2. 状态文本
         if (isRecording) {
             remoteViews.setTextViewText(R.id.tv_notif_status, "● 录制中 $timeStr")
-            remoteViews.setTextColor(R.id.tv_notif_status, context.getColor(R.color.accent_danger))
+            remoteViews.setTextColor(R.id.tv_notif_status, context.getColor(R.color.sp_dg))
         } else {
             remoteViews.setTextViewText(R.id.tv_notif_status, "○ 待机守护中")
-            remoteViews.setTextColor(R.id.tv_notif_status, context.getColor(R.color.text_secondary))
+            remoteViews.setTextColor(R.id.tv_notif_status, context.getColor(R.color.sp_tx2))
         }
 
         // 3. 存储状态

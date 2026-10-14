@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  夜间：关闭浅色状态栏图标着色，其余继承 values/themes.xml -->
+    <style name="Theme.Sophon" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/sp_page</item>
+        <item name="android:navigationBarColor">@color/sp_page</item>
+        <item name="android:windowBackground">@color/sp_page</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="colorPrimary">@color/sp_ac</item>
+        <item name="colorPrimaryDark">@color/sp_ac2</item>
+        <item name="colorSecondary">@color/sp_ac2</item>
+        <item name="colorAccent">@color/sp_ac</item>
+        <item name="colorError">@color/sp_dg</item>
+
+        <item name="android:textColorPrimary">@color/sp_tx</item>
+        <item name="android:textColorSecondary">@color/sp_tx2</item>
+        <item name="android:colorBackground">@color/sp_page</item>
+    </style>
+</resources>

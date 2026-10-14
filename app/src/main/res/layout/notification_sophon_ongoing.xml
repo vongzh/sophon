@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/bg_card_dark"
+    android:background="@color/sp_surf"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingHorizontal="16dp">
@@ -32,8 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
-                android:textColor="@color/flyme_cyan"
-                android:textSize="14sp"
+                android:textColor="@color/sp_ac"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -42,8 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="● 正在录制 00:00:00"
-                android:textColor="@color/accent_danger"
-                android:textSize="12sp"
+                android:textColor="@color/sp_dg"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -53,8 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="U盘状态: 已挂载"
-            android:textColor="@color/text_secondary"
-            android:textSize="11sp" />
+            android:textColor="@color/sp_tx2"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <!-- 快捷动作按钮组 -->
@@ -69,12 +69,12 @@
             android:id="@+id/btn_notif_snapshot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:text="抓拍"
-            android:textColor="@color/text_primary"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_tx"
+            android:textSize="13sp" />
 
         <!-- 加锁按键 -->
         <TextView
@@ -82,25 +82,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:text="加锁"
-            android:textColor="@color/accent_warning"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_wn"
+            android:textSize="13sp" />
 
-        <!-- 主页按键 -->
+        <!--  主页按键 -->
         <TextView
             android:id="@+id/btn_notif_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:text="主页"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_ac"
+            android:textSize="13sp" />
 
     </LinearLayout>
 

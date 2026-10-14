@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -30,6 +31,17 @@ import kotlinx.coroutines.withContext
  * 4. 内置车规级 U 盘物理写入基准测速与健康体检。
  */
 class SophonSettingsActivity : AppCompatActivity() {
+
+    private lateinit var scrollSettingsContent: ScrollView
+    private lateinit var btnTabRec: TextView
+    private lateinit var btnTabVisual: TextView
+    private lateinit var btnTabRemote: TextView
+    private lateinit var btnTabStorage: TextView
+
+    private lateinit var cardRec: View
+    private lateinit var cardVisual: View
+    private lateinit var cardRemote: View
+    private lateinit var cardStorage: View
 
     private lateinit var etBarkServer: EditText
     private lateinit var etBarkKey: EditText
@@ -125,6 +137,20 @@ class SophonSettingsActivity : AppCompatActivity() {
         tvBenchmarkResult = findViewById(R.id.tv_benchmark_result)
         btnRunUsbBenchmark = findViewById(R.id.btn_run_usb_benchmark)
 
+        // S6 双栏设置导航与锚点
+        scrollSettingsContent = findViewById(R.id.scroll_settings_content)
+        btnTabRec = findViewById(R.id.btn_tab_rec)
+        btnTabVisual = findViewById(R.id.btn_tab_visual)
+        btnTabRemote = findViewById(R.id.btn_tab_remote)
+        btnTabStorage = findViewById(R.id.btn_tab_storage)
+
+        cardRec = findViewById(R.id.card_rec)
+        cardVisual = findViewById(R.id.card_visual)
+        cardRemote = findViewById(R.id.card_remote)
+        cardStorage = findViewById(R.id.card_storage)
+
+        setupNavigationRail()
+
         findViewById<TextView>(R.id.btn_settings_back).setOnClickListener {
             finish()
         }
@@ -134,6 +160,46 @@ class SophonSettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "配置已保存并生效", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    private fun setupNavigationRail() {
+        btnTabRec.setOnClickListener { scrollToCard(cardRec, btnTabRec) }
+        btnTabVisual.setOnClickListener { scrollToCard(cardVisual, btnTabVisual) }
+        btnTabRemote.setOnClickListener { scrollToCard(cardRemote, btnTabRemote) }
+        btnTabStorage.setOnClickListener { scrollToCard(cardStorage, btnTabStorage) }
+
+        scrollSettingsContent.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val storageTop = cardStorage.top - 60
+            val remoteTop = cardRemote.top - 60
+            val visualTop = cardVisual.top - 60
+
+            when {
+                scrollY >= storageTop -> updateActiveTab(btnTabStorage)
+                scrollY >= remoteTop -> updateActiveTab(btnTabRemote)
+                scrollY >= visualTop -> updateActiveTab(btnTabVisual)
+                else -> updateActiveTab(btnTabRec)
+            }
+        }
+    }
+
+    private fun updateActiveTab(activeTab: TextView) {
+        val tabs = listOf(btnTabRec, btnTabVisual, btnTabRemote, btnTabStorage)
+        for (tab in tabs) {
+            if (tab == activeTab) {
+                tab.setBackgroundResource(R.drawable.sp_bg_nav_item_active)
+                tab.setTextColor(getColor(R.color.sp_ac))
+                tab.typeface = android.graphics.Typeface.DEFAULT_BOLD
+            } else {
+                tab.setBackgroundResource(R.drawable.sp_bg_nav_item)
+                tab.setTextColor(getColor(R.color.sp_tx2))
+                tab.typeface = android.graphics.Typeface.DEFAULT
+            }
+        }
+    }
+
+    private fun scrollToCard(card: View, tab: TextView) {
+        updateActiveTab(tab)
+        scrollSettingsContent.smoothScrollTo(0, card.top)
     }
 
     private fun loadCurrentPreferences() {

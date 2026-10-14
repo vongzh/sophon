@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  快门（88dp）：外圈描边 + 内圈主色，按压有涟漪 -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/sp_acring">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/sp_ac" />
+            <stroke
+                android:width="3dp"
+                android:color="@color/sp_page" />
+        </shape>
+    </item>
+</ripple>

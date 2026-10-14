@@ -32,7 +32,7 @@
         android:pathData="M 10,10.5 A 1.5,1.5 0 1,1 10,10.49 Z"
         android:fillColor="@color/text_secondary" />
 
-    <!-- 5. 顶部状态指示槽 -->
+    <!--  5. 顶部状态指示槽 -->
     <path
         android:pathData="M 6.5,7 L 8.5,7"
         android:strokeColor="@color/text_secondary"

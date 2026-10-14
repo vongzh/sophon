@@ -20,7 +20,7 @@
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 桶身竖条纹 -->
+    <!--  桶身竖条纹 -->
     <path
         android:pathData="M 8.5,8.5 L 8.5,14.5 M 11.5,8.5 L 11.5,14.5"
         android:strokeColor="@color/text_secondary"

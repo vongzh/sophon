@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===================================================================
+         Sophon Design System v3 · 字阶与组件样式
+         =================================================================== -->
+
+    <!-- KPI / 大数值 -->
+    <style name="TextAppearance.Sophon.Display" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_display</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/sp_tx</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <!-- 页面标题 -->
+    <style name="TextAppearance.Sophon.Headline" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_headline</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/sp_tx</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <!-- 卡片 / 导航项标题 -->
+    <style name="TextAppearance.Sophon.Title" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/sp_tx</item>
+    </style>
+
+    <!-- 副标题 / 说明行 -->
+    <style name="TextAppearance.Sophon.Subtitle" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_subtitle</item>
+        <item name="android:textColor">@color/sp_tx2</item>
+    </style>
+
+    <style name="TextAppearance.Sophon.Body" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_body</item>
+        <item name="android:textColor">@color/sp_tx</item>
+    </style>
+
+    <!-- 次级信息 / 元信息 -->
+    <style name="TextAppearance.Sophon.Label" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_label</item>
+        <item name="android:textColor">@color/sp_tx2</item>
+    </style>
+
+    <style name="TextAppearance.Sophon.Caption" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_caption</item>
+        <item name="android:textColor">@color/sp_tx3</item>
+    </style>
+
+    <!-- 等宽数值（时间码 / 车牌 / 坐标） -->
+    <style name="TextAppearance.Sophon.Mono" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_label</item>
+        <item name="android:textColor">@color/sp_tx2</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+
+    <!-- OSD 画面叠加文字（恒白，带投影） -->
+    <style name="TextAppearance.Sophon.Osd" parent="android:TextAppearance">
+        <item name="android:textSize">@dimen/sp_t_caption</item>
+        <item name="android:textColor">@color/sp_osd_tx</item>
+        <item name="android:shadowColor">#99000000</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">3</item>
+    </style>
+
+    <!-- 字阶父样式（点分命名要求父节点存在） -->
+    <style name="TextAppearance.Sophon" parent="android:TextAppearance" />
+
+    <!-- ===================== 组件样式 ===================== -->
+
+    <!-- 组件父样式（点分命名要求父节点存在） -->
+    <style name="Widget" />
+    <style name="Widget.Sophon" />
+
+    <!-- 导航项 -->
+    <style name="Widget.Sophon.NavItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sp_nav_item_h</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">@dimen/sp_s_16</item>
+        <item name="android:paddingEnd">@dimen/sp_s_16</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!--  玻璃质感方键 -->
+    <style name="Widget.Sophon.GlassButton">
+        <item name="android:layout_width">@dimen/sp_glass_btn</item>
+        <item name="android:layout_height">@dimen/sp_glass_btn</item>
+        <item name="android:background">@drawable/sp_bg_glass_btn</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>

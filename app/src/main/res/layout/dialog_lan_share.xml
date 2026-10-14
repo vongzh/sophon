@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="480dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_cockpit_card_elevated"
+    android:background="@drawable/sp_bg_card_raised"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -18,19 +18,19 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="车载免流极速快传"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="18sp"
+            android:textColor="@color/sp_ac"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/btn_dialog_close"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:text="✕"
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:textColor="@color/sp_tx2"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <TextView
@@ -38,8 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="0 流量消耗 · 手机直连车机 · 高清原画批量高速导出"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp" />
+        android:textColor="@color/sp_tx2"
+        android:textSize="13sp" />
 
     <!-- 二维码展示区 (精致白色卡片圆角) -->
     <FrameLayout
@@ -47,7 +47,7 @@
         android:layout_height="220dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_input_field"
+        android:background="@drawable/sp_bg_input_field"
         android:backgroundTint="#FFFFFFFF"
         android:clipToOutline="true"
         android:padding="12dp">
@@ -59,19 +59,19 @@
             android:contentDescription="Lan Share QR Code" />
     </FrameLayout>
 
-    <!-- 提示与操作链接 -->
+    <!--  提示与操作链接 -->
     <TextView
         android:id="@+id/tv_share_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_badge_pill"
+        android:background="@drawable/sp_bg_pill"
         android:paddingHorizontal="18dp"
         android:paddingVertical="7dp"
         android:text="http://192.168.43.1:8088"
-        android:textColor="@color/flyme_cyan"
-        android:textSize="14sp"
+        android:textColor="@color/sp_ac"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
     <TextView
@@ -82,7 +82,7 @@
         android:gravity="center"
         android:lineSpacingExtra="4dp"
         android:text="① 手机连接车机 Wi-Fi 热点\n② 微信或手机系统相机扫描上方二维码\n③ 浏览器即开点播与原画免流下载"
-        android:textColor="@color/text_secondary"
-        android:textSize="12sp" />
+        android:textColor="@color/sp_tx2"
+        android:textSize="13sp" />
 
 </LinearLayout>

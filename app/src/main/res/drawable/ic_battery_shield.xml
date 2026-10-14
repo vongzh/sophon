@@ -20,7 +20,7 @@
         android:strokeWidth="2.2"
         android:strokeLineCap="round" />
 
-    <!-- 3. 电量防亏电安全闪电核心 (Safety Voltage Bolt) -->
+    <!--  3. 电量防亏电安全闪电核心 (Safety Voltage Bolt) -->
     <path
         android:pathData="M 12.5,9 L 9,13.5 L 12,13.5 L 11.5,17 L 15,12.5 L 12,12.5 Z"
         android:fillColor="@color/flyme_cyan" />

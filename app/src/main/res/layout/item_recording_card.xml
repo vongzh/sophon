@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     录像卡片 · 设计稿 S3 列表项（docs/design/Sophon-UI-Design-v3.html）
+     尺度依据：126×71 + 时长角标 + 锁定锁 + 三段元数据
+     =================================================================== -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="6dp"
-    android:background="@drawable/bg_cockpit_card"
+    android:layout_marginHorizontal="@dimen/sp_s_12"
+    android:layout_marginVertical="@dimen/sp_s_4"
+    android:background="@drawable/sp_bg_card"
+    android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="12dp">
+    android:padding="@dimen/sp_s_8">
 
-    <!-- 视频封面缩略图容器 (12dp 圆角裁切) -->
+    <!-- 缩略图 (126dp × 71dp 车规实测尺度) -->
     <FrameLayout
-        android:layout_width="144dp"
-        android:layout_height="84dp"
-        android:background="@drawable/bg_cockpit_card_elevated"
+        android:layout_width="126dp"
+        android:layout_height="71dp"
+        android:background="@drawable/sp_bg_chip"
         android:clipToOutline="true">
 
         <ImageView
@@ -22,45 +29,59 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-        <!-- 播放轻量半透明微光药丸 -->
-        <FrameLayout
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_badge_pill">
+        <!-- 镜头角标 (左下角) -->
+        <TextView
+            android:id="@+id/tv_badge_cam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="4dp"
+            android:background="@drawable/sp_bg_osd_chip"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="1dp"
+            android:text="前路"
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="9.5sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="▶"
-                android:textColor="@color/flyme_cyan"
-                android:textSize="12sp" />
-        </FrameLayout>
-
-        <!-- 锁档标签 (发生碰撞或用户锁档) -->
+        <!-- 加锁标记 (左上角) -->
         <TextView
             android:id="@+id/tv_badge_locked"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
-            android:layout_margin="6dp"
-            android:background="@drawable/bg_badge_pill_active"
-            android:backgroundTint="@color/accent_danger"
-            android:paddingHorizontal="7dp"
-            android:paddingVertical="2dp"
-            android:text="加锁保护"
+            android:layout_margin="4dp"
+            android:background="@drawable/sp_bg_pill"
+            android:backgroundTint="@color/sp_dg"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:text="🔒"
             android:textColor="#FFFFFFFF"
-            android:textSize="9sp"
+            android:textSize="9.5sp"
             android:textStyle="bold"
             android:visibility="gone" />
+
+        <!-- 时长角标 (右下角) -->
+        <TextView
+            android:id="@+id/tv_badge_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:background="@drawable/sp_bg_osd_chip"
+            android:fontFamily="monospace"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="1dp"
+            android:text="01:00"
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="9.5sp" />
     </FrameLayout>
 
-    <!-- 视频规格与时间戳信息 -->
+    <!-- 三段信息区 (主标题 / 副说明 / 数值与格式) -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/sp_s_12"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -68,51 +89,80 @@
             android:id="@+id/tv_record_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2026-10-14 09:12:00"
-            android:textColor="@color/text_primary"
-            android:textSize="15sp"
+            android:fontFamily="monospace"
+            android:text="14:02:18"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_body"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_record_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="时长: 01:00  ·  大小: 72.5 MB  ·  四路全景"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:layout_marginTop="2dp"
+            android:text="时长 01:00  ·  74.2 MB  ·  H.264"
+            android:textColor="@color/sp_tx3"
+            android:textSize="@dimen/sp_t_caption" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_tag_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_chip"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="1dp"
+                android:text="常规行车"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/sp_bg_chip"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="1dp"
+                android:text="1080P"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- 右侧操作药丸按键区 -->
+    <!-- 侧边快捷操作键 (加锁 / 删除) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/btn_record_lock_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_badge_pill"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="7dp"
+            android:layout_marginEnd="@dimen/sp_s_6"
+            android:background="@drawable/sp_bg_pill"
+            android:paddingHorizontal="@dimen/sp_s_12"
+            android:paddingVertical="@dimen/sp_s_6"
             android:text="加锁"
-            android:textColor="@color/accent_warning"
-            android:textSize="12sp"
+            android:textColor="@color/sp_wn"
+            android:textSize="@dimen/sp_t_caption"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/btn_record_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="7dp"
+            android:background="@drawable/sp_bg_pill"
+            android:paddingHorizontal="@dimen/sp_s_12"
+            android:paddingVertical="@dimen/sp_s_6"
             android:text="删除"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_dg"
+            android:textSize="@dimen/sp_t_caption" />
     </LinearLayout>
 
 </LinearLayout>

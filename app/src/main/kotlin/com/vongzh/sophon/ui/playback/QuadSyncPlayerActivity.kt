@@ -150,14 +150,14 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
     }
 
     private fun switchViewPerspective(mode: Int) {
-        btnViewQuad.setBackgroundTintList(if (mode == 0) getColorStateList(R.color.flyme_cyan) else null)
-        btnViewQuad.setTextColor(if (mode == 0) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnViewQuad.setBackgroundTintList(if (mode == 0) getColorStateList(R.color.sp_acbg) else null)
+        btnViewQuad.setTextColor(if (mode == 0) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
 
-        btnViewFront.setBackgroundTintList(if (mode == 1) getColorStateList(R.color.flyme_cyan) else null)
-        btnViewFront.setTextColor(if (mode == 1) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnViewFront.setBackgroundTintList(if (mode == 1) getColorStateList(R.color.sp_acbg) else null)
+        btnViewFront.setTextColor(if (mode == 1) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
 
-        btnViewBack.setBackgroundTintList(if (mode == 2) getColorStateList(R.color.flyme_cyan) else null)
-        btnViewBack.setTextColor(if (mode == 2) getColor(R.color.bg_cockpit_dark) else getColor(R.color.text_secondary))
+        btnViewBack.setBackgroundTintList(if (mode == 2) getColorStateList(R.color.sp_acbg) else null)
+        btnViewBack.setTextColor(if (mode == 2) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
 
         when (mode) {
             0 -> {

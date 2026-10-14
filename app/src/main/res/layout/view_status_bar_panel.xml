@@ -3,7 +3,7 @@
     android:id="@+id/panel_root"
     android:layout_width="280dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_capsule_panel"
+    android:background="@drawable/sp_bg_sheet"
     android:orientation="vertical"
     android:padding="14dp">
 
@@ -18,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="14sp"
+            android:textColor="@color/sp_ac"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -28,8 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="● 录制中"
-            android:textColor="@color/accent_danger"
-            android:textSize="12sp"
+            android:textColor="@color/sp_dg"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <View
@@ -43,8 +43,8 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:text="✕"
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp" />
+            android:textColor="@color/sp_tx2"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <!-- 存储状态行 -->
@@ -54,16 +54,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text="U盘状态: 正常已挂载"
-        android:textColor="@color/text_secondary"
-        android:textSize="11sp" />
+        android:textColor="@color/sp_tx2"
+        android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginVertical="10dp"
-        android:background="@color/divider_line" />
+        android:background="@color/sp_line2" />
 
-    <!-- 快捷操作按钮行 -->
+    <!--  快捷操作按钮行 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,12 +76,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
             android:text="📷 抓拍"
-            android:textColor="@color/text_primary"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_tx"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/btn_panel_lock"
@@ -89,12 +89,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
             android:text="🔒 加锁"
-            android:textColor="@color/accent_warning"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_wn"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/btn_panel_share"
@@ -102,24 +102,24 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
             android:text="📲 快传"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_ac"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/btn_panel_open"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
             android:text="🏠 主页"
-            android:textColor="@color/text_primary"
-            android:textSize="12sp" />
+            android:textColor="@color/sp_tx"
+            android:textSize="13sp" />
     </LinearLayout>
 
 </LinearLayout>

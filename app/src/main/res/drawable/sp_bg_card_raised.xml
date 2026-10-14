@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  浮起卡片（e-2 层）：用于面板、设置分区、悬浮控件底座 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/sp_r_card" />
+            <solid android:color="@color/sp_raise" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/sp_line2" />
+        </shape>
+    </item>
+    <item
+        android:gravity="top"
+        android:height="2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/sp_r_card" />
+            <gradient
+                android:angle="270"
+                android:endColor="#00000000"
+                android:startColor="@color/sp_top_hi" />
+        </shape>
+    </item>
+</layer-list>

@@ -5,7 +5,7 @@
     <string name="recording_active">极视全维行车记录正在运行中</string>
     <string name="no_usb_warning">未检测到外置 U 盘，录制已挂起（保持盲区补盲模式）</string>
     
-    <!-- Navigation Rail -->
+    <!--  Navigation Rail -->
     <string name="nav_live">实时监控</string>
     <string name="nav_driving">行车视频</string>
     <string name="nav_sentry">哨兵事件</string>

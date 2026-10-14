@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  导航项按压 / 车机旋钮聚焦态 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/sp_r_card" />
+    <solid android:color="@color/sp_surf2" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/sp_line2" />
+</shape>

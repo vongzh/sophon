@@ -308,10 +308,10 @@ class StatusBarCapsuleService : Service() {
                 capsuleView?.findViewById<TextView>(R.id.tv_capsule_usb)?.let { tv ->
                     if (isMounted) {
                         tv.text = "🖫"
-                        tv.setTextColor(getColor(R.color.flyme_cyan))
+                        tv.setTextColor(getColor(R.color.sp_ac))
                     } else {
                         tv.text = "✕"
-                        tv.setTextColor(getColor(R.color.accent_warning))
+                        tv.setTextColor(getColor(R.color.sp_wn))
                     }
                 }
                 panelView?.findViewById<TextView>(R.id.tv_panel_storage_info)?.text =

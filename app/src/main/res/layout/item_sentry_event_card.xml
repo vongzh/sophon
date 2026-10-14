@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     哨兵事件条目 · 设计稿 S5 列表项
+     三段信息：缩略图 + 触发类型/时间 + 方位机位与加锁标记
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/sp_s_12"
+    android:layout_marginVertical="@dimen/sp_s_4"
+    android:background="@drawable/sp_bg_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/sp_s_8">
+
+    <!-- 缩略图 (112dp × 64dp) -->
+    <FrameLayout
+        android:layout_width="112dp"
+        android:layout_height="64dp"
+        android:background="@drawable/sp_bg_chip"
+        android:clipToOutline="true">
+
+        <ImageView
+            android:id="@+id/iv_sentry_thumb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <!-- 危险等级 / 类型标记 (左上角) -->
+        <TextView
+            android:id="@+id/tv_sentry_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:layout_margin="4dp"
+            android:background="@drawable/sp_bg_pill"
+            android:backgroundTint="@color/sp_dg"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:text="碰撞"
+            android:textColor="#FFFFFFFF"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+        <!-- 机位角标 (右下角) -->
+        <TextView
+            android:id="@+id/tv_sentry_cam_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:background="@drawable/sp_bg_osd_chip"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="1dp"
+            android:text="左前盲区"
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="9sp" />
+    </FrameLayout>
+
+    <!-- 事件元数据区 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sp_s_12"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_sentry_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="车身剧烈震动 / 碰撞警报"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_sentry_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="14:02:18  ·  触发亮屏威慑  ·  已自动加锁"
+            android:textColor="@color/sp_tx3"
+            android:textSize="@dimen/sp_t_caption" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_sentry_view_clip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/sp_s_8"
+        android:background="@drawable/sp_bg_pill_accent"
+        android:paddingHorizontal="@dimen/sp_s_12"
+        android:paddingVertical="@dimen/sp_s_6"
+        android:text="回看"
+        android:textColor="@color/sp_ac"
+        android:textSize="@dimen/sp_t_caption"
+        android:textStyle="bold" />
+
+</LinearLayout>

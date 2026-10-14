@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  玻璃圆键（次要播放控制 / 翻页） -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/sp_acring">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/sp_glass" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/sp_line" />
+        </shape>
+    </item>
+</ripple>

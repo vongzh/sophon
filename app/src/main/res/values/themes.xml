@@ -1,9 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Sophon" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:statusBarColor">@color/bg_cockpit_dark</item>
-        <item name="android:navigationBarColor">@color/bg_cockpit_dark</item>
-        <item name="android:windowBackground">@color/bg_cockpit_dark</item>
-        <item name="colorPrimary">@color/flyme_cyan</item>
-        <item name="colorSecondary">@color/flyme_blue</item>
+    <!-- ===================================================================
+         Sophon Design System v3 · 主题
+         DayNight：白天走 values/（浅色 #E8ECF1），夜间走 values-night/（深色 #11151B）
+         车机通过 uiMode 切换，行车记录仪默认建议深色（见 SophonApp 可设 MODE_NIGHT_YES）
+         =================================================================== -->
+    <style name="Theme.Sophon" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/sp_page</item>
+        <item name="android:navigationBarColor">@color/sp_page</item>
+        <item name="android:windowBackground">@color/sp_page</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!--  单一强调色：Flyme 蓝 -->
+        <item name="colorPrimary">@color/sp_ac</item>
+        <item name="colorPrimaryDark">@color/sp_ac2</item>
+        <item name="colorSecondary">@color/sp_ac2</item>
+        <item name="colorAccent">@color/sp_ac</item>
+        <item name="colorError">@color/sp_dg</item>
+
+        <item name="android:textColorPrimary">@color/sp_tx</item>
+        <item name="android:textColorSecondary">@color/sp_tx2</item>
+        <item name="android:colorBackground">@color/sp_page</item>
     </style>
 </resources>

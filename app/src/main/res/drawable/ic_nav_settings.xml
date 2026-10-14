@@ -19,7 +19,7 @@
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.6" />
 
-    <!-- 3. 旋钮刻度指示标 (Notch Indication) -->
+    <!--  3. 旋钮刻度指示标 (Notch Indication) -->
     <path
         android:pathData="M 12,10.5 L 12,12"
         android:strokeColor="@color/text_secondary"

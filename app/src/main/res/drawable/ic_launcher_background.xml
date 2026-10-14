@@ -23,7 +23,7 @@
         </aapt:attr>
     </path>
 
-    <!-- 右上方极视漫反射柔和微光斑 (Flyme Cyan 极光微光) -->
+    <!--  右上方极视漫反射柔和微光斑 (Flyme Cyan 极光微光) -->
     <path
         android:pathData="M 68,44 A 28,28 0 1,1 68,43.9 Z">
         <aapt:attr name="android:fillColor">

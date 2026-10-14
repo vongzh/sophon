@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_cockpit_dark"
+    android:background="@color/sp_page"
     android:orientation="vertical">
 
     <!-- 顶部状态栏 (Settings Top Bar) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/bg_nav_rail"
+        android:background="@color/sp_surf"
         android:gravity="center_vertical"
         android:paddingHorizontal="20dp">
 
@@ -17,15 +17,15 @@
             android:id="@+id/btn_settings_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/sp_bg_pill"
             android:drawableStart="@drawable/ic_action_back"
             android:drawablePadding="6dp"
             android:gravity="center_vertical"
             android:paddingHorizontal="14dp"
             android:paddingVertical="7dp"
             android:text="返回"
-            android:textColor="@color/flyme_cyan"
-            android:textSize="13sp"
+            android:textColor="@color/sp_ac"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -34,116 +34,148 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="座舱录制与安全设置"
-            android:textColor="@color/text_primary"
-            android:textSize="17sp"
+            android:textColor="@color/sp_tx"
+            android:textSize="26sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/btn_settings_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill_active"
+            android:background="@drawable/sp_bg_pill_accent"
             android:paddingHorizontal="18dp"
             android:paddingVertical="7dp"
             android:text="保存配置"
-            android:textColor="@color/bg_cockpit_dark"
-            android:textSize="13sp"
+            android:textColor="@color/sp_page"
+            android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider_line" />
+        android:background="@color/sp_line2" />
 
-    <ScrollView
+    <!-- 主体双栏区域 (设计稿 S6 规范) -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="16dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- 左侧分类导航面板 (240dp) -->
+        <LinearLayout
+            android:id="@+id/layout_settings_rail"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:background="@color/sp_surf"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/sp_s_16"
+            android:paddingVertical="@dimen/sp_s_20">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_s_8"
+                android:layout_marginBottom="@dimen/sp_s_12"
+                android:text="设置分区"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <!-- Tab 1: 循环录像与行车 -->
+            <TextView
+                android:id="@+id/btn_tab_rec"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="@dimen/sp_s_6"
+                android:background="@drawable/sp_bg_nav_item_active"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="循环录制与行车"
+                android:textColor="@color/sp_ac"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
+
+            <!-- Tab 2: 视觉算法与安全 -->
+            <TextView
+                android:id="@+id/btn_tab_visual"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="@dimen/sp_s_6"
+                android:background="@drawable/sp_bg_nav_item"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="视觉算法与安全"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_subtitle" />
+
+            <!-- Tab 3: 远程机器人 -->
+            <TextView
+                android:id="@+id/btn_tab_remote"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="@dimen/sp_s_6"
+                android:background="@drawable/sp_bg_nav_item"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="远程机器人通知"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_subtitle" />
+
+            <!-- Tab 4: 存储与测速 -->
+            <TextView
+                android:id="@+id/btn_tab_storage"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="@dimen/sp_s_6"
+                android:background="@drawable/sp_bg_nav_item"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="U 盘存储与测速"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_subtitle" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_s_8"
+                android:text="极视 Sophon · 龙鹰一号"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/sp_line" />
+
+        <!-- 右侧卡片内容滚动区 -->
+        <ScrollView
+            android:id="@+id/scroll_settings_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 卡片 1: Bark iOS 极速推送配置 -->
+            <!-- 卡片 1: 循环录像与切片时长 -->
             <LinearLayout
+                android:id="@+id/card_rec"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_cockpit_card"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bark iOS 手机远程预警推送"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="车辆发生急刹、碰撞或远程抓拍时，静默推送原图与警报至 iPhone"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-
-                <EditText
-                    android:id="@+id/et_bark_server"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_input_field"
-                    android:hint="服务器地址 (默认: https://api.day.app)"
-                    android:paddingHorizontal="14dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_tertiary"
-                    android:textSize="13sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/et_bark_key"
-                        android:layout_width="0dp"
-                        android:layout_height="44dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_input_field"
-                        android:hint="输入您的 Bark Device Key (如: abcde12345)"
-                        android:paddingHorizontal="14dp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_tertiary"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/btn_test_bark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="44dp"
-                        android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_badge_pill"
-                        android:gravity="center"
-                        android:paddingHorizontal="18dp"
-                        android:text="测试推送"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 卡片 2: 循环录像与切片时长 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -151,8 +183,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="行车循环录像单段时长"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="16sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <RadioGroup
@@ -168,8 +200,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="28dp"
                         android:text="1 分钟 / 段 (推荐)"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_chunk_3min"
@@ -177,16 +209,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="28dp"
                         android:text="3 分钟 / 段"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_chunk_5min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="5 分钟 / 段"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -195,7 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -203,8 +235,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="窄道会车双闪全景补盲"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="16sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -212,8 +244,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="挂 D 挡且开启双闪时，低于设定时速自动弹出左右双侧分屏补盲视窗"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="13sp" />
 
                 <RadioGroup
                     android:id="@+id/rg_hazard_speed"
@@ -228,8 +260,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="28dp"
                         android:text="低于 15 km/h 激活 (标准)"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_hazard_20kmh"
@@ -237,25 +269,26 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="28dp"
                         android:text="低于 20 km/h 激活 (灵敏)"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
 
                     <RadioButton
                         android:id="@+id/rb_hazard_off"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="关闭双闪会车辅助"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textSize="15sp" />
                 </RadioGroup>
             </LinearLayout>
 
-            <!-- 卡片 4: 视觉算法与高级安全开关 -->
+            <!-- 卡片 2: 视觉算法与高级安全开关 -->
             <LinearLayout
+                android:id="@+id/card_visual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -263,8 +296,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="安全策略与视觉算法"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="16sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <Switch
@@ -273,8 +306,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="急刹车 / 碰撞异常自动锁存视频分段"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_fisheye_correction"
@@ -282,8 +315,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="GPU Brown-Conrady 广角光学畸变实时消除"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_osd_watermark"
@@ -291,8 +324,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="录制视频压制时间戳、车速与挡位 OSD 水印"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_rainy_night_shader"
@@ -300,8 +333,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="GPU 雨夜与破雾透亮滤波 (低照度暗部提亮 / 强光眩光抑制)"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_door_open_warning"
@@ -309,8 +342,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="停车/怠速开门防碰撞侧视盲区辅助 (DOW 预警)"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_battery_protection"
@@ -318,8 +351,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="12V 蓄电池低压保护 (低于 11.8V 自动休眠哨兵防亏电)"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_sentry_deterrent"
@@ -327,8 +360,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="哨兵感应异常震动触发中控屏“警示眼”全屏威慑"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <Switch
                     android:id="@+id/sw_pip_auto"
@@ -336,16 +369,88 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="退出应用自动开启画中画 (PiP) 悬浮微窗监看"
-                    android:textColor="@color/text_primary"
-                    android:textSize="14sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
             </LinearLayout>
 
-            <!-- 卡片 5: Telegram 远程机器人接入 -->
+            <!-- 卡片 3: Bark iOS 极速推送配置 (远程机器人分区锚点) -->
+            <LinearLayout
+                android:id="@+id/card_remote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bark iOS 手机远程预警推送"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="车辆发生急刹、碰撞或远程抓拍时，静默推送原图与警报至 iPhone"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/et_bark_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/sp_bg_input_field"
+                    android:hint="服务器地址 (默认: https://api.day.app)"
+                    android:paddingHorizontal="14dp"
+                    android:textColor="@color/sp_tx"
+                    android:textColorHint="@color/sp_tx3"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_bark_key"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/sp_bg_input_field"
+                        android:hint="输入您的 Bark Device Key (如: abcde12345)"
+                        android:paddingHorizontal="14dp"
+                        android:textColor="@color/sp_tx"
+                        android:textColorHint="@color/sp_tx3"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/btn_test_bark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/sp_bg_pill"
+                        android:gravity="center"
+                        android:paddingHorizontal="18dp"
+                        android:text="测试推送"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 4: Telegram 远程机器人接入 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -359,8 +464,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Telegram 远程机器人交互"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="16sp"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <Switch
@@ -374,20 +479,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="支持发送 /snap 远程回传四向全景照片、/status 车况巡检、/lock 紧急加锁"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="13sp" />
 
                 <EditText
                     android:id="@+id/et_telegram_bot_token"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_input_field"
+                    android:background="@drawable/sp_bg_input_field"
                     android:hint="Bot Token (如: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ)"
                     android:paddingHorizontal="14dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_tertiary"
-                    android:textSize="13sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textColorHint="@color/sp_tx3"
+                    android:textSize="15sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -400,24 +505,24 @@
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_input_field"
+                        android:background="@drawable/sp_bg_input_field"
                         android:hint="授权 Chat ID (用于接收警报与限制鉴权)"
                         android:paddingHorizontal="14dp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_tertiary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textColorHint="@color/sp_tx3"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/btn_test_telegram"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
                         android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_badge_pill"
+                        android:background="@drawable/sp_bg_pill"
                         android:gravity="center"
                         android:paddingHorizontal="18dp"
                         android:text="测试电报"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="13sp"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -427,7 +532,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -441,8 +546,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="飞书 (Feishu) 机器人集成"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="16sp"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <Switch
@@ -456,20 +561,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="支持群自定义 Webhook 告警或企业自建应用原图私信直发"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="13sp" />
 
                 <EditText
                     android:id="@+id/et_feishu_webhook"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_input_field"
+                    android:background="@drawable/sp_bg_input_field"
                     android:hint="群机器人 Webhook URL (https://open.feishu.cn/...)"
                     android:paddingHorizontal="14dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_tertiary"
-                    android:textSize="13sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textColorHint="@color/sp_tx3"
+                    android:textSize="15sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -481,12 +586,12 @@
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_input_field"
+                        android:background="@drawable/sp_bg_input_field"
                         android:hint="自建应用 App ID (选填)"
                         android:paddingHorizontal="14dp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_tertiary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textColorHint="@color/sp_tx3"
+                        android:textSize="15sp" />
 
                     <EditText
                         android:id="@+id/et_feishu_app_secret"
@@ -494,12 +599,12 @@
                         android:layout_height="44dp"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_input_field"
+                        android:background="@drawable/sp_bg_input_field"
                         android:hint="App Secret (选填)"
                         android:paddingHorizontal="14dp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_tertiary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textColorHint="@color/sp_tx3"
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -513,35 +618,36 @@
                         android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_input_field"
+                        android:background="@drawable/sp_bg_input_field"
                         android:hint="接收人 Open ID (如: ou_xxx)"
                         android:paddingHorizontal="14dp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_tertiary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/sp_tx"
+                        android:textColorHint="@color/sp_tx3"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/btn_test_feishu"
                         android:layout_width="wrap_content"
                         android:layout_height="44dp"
                         android:layout_marginStart="12dp"
-                        android:background="@drawable/bg_badge_pill"
+                        android:background="@drawable/sp_bg_pill"
                         android:gravity="center"
                         android:paddingHorizontal="18dp"
                         android:text="测试飞书"
-                        android:textColor="@color/flyme_cyan"
-                        android:textSize="13sp"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 卡片 7: 外置 U 盘写入基准测速与车规健康体检 -->
+            <!--  卡片 5: 外置 U 盘写入基准测速与车规健康体检 -->
             <LinearLayout
+                android:id="@+id/card_storage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_cockpit_card"
+                android:background="@drawable/sp_bg_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -549,8 +655,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="外置 U 盘写入基准测速与车规健康体检"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="16sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -558,35 +664,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="评估当前 U 盘物理 I/O 带宽是否满足四路 1080P/2K 视频流实时并发写入"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tv_benchmark_result"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_input_field"
+                    android:background="@drawable/sp_bg_input_field"
                     android:padding="14dp"
                     android:text="尚未进行测速体检，点击下方按钮开始。"
-                    android:textColor="@color/text_primary"
-                    android:textSize="13sp" />
+                    android:textColor="@color/sp_tx"
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/btn_run_usb_benchmark"
                     android:layout_width="wrap_content"
                     android:layout_height="44dp"
                     android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_badge_pill"
+                    android:background="@drawable/sp_bg_pill"
                     android:gravity="center"
                     android:paddingHorizontal="22dp"
                     android:text="⚡ 开始 U 盘写入基准测速"
-                    android:textColor="@color/flyme_cyan"
-                    android:textSize="13sp"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>
