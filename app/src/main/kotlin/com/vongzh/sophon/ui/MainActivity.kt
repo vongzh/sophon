@@ -39,9 +39,33 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initViews()
-        startDaemonServices()
+        checkAndRequestCameraPermission()
         observeSystemStates()
         checkShowLanShare(intent)
+    }
+
+    private fun checkAndRequestCameraPermission() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            startDaemonServices()
+        } else {
+            androidx.core.app.ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.CAMERA),
+                1001
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001 && grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            startDaemonServices()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
