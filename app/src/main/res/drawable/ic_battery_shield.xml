@@ -1,9 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
+    <!-- 1. 12V 汽车蓄电池轮廓主体 (12V Lead-Acid Battery Shell) -->
     <path
-        android:fillColor="#38FEFE"
-        android:pathData="M12,1L3,5v6c0,5.55 3.84,10.74 9,12 5.16,-1.26 9,-6.45 9,-12V5l-9,-4zm0,10.99h7c-0.53,4.12 -3.28,7.79 -7,8.94V12H5V6.3l7,-3.11v8.8z" />
+        android:pathData="M 3,8 C 3,6.9 3.9,6 5,6 L 19,6 C 20.1,6 21,6.9 21,8 L 21,18 C 21,19.1 20.1,20 19,20 L 5,20 C 3.9,20 3,19.1 3,18 Z"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 2. 正负极柱 (Terminals) -->
+    <path
+        android:pathData="M 6.5,4 L 6.5,6 M 17.5,4 L 17.5,6"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round" />
+
+    <!-- 3. 电量防亏电安全闪电核心 (Safety Voltage Bolt) -->
+    <path
+        android:pathData="M 12.5,9 L 9,13.5 L 12,13.5 L 11.5,17 L 15,12.5 L 12,12.5 Z"
+        android:fillColor="@color/flyme_cyan" />
 </vector>

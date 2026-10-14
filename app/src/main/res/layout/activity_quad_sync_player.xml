@@ -5,23 +5,28 @@
     android:background="@color/bg_cockpit_dark"
     android:orientation="vertical">
 
-    <!-- 顶部标题栏 -->
+    <!-- 顶部状态栏 (Top Player Bar) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="56dp"
+        android:background="@color/bg_nav_rail"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="20dp">
 
         <TextView
             android:id="@+id/btn_player_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:text="← 返回"
+            android:background="@drawable/bg_badge_pill"
+            android:drawableStart="@drawable/ic_action_back"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:text="返回"
             android:textColor="@color/flyme_cyan"
-            android:textSize="15sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView
@@ -31,7 +36,7 @@
             android:layout_marginStart="16dp"
             android:text="四路同步事件回放"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <View
@@ -39,56 +44,64 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <!-- 视角切换按键组 -->
+        <!-- 视角切换分段控制器 (FlymeAuto Perspective Switcher) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/bg_cockpit_card_elevated"
             android:orientation="horizontal"
-            android:padding="2dp">
+            android:padding="3dp">
 
             <TextView
                 android:id="@+id/btn_view_quad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_badge_pill"
-                android:backgroundTint="@color/flyme_cyan"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:background="@drawable/bg_badge_pill_active"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="5dp"
                 android:text="四分屏"
                 android:textColor="@color/bg_cockpit_dark"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btn_view_front"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:background="@drawable/bg_nav_capsule_inactive"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="5dp"
                 android:text="前视"
                 android:textColor="@color/text_secondary"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/btn_view_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:background="@drawable/bg_nav_capsule_inactive"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="5dp"
                 android:text="后视"
                 android:textColor="@color/text_secondary"
-                android:textSize="11sp" />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 视频画面渲染区 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_line" />
+
+    <!-- 视频画面渲染区 (Cockpit Cinema Frame) -->
     <FrameLayout
         android:id="@+id/player_video_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="12dp"
         android:layout_weight="1"
-        android:background="@color/bg_card_dark">
+        android:background="@drawable/bg_cockpit_card"
+        android:clipToOutline="true">
 
         <VideoView
             android:id="@+id/video_view_main"
@@ -97,14 +110,14 @@
             android:layout_gravity="center" />
     </FrameLayout>
 
-    <!-- 底部控制栏与时间轴 -->
+    <!-- 底部控制栏与高能事件时间轴 (Cockpit Player Control Dock) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_nav_rail"
         android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="12dp">
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="14dp">
 
         <!-- 刻度事件时间轴 (MarkedSeekBar) -->
         <com.vongzh.sophon.ui.widget.MarkedSeekBar
@@ -116,7 +129,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -125,21 +138,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="6dp"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="8dp"
                 android:text="❚❚ 暂停"
                 android:textColor="@color/text_primary"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <!-- 上一事件标记 -->
             <TextView
                 android:id="@+id/btn_prev_marker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="10dp"
                 android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
                 android:text="⏮ 上一事件"
                 android:textColor="@color/flyme_cyan"
                 android:textSize="12sp" />
@@ -151,8 +165,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
                 android:text="⏭ 下一事件"
                 android:textColor="@color/flyme_cyan"
                 android:textSize="12sp" />
@@ -172,30 +186,34 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+            <!-- 无损快速截取片段 -->
             <TextView
                 android:id="@+id/btn_clip_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/bg_badge_pill"
-                android:backgroundTint="#2638FEFE"
+                android:drawableStart="@drawable/ic_clip_scissors"
+                android:drawablePadding="6dp"
                 android:paddingHorizontal="14dp"
-                android:paddingVertical="6dp"
-                android:text="✂️ 截取取证片段"
+                android:paddingVertical="7dp"
+                android:text="截取取证"
                 android:textColor="@color/flyme_cyan"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
+            <!-- 播放倍速 -->
             <TextView
                 android:id="@+id/btn_play_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_pill"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
                 android:text="1.0x 倍速"
-                android:textColor="@color/flyme_cyan"
-                android:textSize="12sp" />
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

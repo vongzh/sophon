@@ -1,14 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- 外圈摄像机机身 -->
+
+    <!-- 1. 精密车载摄像头机身 (Precision Lens Body) -->
     <path
-        android:fillColor="#FF00D4AA"
-        android:pathData="M17,10.5V7c0,-0.55 -0.45,-1 -1,-1H4C3.45,6 3,6.45 3,7v10c0,0.55 0.45,1 1,1h12c0.55,0 1,-0.45 1,-1v-3.5l4,4v-11l-4,4z" />
-    <!-- 内部红色录制指示点 -->
+        android:pathData="M 3,7 C 3,5.9 3.9,5 5,5 L 14,5 C 15.1,5 16,5.9 16,7 L 16,17 C 16,18.1 15.1,19 14,19 L 5,19 C 3.9,19 3,18.1 3,17 Z"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 2. 镜头棱镜锥 (Prism Funnel) -->
     <path
-        android:fillColor="#FFFF453A"
-        android:pathData="M10,12m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+        android:pathData="M 16,10 L 20,7.5 C 20.6,7.1 21.5,7.6 21.5,8.3 L 21.5,15.7 C 21.5,16.4 20.6,16.9 20,16.5 L 16,14"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 3. 灵动录像核心红点 (Alive Red REC Pulse Dot) -->
+    <path
+        android:pathData="M 9.5,12 A 2.2,2.2 0 1,1 9.5,11.99 Z"
+        android:fillColor="@color/accent_danger" />
 </vector>

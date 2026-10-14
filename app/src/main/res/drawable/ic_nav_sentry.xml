@@ -5,22 +5,28 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- 哨兵安全防护盾图标 -->
+    <!-- 1. 全维机甲防护盾外框 (Mecha Sentry Shield Outer) -->
     <path
-        android:pathData="M 12,2 L 4,5.5 L 4,11.5 C 4,16.5 7.4,21.1 12,22.3 C 16.6,21.1 20,16.5 20,11.5 L 20,5.5 Z"
+        android:pathData="M 12,2.5 L 4.5,5.8 C 4.5,5.8 4,12.5 4.5,15.5 C 5.5,19.2 12,22.2 12,22.2 C 12,22.2 18.5,19.2 19.5,15.5 C 20,12.5 19.5,5.8 19.5,5.8 Z"
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 盾内感知警戒中心 -->
+    <!-- 2. 哨兵雷达多波束感知环 (Radar Wavefronts) -->
     <path
-        android:pathData="M 12,8 L 12,13"
+        android:pathData="M 8.5,9.5 C 9.5,8.2 10.7,7.5 12,7.5 C 13.3,7.5 14.5,8.2 15.5,9.5"
         android:strokeColor="@color/text_secondary"
-        android:strokeWidth="2"
+        android:strokeWidth="1.5"
         android:strokeLineCap="round" />
 
+    <!-- 3. 哨兵智瞳警戒核心 (Sentry Core) -->
     <path
-        android:pathData="M 12,16 A 1,1 0 1,1 12,15.99 Z"
+        android:pathData="M 12,11.5 C 10.3,11.5 9,12.8 9,14.5 C 9,16.2 10.3,17.5 12,17.5 C 13.7,17.5 15,16.2 15,14.5 C 15,12.8 13.7,11.5 12,11.5 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.6" />
+
+    <path
+        android:pathData="M 12,13.5 A 1,1 0 1,1 12,13.49 Z"
         android:fillColor="@color/text_secondary" />
 </vector>

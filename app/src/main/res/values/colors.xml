@@ -1,20 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- FlymeAuto Cockpit Dark Palette -->
-    <color name="bg_cockpit_dark">#FF0D0F12</color>
-    <color name="bg_card_dark">#FF181C22</color>
-    <color name="bg_nav_rail">#FF12151B</color>
-    <color name="flyme_cyan">#FF00D4AA</color>
-    <color name="flyme_blue">#FF0A84FF</color>
-    <color name="accent_warning">#FFFF9F0A</color>
-    <color name="accent_danger">#FFFF453A</color>
-    <color name="text_primary">#FFF5F7FA</color>
-    <color name="text_secondary">#FF8E95A5</color>
-    <color name="text_tertiary">#FF525968</color>
-    <color name="divider_line">#FF232832</color>
+    <!-- FlymeAuto Cockpit Dark Palette (车规级深空极客座舱色系) -->
+    <color name="bg_cockpit_dark">#FF0B1117</color>
+    <color name="bg_cockpit_top">#FF0E1620</color>
+    <color name="bg_nav_rail">#FF0D131B</color>
+    <color name="bg_card_dark">#FF131D28</color>
+    <color name="bg_card_elevated">#FF182433</color>
+    <color name="bg_card_inner">#FF0E1622</color>
 
-    <!-- Storage Ring Colors -->
-    <color name="ring_driving">#FF0A84FF</color>
-    <color name="ring_sentry">#FFFF9F0A</color>
-    <color name="ring_photos">#FF30D158</color>
-    <color name="ring_free">#FF2C3240</color>
+    <!-- Flyme 灵动主色 & 状态强调色 -->
+    <color name="flyme_cyan">#FF1AE5A3</color>
+    <color name="flyme_cyan_glow">#331AE5A3</color>
+    <color name="flyme_cyan_subtle">#1A1AE5A3</color>
+    <color name="flyme_blue">#FF0A84FF</color>
+    <color name="accent_warning">#FFFFB020</color>
+    <color name="accent_danger">#FFFF5252</color>
+
+    <!-- 高对比文字层级 (WCAG AA 车规级清晰度) -->
+    <color name="text_primary">#FFF2F6FA</color>
+    <color name="text_secondary">#FF8B9DAE</color>
+    <color name="text_tertiary">#FF4A5C6F</color>
+
+    <!-- 建筑感描边与分割线 -->
+    <color name="divider_line">#FF1E2D3D</color>
+    <color name="divider_line_subtle">#FF16212E</color>
+    <color name="stroke_glass_card">#FF233446</color>
+    <color name="stroke_glass_highlight">#FF37506D</color>
+
+    <!-- U盘环形存储容量图例 -->
+    <color name="ring_driving">#FF1AE5A3</color>
+    <color name="ring_sentry">#FFFFB020</color>
+    <color name="ring_photos">#FF0A84FF</color>
+    <color name="ring_free">#FF1A2736</color>
 </resources>

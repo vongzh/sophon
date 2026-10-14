@@ -14,10 +14,10 @@ import com.vongzh.sophon.domain.model.StorageUsageBreakdown
  * 四色车载存储容量环形图 (StorageCapacityRingView)
  *
  * 视觉规格参照 FlymeAuto 座舱风格：
- * 蓝色：行车视频 (Driving)
- * 橙色：哨兵与事件 (Sentry)
- * 绿色：精彩抓拍 (Photos)
- * 深灰：剩余可用空间 (Free)
+ * 翡翠青：行车视频 (Driving)
+ * 暖琥珀：哨兵与事件 (Sentry)
+ * 电光蓝：精彩抓拍 (Photos)
+ * 深夜灰：剩余可用空间 (Free)
  */
 class StorageCapacityRingView @JvmOverloads constructor(
     context: Context,
@@ -25,30 +25,29 @@ class StorageCapacityRingView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val strokeWidthPx = 28f
+    private var strokeWidthPx = 12f
     private val rectF = RectF()
 
     private val paintFree = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = strokeWidthPx
         color = ContextCompat.getColor(context, R.color.ring_free)
     }
 
     private val paintDriving = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = strokeWidthPx
+        strokeCap = Paint.Cap.ROUND
         color = ContextCompat.getColor(context, R.color.ring_driving)
     }
 
     private val paintSentry = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = strokeWidthPx
+        strokeCap = Paint.Cap.ROUND
         color = ContextCompat.getColor(context, R.color.ring_sentry)
     }
 
     private val paintPhotos = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        strokeWidth = strokeWidthPx
+        strokeCap = Paint.Cap.ROUND
         color = ContextCompat.getColor(context, R.color.ring_photos)
     }
 
@@ -61,12 +60,23 @@ class StorageCapacityRingView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        val size = minOf(w, h)
+        strokeWidthPx = (size * 0.16f).coerceIn(6f, 32f)
+
+        paintFree.strokeWidth = strokeWidthPx
+        paintDriving.strokeWidth = strokeWidthPx
+        paintSentry.strokeWidth = strokeWidthPx
+        paintPhotos.strokeWidth = strokeWidthPx
+
         val halfStroke = strokeWidthPx / 2f
+        val offsetLeft = (w - size) / 2f + halfStroke
+        val offsetTop = (h - size) / 2f + halfStroke
+
         rectF.set(
-            paddingLeft + halfStroke,
-            paddingTop + halfStroke,
-            w - paddingRight - halfStroke,
-            h - paddingBottom - halfStroke
+            offsetLeft,
+            offsetTop,
+            offsetLeft + size - strokeWidthPx,
+            offsetTop + size - strokeWidthPx
         )
     }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- 挂锁横梁 (Lock Shackle) -->
+    <path
+        android:pathData="M 6.5,8 L 6.5,5.5 C 6.5,3.6 8.1,2 10,2 C 11.9,2 13.5,3.6 13.5,5.5 L 13.5,8"
+        android:strokeColor="@color/accent_warning"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+
+    <!-- 挂锁锁体 (Lock Body) -->
+    <path
+        android:pathData="M 4,8 C 4,7.4 4.4,7 5,7 L 15,7 C 15.6,7 16,7.4 16,8 L 16,16 C 16,16.6 15.6,17 15,17 L 5,17 C 4.4,17 4,16.6 4,16 Z"
+        android:strokeColor="@color/accent_warning"
+        android:strokeWidth="1.6"
+        android:strokeLineJoin="round" />
+
+    <!-- 锁孔 -->
+    <path
+        android:pathData="M 10,10.5 L 10,13.5"
+        android:strokeColor="@color/accent_warning"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+</vector>

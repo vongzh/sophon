@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 领克08/Flyme 破晓之箭返回按键 -->
+    <path
+        android:pathData="M 15,19 L 8,12 L 15,5"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

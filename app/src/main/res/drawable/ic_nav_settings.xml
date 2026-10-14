@@ -5,26 +5,24 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- 座舱系统设置调节滑块图标 (FlymeAuto 极简风) -->
-    <!-- 上滑块 -->
+    <!-- 1. 精密齿轮座舱调谐旋钮 (Precision Cockpit Rotary Cog) -->
+    <!-- 外圈 6 齿机械齿轮轮廓 -->
     <path
-        android:pathData="M 3,7 L 9,7 M 15,7 L 21,7"
+        android:pathData="M 12,1 C 12.6,1 13.1,1.4 13.2,2 L 13.5,3.2 C 14.2,3.5 14.8,3.9 15.4,4.3 L 16.6,3.8 C 17.2,3.6 17.8,3.8 18.2,4.3 L 19.4,5.7 C 19.8,6.2 19.8,6.9 19.4,7.4 L 18.6,8.4 C 18.9,9.1 19.1,9.8 19.2,10.5 L 20.4,10.8 C 21,10.9 21.4,11.4 21.4,12 C 21.4,12.6 21,13.1 20.4,13.2 L 19.2,13.5 C 19.1,14.2 18.9,14.9 18.6,15.6 L 19.4,16.6 C 19.8,17.1 19.8,17.8 19.4,18.3 L 18.2,19.7 C 17.8,20.2 17.2,20.4 16.6,20.2 L 15.4,19.7 C 14.8,20.1 14.2,20.5 13.5,20.8 L 13.2,22 C 13.1,22.6 12.6,23 12,23 C 11.4,23 10.9,22.6 10.8,22 L 10.5,20.8 C 9.8,20.5 9.2,20.1 8.6,19.7 L 7.4,20.2 C 6.8,20.4 6.2,20.2 5.8,19.7 L 4.6,18.3 C 4.2,17.8 4.2,17.1 4.6,16.6 L 5.4,15.6 C 5.1,14.9 4.9,14.2 4.8,13.5 L 3.6,13.2 C 3,13.1 2.6,12.6 2.6,12 C 2.6,11.4 3,10.9 3.6,10.8 L 4.8,10.5 C 4.9,9.8 5.1,9.1 5.4,8.4 L 4.6,7.4 C 4.2,6.9 4.2,6.2 4.6,5.7 L 5.8,4.3 C 6.2,3.8 6.8,3.6 7.4,3.8 L 8.6,4.3 C 9.2,3.9 9.8,3.5 10.5,3.2 L 10.8,2 C 10.9,1.4 11.4,1 12,1 Z"
         android:strokeColor="@color/text_secondary"
-        android:strokeWidth="1.8"
-        android:strokeLineCap="round" />
-    <path
-        android:pathData="M 12,7 A 3,3 0 1,1 12,6.99 Z"
-        android:strokeColor="@color/text_secondary"
-        android:strokeWidth="1.8" />
+        android:strokeWidth="1.6"
+        android:strokeLineJoin="round" />
 
-    <!-- 下滑块 -->
+    <!-- 2. 中央控制轴心圆 (Center Control Axis) -->
     <path
-        android:pathData="M 3,17 L 6,17 M 12,17 L 21,17"
+        android:pathData="M 12,8.5 C 13.93,8.5 15.5,10.07 15.5,12 C 15.5,13.93 13.93,15.5 12,15.5 C 10.07,15.5 8.5,13.93 8.5,12 C 8.5,10.07 10.07,8.5 12,8.5 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.6" />
+
+    <!-- 3. 旋钮刻度指示标 (Notch Indication) -->
+    <path
+        android:pathData="M 12,10.5 L 12,12"
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.8"
         android:strokeLineCap="round" />
-    <path
-        android:pathData="M 9,17 A 3,3 0 1,1 9,16.99 Z"
-        android:strokeColor="@color/text_secondary"
-        android:strokeWidth="1.8" />
 </vector>

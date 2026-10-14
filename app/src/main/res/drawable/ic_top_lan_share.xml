@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- 手机外框 (Smartphone) -->
+    <path
+        android:pathData="M 4,3 C 4,2.4 4.4,2 5,2 L 10,2 C 10.6,2 11,2.4 11,3 L 11,17 C 11,17.6 10.6,18 10,18 L 5,18 C 4.4,18 4,17.6 4,17 Z"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.6" />
+
+    <!-- 手机屏幕下边线 -->
+    <path
+        android:pathData="M 7,15.5 L 8,15.5"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+
+    <!-- 高速 WiFi 6 广播波束 (High-Speed WiFi Wavefronts) -->
+    <path
+        android:pathData="M 13.5,6 C 15.5,7 16.5,8.8 16.5,10.5"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 16,3.5 C 19,5 20.5,7.8 20.5,10.5"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+</vector>

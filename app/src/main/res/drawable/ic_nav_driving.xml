@@ -5,24 +5,37 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- 行车记录仪图标 (胶卷录像机) -->
+    <!-- 1. 车载行车记录仪流线主体 (Aerodynamic Dashcam Body) -->
     <path
-        android:pathData="M 4,6 C 4,4.9 4.9,4 6,4 L 14,4 C 15.1,4 16,4.9 16,6 L 16,18 C 16,19.1 15.1,20 14,20 L 6,20 C 4.9,20 4,19.1 4,18 Z"
+        android:pathData="M 3,6.5 C 3,5.1 4.1,4 5.5,4 L 14.5,4 C 15.9,4 17,5.1 17,6.5 L 17,17.5 C 17,18.9 15.9,20 14.5,20 L 5.5,20 C 4.1,20 3,18.9 3,17.5 Z"
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 侧向播放镜头 -->
+    <!-- 2. 超广角物镜光锥 (Front Optics Cone) -->
     <path
-        android:pathData="M 16,9.5 L 20.5,6.5 C 21.1,6.1 22,6.5 22,7.2 L 22,16.8 C 22,17.5 21.1,17.9 20.5,17.5 L 16,14.5"
+        android:pathData="M 17,9.2 L 20.6,6.8 C 21.4,6.3 22.5,6.8 22.5,7.8 L 22.5,16.2 C 22.5,17.2 21.4,17.7 20.6,17.2 L 17,14.8"
         android:strokeColor="@color/text_secondary"
         android:strokeWidth="1.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
-    <!-- 录制指示红点 / 智瞳光点 -->
+    <!-- 3. 机身传感器精密刻度与高光视窗 -->
     <path
-        android:pathData="M 10,12 A 2,2 0 1,1 10,11.99 Z"
+        android:pathData="M 10,8.5 C 11.93,8.5 13.5,10.07 13.5,12 C 13.5,13.93 11.93,15.5 10,15.5 C 8.07,15.5 6.5,13.93 6.5,12 C 6.5,10.07 8.07,8.5 10,8.5 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.5" />
+
+    <!-- 4. 正在稳定录制指示小光圈 -->
+    <path
+        android:pathData="M 10,10.5 A 1.5,1.5 0 1,1 10,10.49 Z"
         android:fillColor="@color/text_secondary" />
+
+    <!-- 5. 顶部状态指示槽 -->
+    <path
+        android:pathData="M 6.5,7 L 8.5,7"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
 </vector>

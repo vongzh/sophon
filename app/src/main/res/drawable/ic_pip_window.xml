@@ -1,9 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
+
+    <!-- 1. 座舱主屏画幅框 (Cockpit Main Screen Outer Frame) -->
     <path
-        android:fillColor="#38FEFE"
-        android:pathData="M19,7h-8v6h8V7zm2,-4H3c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,1.98 2,1.98h18c1.1,0 2,-0.88 2,-1.98V5c0,-1.1 -0.9,-2 -2,-2zm0,16.01H3V4.98h18v14.03z" />
+        android:pathData="M 3,6 C 3,4.9 3.9,4 5,4 L 19,4 C 20.1,4 21,4.9 21,6 L 21,18 C 21,19.1 20.1,20 19,20 L 5,20 C 3.9,20 3,19.1 3,18 Z"
+        android:strokeColor="@color/text_secondary"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 2. 右下角悬浮流媒体画中画小窗 (Floating PiP Sub-window) -->
+    <path
+        android:pathData="M 11,11 C 11,10.4 11.4,10 12,10 L 18,10 C 18.6,10 19,10.4 19,11 L 19,16 C 19,16.6 18.6,17 18,17 L 12,17 C 11.4,17 11,16.6 11,16 Z"
+        android:fillColor="@color/flyme_cyan_subtle"
+        android:strokeColor="@color/flyme_cyan"
+        android:strokeWidth="1.6" />
 </vector>

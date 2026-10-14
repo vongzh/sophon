@@ -5,7 +5,7 @@
     android:background="@color/bg_cockpit_dark"
     android:orientation="vertical">
 
-    <!-- 顶部标题与筛选栏 -->
+    <!-- 顶部状态与筛选栏 (FlymeAuto History Top Bar) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -17,11 +17,15 @@
             android:id="@+id/btn_history_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:text="← 返回"
+            android:background="@drawable/bg_badge_pill"
+            android:drawableStart="@drawable/ic_action_back"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:text="返回"
             android:textColor="@color/flyme_cyan"
-            android:textSize="15sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView
@@ -31,7 +35,7 @@
             android:layout_marginStart="16dp"
             android:text="行车视频资料库"
             android:textColor="@color/text_primary"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <View
@@ -39,20 +43,19 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <!-- 过滤器单选药丸组 -->
+        <!-- 过滤器单选药丸组 (FlymeAuto Segmented Controls) -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_pill"
+            android:background="@drawable/bg_cockpit_card_elevated"
             android:orientation="horizontal"
-            android:padding="2dp">
+            android:padding="3dp">
 
             <TextView
                 android:id="@+id/btn_filter_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_badge_pill"
-                android:backgroundTint="@color/flyme_cyan"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="5dp"
                 android:text="全部"
@@ -64,6 +67,7 @@
                 android:id="@+id/btn_filter_normal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_pill"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="5dp"
                 android:text="常规循环"
@@ -74,9 +78,10 @@
                 android:id="@+id/btn_filter_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_pill"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="5dp"
-                android:text="🔒 加锁事件"
+                android:text="加锁事件"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
@@ -84,14 +89,21 @@
                 android:id="@+id/btn_filter_trash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge_pill"
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="5dp"
-                android:text="🗑 回收站"
+                android:text="回收站"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_line" />
+
+    <!-- 列表展示区 -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -109,9 +121,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="U 盘未检测到视频或暂无录像文件"
             android:textColor="@color/text_tertiary"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:visibility="gone" />
     </FrameLayout>
 

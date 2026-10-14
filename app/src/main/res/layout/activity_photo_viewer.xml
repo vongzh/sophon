@@ -5,24 +5,28 @@
     android:background="@color/bg_cockpit_dark"
     android:orientation="vertical">
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航栏 (Photo Viewer Top Bar) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="56dp"
         android:background="@color/bg_nav_rail"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
+        android:paddingHorizontal="20dp">
 
         <TextView
             android:id="@+id/btn_photo_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:text="← 返回"
+            android:background="@drawable/bg_badge_pill"
+            android:drawableStart="@drawable/ic_action_back"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:text="返回"
             android:textColor="@color/flyme_cyan"
-            android:textSize="15sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,7 +36,7 @@
             android:layout_marginStart="16dp"
             android:text="抓拍照片查看器"
             android:textColor="@color/text_primary"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <TextView
@@ -55,19 +59,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_pill"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="6dp"
-            android:text="🗑 删除"
+            android:drawableStart="@drawable/ic_action_trash"
+            android:drawablePadding="6dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="7dp"
+            android:text="删除"
             android:textColor="@color/accent_danger"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 照片大图展示区 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_line" />
+
+    <!-- 照片大图展示区 (Cockpit Cinema Card) -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="12dp"
         android:layout_weight="1"
-        android:background="@color/bg_card_dark">
+        android:background="@drawable/bg_cockpit_card"
+        android:clipToOutline="true">
 
         <ImageView
             android:id="@+id/iv_photo_display"
@@ -86,30 +100,30 @@
             android:textSize="14sp"
             android:visibility="gone" />
 
-        <!-- 左右切换悬浮按钮 -->
+        <!-- 左右切换悬浮胶囊按钮 -->
         <TextView
             android:id="@+id/btn_photo_prev"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/bg_badge_pill"
             android:gravity="center"
             android:text="❮"
             android:textColor="@color/text_primary"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/btn_photo_next"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/bg_badge_pill"
             android:gravity="center"
             android:text="❯"
             android:textColor="@color/text_primary"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </FrameLayout>
 
 </LinearLayout>
