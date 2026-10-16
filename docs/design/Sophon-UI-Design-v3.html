@@ -132,12 +132,12 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:v
 .app{display:flex;height:756px}
 .rail{width:300px;flex:none;background:var(--sp-surf);border-right:1px solid var(--sp-line);
   display:flex;flex-direction:column;padding:18px 16px 16px;overflow:hidden}
-.brand2{display:flex;align-items:center;gap:11px;padding:4px 8px 16px}
-.brand2 .mk{width:38px;height:38px;border-radius:11px;flex:none;position:relative;
-  background:linear-gradient(145deg,var(--sp-ac) 0%,var(--sp-ac2) 100%);box-shadow:0 4px 12px var(--sp-acring)}
-.brand2 .mk svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:21px;height:21px;stroke:#fff;stroke-width:2}
-.brand2 b{display:block;font-size:15.5px;font-weight:700;letter-spacing:.10em;line-height:1.15}
-.brand2 span{display:block;font-size:10.5px;letter-spacing:.14em;color:var(--sp-tx3);font-weight:600;margin-top:2px}
+.brand2{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.brand2 .mk{width:36px;height:36px;flex:none;position:relative}
+.brand2 .mk svg{width:100%;height:100%;display:block}
+.brand2 .brand-text{display:flex;align-items:baseline;gap:8px}
+.brand2 .brand-text b{font-size:18px;font-weight:700;letter-spacing:.04em;line-height:1;color:var(--sp-tx)}
+.brand2 .brand-text span{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sp-tx3);line-height:1}
 .rail .ey{margin:2px 0 7px;padding-left:12px}
 .rl-item{display:flex;align-items:center;gap:12px;height:54px;padding:0 12px;border-radius:13px;cursor:pointer;margin-bottom:3px}
 .rl-item .ico{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
@@ -1010,9 +1010,10 @@ var SETS=[
   ['download','网络与升级','1','固件 v1.5.0 可更新'],
   ['lock','隐私与权限','','位置水印 · 数据']
 ];
+var LOGO_SVG='<svg viewBox="0 0 108 108" width="36" height="36" fill="none"><defs><linearGradient id="spBg" x1="54" y1="0" x2="54" y2="108" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="50%" stop-color="#F2F7F9"/><stop offset="100%" stop-color="#E2ECF2"/></linearGradient><linearGradient id="spRing" x1="32" y1="32" x2="76" y2="76" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00D4AA"/><stop offset="100%" stop-color="#0A84FF"/></linearGradient><linearGradient id="spIris" x1="41" y1="41" x2="67" y2="67" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00D4AA"/><stop offset="70%" stop-color="#009E7E"/><stop offset="100%" stop-color="#0A84FF"/></linearGradient><linearGradient id="spWing" x1="66" y1="36" x2="79" y2="55" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00D4AA"/><stop offset="100%" stop-color="#00D4AA" stop-opacity="0.25"/></linearGradient></defs><circle cx="54" cy="54" r="44" fill="url(#spBg)" stroke="#D6E4EC" stroke-width="1.2"/><circle cx="54" cy="54" r="32" fill="#00D4AA" fill-opacity="0.12"/><line x1="54" y1="24" x2="54" y2="29" stroke="#00A382" stroke-width="2.2" stroke-linecap="round"/><line x1="54" y1="79" x2="54" y2="84" stroke="#00A382" stroke-width="2.2" stroke-linecap="round"/><line x1="24" y1="54" x2="29" y2="54" stroke="#00A382" stroke-width="2.2" stroke-linecap="round"/><line x1="79" y1="54" x2="84" y2="54" stroke="#00A382" stroke-width="2.2" stroke-linecap="round"/><circle cx="54" cy="54" r="22" stroke="url(#spRing)" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="54" cy="54" r="13" fill="url(#spIris)"/><circle cx="54" cy="54" r="7" fill="#0D1520"/><path d="M 49,50 C 51,48 54,48 56,49" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M 66,36 C 75,41 79,48 79,55 C 79,62 75,69 66,74" stroke="url(#spWing)" stroke-width="2.8" stroke-linecap="round" fill="none"/><circle cx="82" cy="34" r="1.8" fill="#00D4AA"/></svg>';
 function railHtml(active,items,groups,foot){
-  var h='<div class="rail"><div class="brand2"><div class="mk">'+ic('camera')+'</div>'
-    +'<div><b>SOPHON</b><span>极视 · 四向全维</span></div></div>';
+  var h='<div class="rail"><div class="brand2"><div class="mk">'+LOGO_SVG+'</div>'
+    +'<div class="brand-text"><b>极视</b><span>SOPHON</span></div></div>';
   items.forEach(function(it,i){
     if(groups&&i===groups) h+='<div class="ey">设置分区</div>';
     h+='<div class="rl-item'+(it[0]===active?' on':'')+'"><div class="ico">'+ic(it[0])+'</div>'
