@@ -12,6 +12,7 @@
     android:background="@drawable/sp_bg_card"
     android:clickable="true"
     android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="@dimen/sp_s_8">
@@ -20,14 +21,15 @@
     <FrameLayout
         android:layout_width="126dp"
         android:layout_height="71dp"
-        android:background="@drawable/sp_bg_chip"
+        android:background="@drawable/sp_bg_card_inner"
         android:clipToOutline="true">
 
         <ImageView
             android:id="@+id/iv_record_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:contentDescription="录像切片缩略图" />
 
         <!-- 镜头角标 (左下角) -->
         <TextView
@@ -39,9 +41,9 @@
             android:background="@drawable/sp_bg_osd_chip"
             android:paddingHorizontal="5dp"
             android:paddingVertical="1dp"
-            android:text="前路"
+            android:text="--"
             android:textColor="@color/sp_osd_tx"
-            android:textSize="9.5sp"
+            android:textSize="@dimen/sp_t_micro"
             android:textStyle="bold" />
 
         <!-- 加锁标记 (左上角) -->
@@ -53,11 +55,13 @@
             android:layout_margin="4dp"
             android:background="@drawable/sp_bg_pill"
             android:backgroundTint="@color/sp_dg"
+            android:drawableStart="@drawable/ic_action_lock"
+            android:drawablePadding="2dp"
+            android:drawableTint="@color/sp_osd_tx"
             android:paddingHorizontal="6dp"
-            android:paddingVertical="1dp"
-            android:text="🔒"
-            android:textColor="#FFFFFFFF"
-            android:textSize="9.5sp"
+            android:paddingVertical="2dp"
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="@dimen/sp_t_micro"
             android:textStyle="bold"
             android:visibility="gone" />
 
@@ -72,9 +76,9 @@
             android:fontFamily="monospace"
             android:paddingHorizontal="5dp"
             android:paddingVertical="1dp"
-            android:text="01:00"
+            android:text="--:--"
             android:textColor="@color/sp_osd_tx"
-            android:textSize="9.5sp" />
+            android:textSize="@dimen/sp_t_micro" />
     </FrameLayout>
 
     <!-- 三段信息区 (主标题 / 副说明 / 数值与格式) -->
@@ -90,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="monospace"
-            android:text="14:02:18"
+            android:text="--:--:--"
             android:textColor="@color/sp_tx"
             android:textSize="@dimen/sp_t_body"
             android:textStyle="bold" />
@@ -100,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="时长 01:00  ·  74.2 MB  ·  H.264"
+            android:text="--  ·  --  ·  --"
             android:textColor="@color/sp_tx3"
             android:textSize="@dimen/sp_t_caption" />
 
@@ -117,18 +121,19 @@
                 android:background="@drawable/sp_bg_chip"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="1dp"
-                android:text="常规行车"
+                android:text="--"
                 android:textColor="@color/sp_tx3"
                 android:textSize="@dimen/sp_t_micro" />
 
             <TextView
+                android:id="@+id/tv_badge_res"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:background="@drawable/sp_bg_chip"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="1dp"
-                android:text="1080P"
+                android:text="--"
                 android:textColor="@color/sp_tx3"
                 android:textSize="@dimen/sp_t_micro" />
         </LinearLayout>

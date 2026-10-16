@@ -136,7 +136,7 @@ class TelegramBotClient(
                         val timeStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
                         sendVideo(botToken, chatId, videoFile, "🎬 领克08 最近 ${durationSec}s 原画视频片段\n时间: $timeStr")
                     } else {
-                        sendTextMessage(botToken, chatId, "⚠️ 提取视频片段失败：U 盘中暂无有效录像切片或提取异常。")
+                        sendTextMessage(botToken, chatId, "⚠️ 提取视频片段失败：外接存储中暂无有效录像切片或提取异常。")
                     }
                 }
             }
@@ -156,7 +156,7 @@ class TelegramBotClient(
                     ─────────────────────
                     /snap - 实时远程抓拍四向视角照片
                     /clip 15 - 远程抽取最近 15 秒高清短视频
-                    /status - 查询车速、挡位与U盘容量
+                    /status - 查询车速、挡位与外接存储容量
                     /lock - 紧急加锁当前录像片段
                 """.trimIndent()
                 sendTextMessage(botToken, chatId, help)

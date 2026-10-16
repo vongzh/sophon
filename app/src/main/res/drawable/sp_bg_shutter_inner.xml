@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  快门内圈：中性白点（相机快门语义）。
+      旧实现复用 sp_bg_pill_rec（白底红点胶囊），待机时也呈现红点，被误认为「录制中」 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@android:color/white" />
+</shape>

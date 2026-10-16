@@ -7,7 +7,7 @@
     android:id="@+id/sentry_deterrent_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF07080A">
+    android:background="@color/sp_sentry_bg">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
             android:layout_marginTop="@dimen/sp_s_8"
             android:letterSpacing="0.05"
             android:text="极视全维哨兵正在录制 · 视守全程"
-            android:textColor="#FFFFFFFF"
+            android:textColor="@color/sp_tx_inverse"
             android:textSize="@dimen/sp_t_title"
             android:textStyle="bold" />
 
@@ -61,11 +61,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_s_12"
             android:background="@drawable/sp_bg_pill"
-            android:backgroundTint="#26FF453A"
+            android:backgroundTint="@color/sp_sentry_halo"
             android:paddingHorizontal="@dimen/sp_s_20"
             android:paddingVertical="@dimen/sp_s_8"
             android:text="侦测到车身震动 · 四路全维视频已实时加密锁存"
-            android:textColor="#FFFF6961"
+            android:textColor="@color/sp_dg"
             android:textSize="@dimen/sp_t_subtitle" />
 
         <TextView

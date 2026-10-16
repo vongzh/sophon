@@ -15,8 +15,8 @@ import java.net.NetworkInterface
 /**
  * 车载局域网免流高速快传服务器 (LanShareServer)
  *
- * 【免流量极致体验 - 对标 EVCam / 盯盯车 核心互联功能】
- * 1. 车机启动嵌入式 HTTP 服务 (默认端口 8088)；
+ * 【车机互联与免流快传】
+ * 1. 车机启动轻量级嵌入式 HTTP 服务 (默认端口 8088)；
  * 2. 手机扫描二维码连接车机 Wi-Fi / 热点免流量直连；
  * 3. 手机端响应式原生深色 Web：
  *    - 内置 HTML5 弹窗流式播放器，支持 HTTP 206 Partial Content 拖拽秒开；
@@ -42,7 +42,7 @@ class LanShareServer(
             return newFixedLengthResponse(
                 Response.Status.OK,
                 MIME_PLAINTEXT,
-                "未检测到外置U盘，请插入U盘后重试。"
+                "未检测到外接存储，请插入外接存储后重试。"
             )
         }
 
@@ -70,7 +70,7 @@ class LanShareServer(
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-                <title>极视 (Sophon) 车载免流高速互联</title>
+                <title>极视 (Sophon) 车载局域网快传</title>
                 <style>
                     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
                     body { background: #0D0F12; color: #F5F7FA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 16px; padding-bottom: 90px; }
@@ -98,7 +98,7 @@ class LanShareServer(
             </head>
             <body>
                 <div class="header">
-                    <div class="title">极视 · 车载免流高速快传</div>
+                    <div class="title">极视 · 车载局域网快传</div>
                     <div class="count">共 ${files.size} 项文件</div>
                 </div>
 
@@ -119,7 +119,7 @@ class LanShareServer(
                             <input type="checkbox" class="checkbox file-check" data-url="/download/$relPath" data-name="${file.name}" onchange="updateSelection()">
                             <div class="file-info">
                                 <div class="name">${file.name}</div>
-                                <div class="meta">${if (isVideo) "🎬 视频" else "📷 照片"} · $sizeMb</div>
+                                <div class="meta">${if (isVideo) "视频" else "照片"} · $sizeMb</div>
                             </div>
                             <div class="btn-group">
                                 ${if (isVideo) "<button class=\"btn btn-play\" onclick=\"openPlayer('/stream/$relPath')\">预览</button>" else ""}
@@ -131,12 +131,12 @@ class LanShareServer(
                 </div>
 
                 <div class="bottom-bar">
-                    <span style="font-size: 13px; color: #8E95A5;">通过车机 Wi-Fi 免流直达</span>
-                    <button class="btn-batch-download" onclick="downloadSelected()">⚡ 批量下载选中项</button>
+                    <span style="font-size: 13px; color: #8E95A5;">通过车机 Wi-Fi 直达，不耗手机流量</span>
+                    <button class="btn-batch-download" onclick="downloadSelected()">批量下载选中项</button>
                 </div>
 
                 <div id="playerModal" class="modal">
-                    <div class="modal-close" onclick="closePlayer()">✕</div>
+                    <div class="modal-close" onclick="closePlayer()" aria-label="关闭"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6 L18 18 M18 6 L6 18"/></svg></div>
                     <video id="htmlPlayer" class="modal-video" controls playsinline></video>
                 </div>
 

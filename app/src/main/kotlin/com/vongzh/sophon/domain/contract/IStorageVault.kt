@@ -54,6 +54,30 @@ interface IStorageVault {
     /**
      * 执行按时间 FIFO 循环自动清理 (当剩余空间低于预警阈值时)
      * 仅清理 Normal 目录下的最早切片，Event 和 Sentry 目录受到写保护
+     *
+     * 注意：这是**写入连续性安全网**，与用户配额无关，任何触发时机下都必须执行。
      */
     fun pruneOldestRecordingsIfNeeded(): Boolean
+
+    /**
+     * 按用户在设置页配置的目录配额执行淘汰（行车视频 / 抓拍照片上限 + 单次释放比例）。
+     *
+     * 与 [pruneOldestRecordingsIfNeeded] 的区别：后者保的是"剩余空间"，本方法保的是"目录配额"。
+     *
+     * @param trigger 触发时机，取值见 [CLEANUP_TRIGGER_CHUNK_END] 等常量；
+     *                仅当与用户所选时机一致时才真正执行
+     * @return 是否实际释放了空间
+     */
+    fun enforceStorageQuotas(trigger: Int): Boolean
+
+    companion object {
+        /** 触发时机：每次录制结束（切片热切换时） */
+        const val CLEANUP_TRIGGER_CHUNK_END = 0
+
+        /** 触发时机：存储用量超过 90% */
+        const val CLEANUP_TRIGGER_USAGE_90 = 1
+
+        /** 触发时机：车机启动时 */
+        const val CLEANUP_TRIGGER_BOOT = 2
+    }
 }

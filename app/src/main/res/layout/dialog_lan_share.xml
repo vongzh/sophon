@@ -19,18 +19,19 @@
             android:layout_weight="1"
             android:text="车载免流极速快传"
             android:textColor="@color/sp_ac"
-            android:textSize="20sp"
+            android:textSize="@dimen/sp_t_title"
             android:textStyle="bold" />
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_dialog_close"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/sp_bg_pill"
-            android:gravity="center"
-            android:text="✕"
-            android:textColor="@color/sp_tx2"
-            android:textSize="15sp" />
+            android:contentDescription="关闭"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_action_close"
+            android:tint="@color/sp_tx2" />
     </LinearLayout>
 
     <TextView
@@ -39,7 +40,7 @@
         android:layout_marginTop="4dp"
         android:text="0 流量消耗 · 手机直连车机 · 高清原画批量高速导出"
         android:textColor="@color/sp_tx2"
-        android:textSize="13sp" />
+        android:textSize="@dimen/sp_t_label" />
 
     <!-- 二维码展示区 (精致白色卡片圆角) -->
     <FrameLayout
@@ -48,7 +49,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:background="@drawable/sp_bg_input_field"
-        android:backgroundTint="#FFFFFFFF"
+        android:backgroundTint="@color/sp_osd_tx"
         android:clipToOutline="true"
         android:padding="12dp">
 
@@ -57,9 +58,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Lan Share QR Code" />
+
+        <LinearLayout
+            android:id="@+id/layout_no_network"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_section_network"
+                android:tint="@color/sp_tx3"
+                android:contentDescription="未联网" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="未获取到局域网 IP"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_caption" />
+        </LinearLayout>
     </FrameLayout>
 
-    <!--  提示与操作链接 -->
+    <!-- 提示与操作链接 -->
     <TextView
         android:id="@+id/tv_share_url"
         android:layout_width="wrap_content"
@@ -69,10 +94,44 @@
         android:background="@drawable/sp_bg_pill"
         android:paddingHorizontal="18dp"
         android:paddingVertical="7dp"
-        android:text="http://192.168.43.1:8088"
+        android:text="http://--:8088"
         android:textColor="@color/sp_ac"
-        android:textSize="15sp"
+        android:textSize="@dimen/sp_t_subtitle"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/layout_unconnected_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/btn_retry_network"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sp_bg_pill"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="重新检测"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_label" />
+
+        <TextView
+            android:id="@+id/btn_open_hotspot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/sp_bg_pill_accent"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="车机网络设置"
+            android:textColor="@color/sp_ac"
+            android:textSize="@dimen/sp_t_label"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_share_hint"
@@ -81,8 +140,8 @@
         android:layout_marginTop="14dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
-        android:text="① 手机连接车机 Wi-Fi 热点\n② 微信或手机系统相机扫描上方二维码\n③ 浏览器即开点播与原画免流下载"
+        android:text="① 手机连接车机 Wi-Fi 热点\n② 微信或手机系统相机扫描上方二维码\n③ 浏览器即开点播与原画下载，不耗手机流量"
         android:textColor="@color/sp_tx2"
-        android:textSize="13sp" />
+        android:textSize="@dimen/sp_t_label" />
 
 </LinearLayout>

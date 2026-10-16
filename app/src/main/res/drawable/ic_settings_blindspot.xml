@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 补盲设置 · BSD 毫米波雷达扫描 -->
+    <path
+        android:pathData="M 3,17.4 A 9,9 0 0 1 21,17.4"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+    <path
+        android:pathData="M 7,17.4 A 5,5 0 0 1 17,17.4"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+    <path
+        android:pathData="M 12,17.4 L 17.9,12.4"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+    <path
+        android:pathData="M 12,15.9 A 1.5,1.5 0 1 1 12,18.9 A 1.5,1.5 0 1 1 12,15.9 Z"
+        android:fillColor="@color/sp_tx2"
+    />
+</vector>

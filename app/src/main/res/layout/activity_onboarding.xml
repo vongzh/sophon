@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     首启合规门 · 隐私协议 + 权限分层授权
+     设计系统：sp_* token，车机尺度（触控目标 ≥48dp、字阶走 @dimen/sp_t_*）
+     左栏：隐私协议全文（可滚动）
+     右栏：权限清单，逐项显示真实授权状态，并提供真实可达的授权入口
+     未签署协议前不启动任何摄像头 / 录音 / 车辆信号采集
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_page"
+    android:orientation="vertical"
+    android:padding="@dimen/sp_s_32">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="欢迎使用极视 Sophon"
+        android:textColor="@color/sp_tx"
+        android:textSize="@dimen/sp_t_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="四向全维行车视觉 · 请先阅读协议并完成授权"
+        android:textColor="@color/sp_tx2"
+        android:textSize="@dimen/sp_t_body" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/sp_s_16"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- 左栏：隐私协议 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/sp_s_12"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_20">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="隐私协议"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/privacy_policy_content"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_label" />
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- 右栏：权限清单（真实授权状态） -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_20">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="权限与授权"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btn_permission_grant_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="52dp"
+                    android:background="@drawable/sp_bg_pill_accent"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/sp_s_16"
+                    android:text="一键授权"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_label"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_permission_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="正在检查权限状态"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/sp_s_8"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="基础权限（必需）"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+
+                    <include
+                        android:id="@+id/row_perm_camera"
+                        layout="@layout/item_permission_row" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
+                        android:text="可选权限"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+
+                    <include
+                        android:id="@+id/row_perm_audio"
+                        layout="@layout/item_permission_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/sp_line" />
+
+                    <include
+                        android:id="@+id/row_perm_notify"
+                        layout="@layout/item_permission_row" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/sp_line" />
+
+                    <include
+                        android:id="@+id/row_perm_overlay"
+                        layout="@layout/item_permission_row" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
+                        android:text="系统权限（只读展示）"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+
+                    <include
+                        android:id="@+id/row_perm_car"
+                        layout="@layout/item_permission_row" />
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sp_s_16"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_privacy_agree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/sp_ac"
+            android:minHeight="52dp"
+            android:text="我已阅读并同意上述隐私协议"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_body" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_agree_continue"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="@dimen/sp_s_12"
+        android:background="@drawable/sp_bg_pill"
+        android:backgroundTint="@color/sp_ac"
+        android:gravity="center"
+        android:text="同意并继续"
+        android:textColor="@color/sp_osd_tx"
+        android:textSize="@dimen/sp_t_subtitle"
+        android:textStyle="bold" />
+
+</LinearLayout>

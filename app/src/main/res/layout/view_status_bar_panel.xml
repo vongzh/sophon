@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/sp_ac"
-            android:textSize="15sp"
+            android:textSize="@dimen/sp_t_subtitle"
             android:textStyle="bold" />
 
         <TextView
@@ -27,9 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="● 录制中"
-            android:textColor="@color/sp_dg"
-            android:textSize="13sp"
+            android:text="○ 待命中"
+            android:textColor="@color/sp_tx2"
+            android:textSize="@dimen/sp_t_label"
             android:textStyle="bold" />
 
         <View
@@ -37,14 +37,15 @@
             android:layout_height="1dp"
             android:layout_weight="1" />
 
-        <TextView
+        <ImageView
             android:id="@+id/tv_panel_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="收起面板"
             android:padding="4dp"
-            android:text="✕"
-            android:textColor="@color/sp_tx2"
-            android:textSize="15sp" />
+            android:src="@drawable/ic_action_close"
+            android:tint="@color/sp_tx2" />
     </LinearLayout>
 
     <!-- 存储状态行 -->
@@ -53,9 +54,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="U盘状态: 正常已挂载"
+        android:text="外接存储: 正常已挂载"
         android:textColor="@color/sp_tx2"
-        android:textSize="12sp" />
+        android:textSize="@dimen/sp_t_caption" />
 
     <View
         android:layout_width="match_parent"
@@ -79,9 +80,12 @@
             android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
-            android:text="📷 抓拍"
+            android:drawableStart="@drawable/ic_action_camera"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_tx"
+            android:text="抓拍"
             android:textColor="@color/sp_tx"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
         <TextView
             android:id="@+id/btn_panel_lock"
@@ -92,9 +96,12 @@
             android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
-            android:text="🔒 加锁"
+            android:drawableStart="@drawable/ic_action_lock"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_wn"
+            android:text="加锁"
             android:textColor="@color/sp_wn"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
         <TextView
             android:id="@+id/btn_panel_share"
@@ -105,9 +112,12 @@
             android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
-            android:text="📲 快传"
+            android:drawableStart="@drawable/ic_action_share"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_ac"
+            android:text="快传"
             android:textColor="@color/sp_ac"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
         <TextView
             android:id="@+id/btn_panel_open"
@@ -117,9 +127,12 @@
             android:background="@drawable/sp_bg_pill"
             android:gravity="center"
             android:paddingVertical="8dp"
-            android:text="🏠 主页"
+            android:drawableStart="@drawable/ic_action_home"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_tx"
+            android:text="主页"
             android:textColor="@color/sp_tx"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
     </LinearLayout>
 
 </LinearLayout>

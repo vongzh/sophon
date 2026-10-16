@@ -81,6 +81,17 @@ class RemoteDispatcher(
     }
 
     /**
+     * 凭据变更后热重启远程通道。
+     *
+     * Telegram 轮询此前只在 SophonApp 启动时拉起一次，用户在设置页填好 Token 并打开开关后
+     * 必须重启应用才会真正开始收命令——对使用者等于「配了没反应」。这里按需重挂。
+     */
+    fun restartRemoteServices() {
+        stopRemoteServices()
+        startRemoteServices()
+    }
+
+    /**
      * 发送 Bark 通知 (兼容便捷方法)
      */
     fun sendBarkAlert(title: String, body: String) {
@@ -105,7 +116,8 @@ class RemoteDispatcher(
         var anyFailed = false
 
         // 1. Bark 推送
-        if (prefs.barkDeviceKey.isNotBlank()) {
+        // isBarkEnabled 必须参与判定：此前只判 deviceKey 非空，导致设置页关闭开关后仍会推送（假设置）。
+        if (prefs.isBarkEnabled && prefs.barkDeviceKey.isNotBlank()) {
             barkNotifier.sendPush(
                 serverUrl = prefs.barkServerUrl.ifBlank { null },
                 deviceKey = prefs.barkDeviceKey,
@@ -178,7 +190,7 @@ class RemoteDispatcher(
                     Log.i(TAG, "Executing remote snapshot request...")
                     val resultMsg = executeRemoteSnapshot()
                     val latest = getLatestSnapshotFile()
-                    sendMultiChannelAlert("极视远程抓拍成功", "四向视角照片已成功拍摄归档至 U 盘。", latest)
+                    sendMultiChannelAlert("极视远程抓拍成功", "四向视角照片已成功拍摄归档至外接存储。", latest)
                     callback(resultMsg)
                 }
                 "STATUS", "/STATUS", "状态", "查询" -> {
@@ -192,7 +204,7 @@ class RemoteDispatcher(
                     callback(lockMsg)
                 }
                 else -> {
-                    callback("【极视指令帮助】\n- 输入 [/snap] 或 [抓拍]: 立即截取四向全景并回传照片\n- 输入 [/clip 15]: 远程提取最近 15 秒高清短视频\n- 输入 [/status] 或 [状态]: 实时查询车速与 U 盘容量\n- 输入 [/lock] 或 [加锁]: 紧急保护当前录像片段")
+                    callback("【极视指令帮助】\n- 输入 [/snap] 或 [抓拍]: 立即截取四向全景并回传照片\n- 输入 [/clip 15]: 远程提取最近 15 秒高清短视频\n- 输入 [/status] 或 [状态]: 实时查询车速与外接存储容量\n- 输入 [/lock] 或 [加锁]: 紧急保护当前录像片段")
                 }
             }
         }
@@ -246,20 +258,31 @@ class RemoteDispatcher(
     }
 
     /**
-     * 获取外置 U 盘中最新的一张抓拍照片
+     * 获取最新的一张抓拍照片（优先外置 U 盘，兜底机身沙盒）
      */
     fun getLatestSnapshotFile(): File? {
-        val usbRoot = SophonApp.storageVault.currentUsbRoot.value ?: return null
-        val snapshotDir = File(usbRoot, "SophonRecord/Snapshot")
-        if (!snapshotDir.exists() || !snapshotDir.isDirectory) return null
-
-        return snapshotDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) }
-            ?.maxByOrNull { it.lastModified() }
+        val candidates = mutableListOf<File>()
+        val usbRoot = SophonApp.storageVault.currentUsbRoot.value
+        if (usbRoot != null && SophonApp.storageVault.isUsbMounted.value) {
+            val snapshotDir = File(usbRoot, "SophonRecord/Snapshot")
+            if (snapshotDir.exists() && snapshotDir.isDirectory) {
+                candidates.addAll(snapshotDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) } ?: emptyArray())
+            }
+        }
+        val sandboxDir = File(context.getExternalFilesDir(null), "SophonRecord/Snapshot")
+        if (sandboxDir.exists() && sandboxDir.isDirectory) {
+            candidates.addAll(sandboxDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) } ?: emptyArray())
+        }
+        return candidates.maxByOrNull { it.lastModified() }
     }
 
     private fun executeRemoteSnapshot(): String {
+        val intent = android.content.Intent(context, com.vongzh.sophon.service.SophonCoreService::class.java).apply {
+            action = com.vongzh.sophon.service.SophonCoreService.ACTION_TRIGGER_SNAPSHOT
+        }
+        context.startService(intent)
         val timeStr = dateFormat.format(Date())
-        return "【极视远程抓拍成功】\n时间: $timeStr\n四向视角照片已归档至外置U盘 Snapshot/ 目录。"
+        return "【极视远程抓拍成功】\n时间: $timeStr\n四向视角照片已归档至相册。"
     }
 
     fun buildCurrentStatusReport(): String {
@@ -276,7 +299,7 @@ class RemoteDispatcher(
             ─────────────────────
             • 当前车速: ${String.format("%.0f", speed)} km/h
             • 挡位状态: $gear
-            • 外置 U 盘: ${if (isMounted) "正常挂载 ($freeGb 可用 / 总计 $totalGb)" else "未检测到U盘 (待机休眠)"}
+            • 外接存储: ${if (isMounted) "正常挂载 ($freeGb 可用 / 总计 $totalGb)" else "未检测到外接存储 (待机休眠)"}
             • 闪存安全策略: 严格 No USB No Write (0 B/s 车机闪存写入)
             • 电源守护: 顺应领克08 整车深休眠策略 (12V 小电瓶 0 额外损耗)
         """.trimIndent()

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 归档列表 · 日期分组头（按 yyyy-MM-dd 分组，今日显示为「今天」） -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/tv_header_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="今天"
+        android:textColor="@color/sp_tx"
+        android:textSize="@dimen/sp_t_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_header_meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="0 段 · 0.0 MB"
+        android:textColor="@color/sp_tx3"
+        android:textSize="@dimen/sp_t_label" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:background="@color/sp_line" />
+
+</LinearLayout>

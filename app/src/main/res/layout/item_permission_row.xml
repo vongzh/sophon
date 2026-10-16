@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     权限清单行 · 首启合规页复用
+     设计系统：sp_* token，车机尺度（行高 ≥68dp、字阶走 @dimen/sp_t_*）
+     状态胶囊与动作按钮由代码按真实授权结果填充，不使用静态文案占位
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="68dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/sp_s_8">
+
+    <ImageView
+        android:id="@+id/iv_perm_icon"
+        android:layout_width="@dimen/sp_icon_24"
+        android:layout_height="@dimen/sp_icon_24"
+        android:contentDescription="权限图标"
+        android:src="@drawable/ic_action_camera" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/sp_s_12"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_perm_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="权限名称"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_body"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_perm_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="权限用途说明"
+            android:textColor="@color/sp_tx3"
+            android:textSize="@dimen/sp_t_micro" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_perm_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/sp_s_8"
+        android:background="@drawable/sp_bg_pill"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:text="未授权"
+        android:textColor="@color/sp_tx3"
+        android:textSize="@dimen/sp_t_micro" />
+
+    <TextView
+        android:id="@+id/btn_perm_action"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:background="@drawable/sp_bg_pill_accent"
+        android:gravity="center"
+        android:minWidth="76dp"
+        android:paddingHorizontal="@dimen/sp_s_12"
+        android:text="去授权"
+        android:textColor="@color/sp_ac"
+        android:textSize="@dimen/sp_t_label" />
+
+</LinearLayout>

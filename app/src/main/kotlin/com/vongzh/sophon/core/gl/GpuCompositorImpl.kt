@@ -272,7 +272,26 @@ class GpuCompositorImpl : ICompositor {
             outputFile.parentFile?.mkdirs()
             val bitmap = android.graphics.Bitmap.createBitmap(1920, 1080, android.graphics.Bitmap.Config.ARGB_8888)
             val canvas = android.graphics.Canvas(bitmap)
-            canvas.drawColor(android.graphics.Color.BLACK)
+            canvas.drawColor(0xFF12161E.toInt())
+
+            // 绘制四分屏高质感十字分割微线与通道标识
+            val gridPaint = android.graphics.Paint().apply {
+                color = 0x334E5969.toInt()
+                strokeWidth = 2f
+            }
+            canvas.drawLine(960f, 0f, 960f, 1080f, gridPaint)
+            canvas.drawLine(0f, 540f, 1920f, 540f, gridPaint)
+
+            val tagPaint = android.graphics.Paint().apply {
+                color = 0xAAFFFFFF.toInt()
+                textSize = 26f
+                isAntiAlias = true
+                setShadowLayer(4f, 1f, 1f, 0xFF000000.toInt())
+            }
+            canvas.drawText("CAM 01 · 前视主摄", 36f, 56f, tagPaint)
+            canvas.drawText("CAM 02 · 后视广角", 996f, 56f, tagPaint)
+            canvas.drawText("CAM 03 · 左视盲区", 36f, 596f, tagPaint)
+            canvas.drawText("CAM 04 · 右视盲区", 996f, 596f, tagPaint)
 
             // 绘制水印标识 (当启用水印时)
             if (com.vongzh.sophon.SophonApp.preferences.isOsdWatermarkEnabled) {

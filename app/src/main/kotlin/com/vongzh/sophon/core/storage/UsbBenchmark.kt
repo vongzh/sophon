@@ -54,8 +54,8 @@ class UsbBenchmark {
                 totalSpaceGB = 0.0,
                 freeSpaceGB = 0.0,
                 usedSpacePercent = 0,
-                errorMessage = "U盘不可写或未正确挂载",
-                summary = "U盘路径异常，无法进行写入体检"
+                errorMessage = "外接存储不可写或未正确挂载",
+                summary = "外接存储路径异常，无法进行写入体检"
             )
         }
 
@@ -80,7 +80,7 @@ class UsbBenchmark {
                 freeSpaceGB = freeGB,
                 usedSpacePercent = usedPercent,
                 errorMessage = "可用空间不足 16MB，无法完成基准测试",
-                summary = "U盘空间极度告急，请立即清理"
+                summary = "外接存储空间极度告急，请立即清理"
             )
         }
 
@@ -120,7 +120,7 @@ class UsbBenchmark {
                 freeSpaceGB = freeGB,
                 usedSpacePercent = usedPercent,
                 errorMessage = e.message ?: "I/O 写入异常",
-                summary = "U盘物理 I/O 阻塞，疑似颗粒老化或供电不稳定"
+                summary = "外接存储物理 I/O 阻塞，疑似颗粒老化或供电不稳定"
             )
         } finally {
             if (testFile.exists()) {
@@ -138,7 +138,7 @@ class UsbBenchmark {
         val summary = when (grade) {
             UsbHealthGrade.EXCELLENT -> "速度极佳 (%.1f MB/s)，完美支持四路 1080P60 极致画质实时并发录制".format(writeSpeedMBs)
             UsbHealthGrade.GOOD -> "速度良好 (%.1f MB/s)，满足四路 1080P30 标清并发录像稳定写入".format(writeSpeedMBs)
-            UsbHealthGrade.POOR -> "速度预警 (%.1f MB/s < 15MB/s)，写入偏慢，长时间录制可能偶发丢帧，建议更换车载高耐久U盘".format(writeSpeedMBs)
+            UsbHealthGrade.POOR -> "速度预警 (%.1f MB/s < 15MB/s)，写入偏慢，长时间录制可能偶发丢帧，建议更换车载高耐久外接存储".format(writeSpeedMBs)
         }
 
         UsbHealthReport(

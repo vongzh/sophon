@@ -85,7 +85,7 @@ class SophonNotificationManager(
         }
 
         // 3. 存储状态
-        val usbStr = if (isUsbMounted) "U盘状态: 正常已挂载" else "U盘状态: 未插入 (待机模式)"
+        val usbStr = if (isUsbMounted) "外接存储: 正常已挂载" else "外接存储: 未插入 (待机模式)"
         remoteViews.setTextViewText(R.id.tv_notif_storage, usbStr)
 
         // 4. 绑定快捷按钮 PendingIntent

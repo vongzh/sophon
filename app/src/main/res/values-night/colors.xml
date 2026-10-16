@@ -20,8 +20,15 @@
     <!-- 文字层级 (WCAG AA) -->
     <color name="sp_tx">#FFF2F5F8</color>
     <color name="sp_tx2">#FFA3AEBD</color>
-    <color name="sp_tx3">#FF6E7989</color>
-    <color name="sp_tx4">#FF58626F</color>
+    <color name="sp_tx3">#FF86909D</color>
+    <color name="sp_osd_tx2">#D0FFFFFF</color>
+    <color name="sp_osd_tx3">#A0FFFFFF</color>
+    <color name="sp_on_rec">#FF1A1A1A</color>
+    <color name="sp_sentry_bg">#FF07080A</color>
+    <color name="sp_sentry_halo">#26FF453A</color>
+    <color name="sp_qr_bg">#FFFFFFFF</color>
+    <color name="sp_tx_inverse">#FFFFFFFF</color>
+    <color name="sp_tx4">#FF889099</color>
 
     <!-- 强调色 -->
     <color name="sp_ac">#FF5B9BFF</color>
@@ -75,6 +82,7 @@
     <color name="stroke_glass_highlight">@color/sp_acln</color>
 
     <!--  存储容量图例 -->
+    <color name="ring_other">#8C7CFF</color>
     <color name="ring_driving">@color/sp_ac</color>
     <color name="ring_sentry">@color/sp_wn</color>
     <color name="ring_photos">@color/sp_ok</color>

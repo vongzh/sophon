@@ -10,15 +10,4 @@
                 android:color="@color/sp_line2" />
         </shape>
     </item>
-    <item
-        android:gravity="top"
-        android:height="2dp">
-        <shape android:shape="rectangle">
-            <corners android:radius="@dimen/sp_r_card" />
-            <gradient
-                android:angle="270"
-                android:endColor="#00000000"
-                android:startColor="@color/sp_top_hi" />
-        </shape>
-    </item>
 </layer-list>

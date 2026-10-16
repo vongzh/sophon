@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 日间浅色模式 · 太阳图标 -->
+    <path
+        android:pathData="M 12,7 A 5,5 0 1,0 12,17 A 5,5 0 1,0 12,7 Z"
+        android:strokeColor="@color/sp_tx"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M 12,2 L 12,4 M 12,20 L 12,22 M 2,12 L 4,12 M 20,12 L 22,12 M 4.93,4.93 L 6.34,6.34 M 17.66,17.66 L 19.07,19.07 M 4.93,19.07 L 6.34,17.66 M 17.66,6.34 L 19.07,4.93"
+        android:strokeColor="@color/sp_tx"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+</vector>

@@ -75,7 +75,7 @@ graph TD
         HAL_CAM[龙鹰一号 Camera HAL3 / Multi-Camera ISP]
         HAL_VPU[龙鹰一号 VPU H.264/H.265 硬件编解码器]
         HAL_GPU[Mali-G78 GPU / EGL 1.4 / GLES 3.0]
-        HAL_VHAL[车机 ECARX / gRPC / CarPropertyManager VHAL]
+        HAL_VHAL[车身 VHAL / gRPC / CarPropertyManager 总线]
         HAL_USB[Linux V4L2 / USB OTG Block Device]
     end
 
@@ -84,27 +84,41 @@ graph TD
     ENGINE_LAYER -->|HAL3 / NDK / ioctl| HAL_LAYER
 ```
 
-### 2.1 模块分包规划 (`com.vongz.sophon`)
+### 2.1 模块分包规划 (`com.vongzh.sophon`)
 ```
-com.vongz.sophon/
+com.vongzh.sophon/
 ├── core/
 │   ├── camera/          # Camera2 HAL 抽象、多摄像头并发栅栏、Surface 生命周期管理
-│   ├── gl/              # EGL 上下文、OES 纹理管理、鱼眼矫正着色器、OSD 时间戳合成器
-│   ├── codec/           # MediaCodec 硬件编码流水线、零掉帧 IDR 快速切片、fMP4/TS 复用器
-│   ├── storage/         # StorageVault、纯内存环形缓冲区 (RamRingBuffer)、USB 挂载监控
-│   └── vhal/            # IVehicleSignalBus、车机信号只读观察者 (转向、车门、车速、AVM)
+│   ├── codec/           # MediaCodec 连续硬件编码、座舱音频采集与无损切片剪辑
+│   ├── config/          # 座舱配置持久化 (SophonPreferences) 与摄像头画质调校 (ImageTuning)
+│   ├── geofence/        # 哨兵安全围栏判据 (SentryHomeGeofence)
+│   ├── gl/              # EGL 上下文、OES 纹理管理、光学畸变矫正与雨夜增强着色器
+│   ├── lan/             # 车载局域网免流快传 HTTP 服务器 (LanShareServer)
+│   ├── power/           # 车载电源状态机与 12V 蓄电池低压硬保护 (PowerStateMachine)
+│   ├── remote/          # Telegram、飞书机器人、Bark 推送与离线消息队列
+│   ├── sensor/          # 三轴加速度计碰撞侦测与急刹感知 (CrashSensorDetector)
+│   ├── storage/         # 8MB 内存环形缓冲、MP4 索引急救器 (Mp4MoovRescuer) 与 U 盘测速
+│   └── vhal/            # IVehicleSignalBus、多源自适应只读车身信号总线
+├── domain/
+│   ├── contract/        # 全局抽象契约接口 (IVehicleSignalBus, IStorageVault 等)
+│   └── model/           # 信号实体、录制事件、存储状态与车身数据模型
 ├── service/
-│   ├── SophonCoreService.kt         # 核心前台录制与生命周期管理服务
-│   ├── BlindSpotOverlayService.kt   # 盲区补盲微件服务 (支持 50ms 原厂 AVM 隐身)
-│   └── SentryGuardianService.kt     # 哨兵事件触发与低功耗监听服务
-├── ui/
-│   ├── common/          # FlymeAuto 风格控件 (LeftNavRail, MarkedSeekBar, StorageRingView)
-│   ├── live/            # 实时四路监控画面组件 (支持单屏、四分屏切换)
-│   ├── playback/        # 四路同步回放播放器
-│   └── settings/        # 车载设置界面
-└── domain/
-    ├── model/           # 信号实体、录制事件、存储状态
-    └── contract/        # 全局抽象契约接口
+│   ├── SophonCoreService.kt         # 核心前台录制与多路编解码守护服务
+│   ├── OverlayMatrixController.kt   # 全场景悬浮窗矩阵协调器 (统一管理 50ms AVM 极速避让)
+│   ├── BlindSpotOverlayService.kt   # 转向灯打灯与窄道双闪盲区悬浮微件
+│   ├── RearViewOverlayService.kt    # 电子后向监看与后向盲区悬浮服务
+│   ├── VehicleStatusOverlayService.kt # 车况仪表信息微件服务
+│   └── AssistBallOverlayService.kt  # 全局贴边全能悬浮辅助球服务
+└── ui/
+    ├── MainActivity.kt              # 主控容器 (承载 Navigation Rail 与 Fragment 统一调度)
+    ├── OnboardingActivity.kt        # 首启合规门 (隐私政策声明与权限分级授权)
+    ├── history/                     # 历史录像资料库组件 (RecordingHistoryFragment)
+    ├── photo/                       # 相册图库组件 (PhotoViewerFragment)
+    ├── playback/                    # 四路毫秒级同步回放器 (QuadSyncPlayerActivity)
+    ├── sentry/                      # 哨兵事件复盘看板 (SentryEventReviewFragment) 与全屏威慑
+    ├── settings/                    # 10 大分类卡片式座舱偏好设置 (SophonSettingsFragment)
+    ├── statusbar/                   # 顶部状态栏灵动胶囊服务 (StatusBarCapsuleService)
+    └── widget/                      # MarkedSeekBar、分段容量条与雷达方位态势图
 ```
 
 ---
@@ -197,8 +211,8 @@ void main() {
 
 ## 五、零掉帧连续硬件编码与容灾封装 (MediaCodec & Fault-Tolerant Muxer)
 
-### 5.1 根治 EVCam 500ms 切片丢帧的架构设计
-EVCam 在每段视频切片（如 1 分钟）到期时，会调用 `mediaRecorder.stop()` 并重新初始化，导致 Camera CaptureSession 重启或 MediaCodec 管道清空，产生 300~600ms 的视频盲区。
+### 5.1 零丢帧 0ms IDR 热切片架构设计
+传统车载行车记录方案在每段视频切片（如 1 分钟）到期时，通常调用 `mediaRecorder.stop()` 并重新初始化，导致 Camera CaptureSession 重启或 MediaCodec 管道清空，产生 300~600ms 的严重视频黑屏盲区。
 
 **Sophon 解决方案：编码器永不重启 (Continuous Stream Slicing)**：
 1. **持续编码**：MediaCodec 从系统启动录制后，持续向 Input Surface 喂帧，底层编码管线永不停止；
@@ -313,7 +327,7 @@ interface IVehicleSignalBus {
 
 - **数据源适配器**：
   - **龙鹰一号 CarPropertyManager 适配器**：通过 Android Car API 只读读取 `GEAR_SELECTION`、`PERF_VEHICLE_SPEED` 等；
-  - **ECARX VHAL gRPC 适配器**：连接车机本地 UNIX Domain Socket / gRPC 端点监听车门、转向灯信号；
+  - **车规总线本地 gRPC 适配器**：连接车机本地 UNIX Domain Socket / gRPC 端点监听车门、转向灯信号；
   - **Logcat 兜底信号提取器**：作为非 root 状态下的只读旁路，通过匹配系统日志捕获开关灯广播。
 
 ### 7.2 50ms 原厂全景 (AVM) 避让保证机制
@@ -339,7 +353,7 @@ sequenceDiagram
 
 ## 八、FlymeAuto 原生座舱交互设计 (UI & Navigation Rail)
 
-结合对 FlymeAuto 设计规范与竞品（盯盯车）优秀体验的解构，极视 (Sophon) 的 UI 设计原则为**极简、大触控区、深色护眼、无感悬浮**。
+严格遵循 FlymeAuto 原生座舱 Alive Design 设计规范，极视 (Sophon) 的 UI 设计原则为**极简、大触控区、深色护眼、无感悬浮**。
 
 ### 8.1 经典左侧导航栏布局 (Left Navigation Rail)
 采用横屏座舱最易单手触达的左侧 80dp 紧凑常驻导航栏：

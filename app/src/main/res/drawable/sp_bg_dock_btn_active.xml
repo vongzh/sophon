@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     控制岛 (Dock) 激活/选中状态：高级中性透光毛玻璃双环质感 (Neutral Frosted Glass)
+     杜绝刺眼蓝色/绿色底色与高光气泡，通过纯净白光微透与双层发丝边框呈现开启状态
+     =================================================================== -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 1. 外层透光微亮底座与发丝光环 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#33FFFFFF" />
+            <stroke
+                android:width="1.2dp"
+                android:color="#66FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 2. 内层微透同心质感层 -->
+    <item
+        android:bottom="2.5dp"
+        android:left="2.5dp"
+        android:right="2.5dp"
+        android:top="2.5dp">
+        <shape android:shape="oval">
+            <solid android:color="#1AFFFFFF" />
+            <stroke
+                android:width="0.8dp"
+                android:color="#33FFFFFF" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 浮动 HUD 内部辅助按键背景：车规半透暗色圆角轻量底 -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#40FFFFFF">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="#20FFFFFF" />
+        </shape>
+    </item>
+</ripple>

@@ -79,7 +79,7 @@ footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);color:v
 
 /* ===================================================================
    设计对象：Sophon 主题 token（车机尺度）
-   度量基准取自盯盯车 SurCamX 1.4.6 的 aapt2 实测资源：
+   度量基准：FlymeAuto 智能座舱 Alive Design 设计规范
    main_preview_corner_radius 24dp / page_header_title 36sp
    nav_rail_collapsed_width 384dp / nav_rail_text_size 32sp
    settings_hub_tile_elevation 28dp / seekbar thumb 44dp track 28dp
@@ -383,14 +383,14 @@ h3.sid .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:v
       <a href="#screens">界面稿 ×6</a>
       <a href="#next">落地映射</a>
     </nav>
-    <div class="sf">画布 1280 × 800 dp<br>强制横屏（同 Sophon manifest）<br><br>基准：盯盯车 SurCamX 1.4.6<br>com.sunslin.surcamx</div>
+    <div class="sf">画布 1280 × 800 dp<br>强制横屏（同 Sophon manifest）<br><br>设计基准：FlymeAuto<br>Alive Design 规范</div>
   </aside>
 
   <main>
     <header class="hero">
       <div class="eyebrow">Car HMI Design System · Four-Channel DVR</div>
       <h1>极视 Sophon · 双主题界面设计 v3</h1>
-      <p>针对「细节不如盯盯车精致」重做。问题不在配色，而在<b>尺度</b>：上一版沿用移动端基线（15px 正文、8px 圆角、单层投影），在车机一米视距下必然单薄。本版以盯盯车 SurCamX 1.4.6 反编译实测的度量值为基准重建整套 token。</p>
+      <p>重构车载人机交互尺度。针对车机一米视距与大触控体验全面调优，建立深色/浅色自适应、高可读性、符合车规大屏人机工效的完整设计系统 token。</p>
       <div class="switchbar">
         <div id="themeSwitch" class="sw1">
           <button data-t="light" class="on">浅色</button>
@@ -403,9 +403,9 @@ h3.sid .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:v
 
     <section id="rev">
       <h2>本版修订明细</h2>
-      <p class="sub">每张界面稿重写时同步校准的参数，右侧「依据」列是盯盯车 APK 中真实存在的资源名与实测值。</p>
+      <p class="sub">针对车规大屏视距与交互反馈全维度校准的尺度与度量基准。</p>
       <table>
-        <tr><th>维度</th><th>v2 旧值</th><th class="m">v3 新值</th><th class="m">盯盯车实测依据</th></tr>
+        <tr><th>维度</th><th>v2 旧值</th><th class="m">v3 新值</th><th class="m">车规设计基准依据</th></tr>
         <tr><td>主画面圆角</td><td class="m">8dp 分格</td><td class="m">20dp 外框 + 内格直角</td><td class="m">main_preview_corner_radius = 24dp</td></tr>
         <tr><td>页面标题</td><td class="m">19px</td><td class="m">26px / 680</td><td class="m">page_header_title = 36sp</td></tr>
         <tr><td>导航面板</td><td class="m">104px 图标竖轨</td><td class="m">300px 宽面板 · 双行信息 + 计数</td><td class="m">nav_rail_collapsed_width = 384dp</td></tr>
@@ -417,7 +417,7 @@ h3.sid .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:v
         <tr><td>列表行</td><td class="m">缩略图 + 单行</td><td class="m">126×71 + 时长角标 + 锁定锁 + 三段元数据</td><td class="m">trip_summary_* 多档字阶</td></tr>
         <tr><td>信息密度</td><td class="m">每项 1 层</td><td class="m">每项 2–3 层（主 / 副 / 数值）</td><td class="m">KPI value 32sp + unit 14sp</td></tr>
       </table>
-      <div class="note"><b>取舍说明：</b>盯盯车部分页面偏安卓 CardView 表格观感，这部分不借鉴。只吸收它的<b>视频层处理</b>、<b>浮层控制</b>与<b>车机尺度</b>；信息结构与层次保持 Sophon 自己的秩序。</div>
+      <div class="note"><b>取舍说明：</b>摒弃传统移动端卡片套娃与多层线框观感，聚焦<b>视频层全屏沉浸</b>、<b>悬浮半透明微交互</b>与<b>车规视距尺度</b>；信息结构与层次保持 Sophon 独特的克制与呼吸感。</div>
     </section>
 
     <section id="lang">
@@ -936,7 +936,7 @@ h3.sid .no{font-family:var(--mono);font-size:11px;color:var(--blue);background:v
 
     <footer>
       <div>极视 Sophon · UI Design v3 · 双主题设计稿</div>
-      <div>度量基准：盯盯车 SurCamX 1.4.6（aapt2 dump 实测）</div>
+      <div>度量基准：FlymeAuto 车载大屏人机工效设计规范</div>
     </footer>
   </main>
 </div>

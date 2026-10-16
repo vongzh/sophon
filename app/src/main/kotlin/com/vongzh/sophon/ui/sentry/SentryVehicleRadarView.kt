@@ -11,11 +11,11 @@ import androidx.core.content.ContextCompat
 import com.vongzh.sophon.R
 
 /**
- * 哨兵模式车身全景雷达波方位视图 (SentryVehicleRadarView) · 设计稿 S5 规范
+ * 哨兵模式车身全景雷达波方位视图 (SentryVehicleRadarView) · 真实数据驱动版
  *
  * 【四向车身盲区与震动雷达态势】
  * 1. 矢量绘制俯视车身拓扑结构；
- * 2. 动态渲染左前、右侧盲区及车尾触发雷达波；
+ * 2. 真实数据驱动：仅在有事件时按方位动态渲染雷达波，无事件时呈现平稳安全监看态；
  * 3. 区分碰撞（红色 #D92D20）、人员靠近（橙黄 #B2670A）与车身震动（Flyme蓝 #3572F4）。
  */
 class SentryVehicleRadarView @JvmOverloads constructor(
@@ -23,6 +23,18 @@ class SentryVehicleRadarView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+    enum class RadarDirection {
+        NONE,
+        FRONT_LEFT,
+        FRONT_RIGHT,
+        REAR_LEFT,
+        REAR_RIGHT,
+        ALL_AROUND
+    }
+
+    private var activeDirection: RadarDirection = RadarDirection.NONE
+    private var activeWaveColor: Int = ContextCompat.getColor(context, R.color.sp_dg)
 
     private val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -63,10 +75,26 @@ class SentryVehicleRadarView @JvmOverloads constructor(
     private val colorDanger = ContextCompat.getColor(context, R.color.sp_dg)
     private val colorWarning = ContextCompat.getColor(context, R.color.sp_wn)
     private val colorAccent = ContextCompat.getColor(context, R.color.sp_ac)
+    private val colorOk = ContextCompat.getColor(context, R.color.sp_ok)
 
     private val carBounds = RectF()
     private val frontGlass = RectF()
     private val rearGlass = RectF()
+
+    /**
+     * 响应式高亮指定方位的雷达波（完全由外部事件驱动，绝不绘制假波纹）
+     */
+    fun highlightDirection(direction: RadarDirection, color: Int = colorDanger) {
+        this.activeDirection = direction
+        this.activeWaveColor = color
+        invalidate()
+    }
+
+    fun resetToSafeState() {
+        this.activeDirection = RadarDirection.NONE
+        this.activeWaveColor = colorOk
+        invalidate()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -78,7 +106,7 @@ class SentryVehicleRadarView @JvmOverloads constructor(
         val centerX = w / 2f
         val centerY = h / 2f
 
-        // 1. 绘制车身剪影 (车长约占视图高度 75%，车宽约占 40%)
+        // 1. 绘制车身剪影 (车长约占视图高度 72%，车宽约占 42%)
         val carW = (w * 0.42f).coerceAtMost(110f * resources.displayMetrics.density)
         val carH = (h * 0.72f).coerceAtMost(220f * resources.displayMetrics.density)
 
@@ -105,57 +133,56 @@ class SentryVehicleRadarView @JvmOverloads constructor(
         canvas.drawRoundRect(rearGlass, 10f, 10f, glassPaint)
         canvas.drawRoundRect(rearGlass, 10f, 10f, glassStrokePaint)
 
-        // 顶棚车标 / 雷达中枢指示
-        radarFillPaint.color = colorAccent
+        // 顶棚车标 / 雷达中枢指示 (安全状态下为绿色/蓝色常驻呼吸)
+        val centerIndicatorColor = if (activeDirection == RadarDirection.NONE) colorOk else activeWaveColor
+        radarFillPaint.color = centerIndicatorColor
         radarFillPaint.alpha = 40
         canvas.drawCircle(centerX, centerY + carH * 0.18f, 18f, radarFillPaint)
         radarFillPaint.alpha = 255
         canvas.drawCircle(centerX, centerY + carH * 0.18f, 6f, radarFillPaint)
 
-        // 2. 绘制左前碰撞警报雷达波 (高危红色)
-        val shockX = carLeft - 18f
-        val shockY = carTop + carH * 0.18f
+        // 2. 根据真实事件动态绘制雷达波，无事件时不绘制假波纹
+        when (activeDirection) {
+            RadarDirection.FRONT_LEFT -> {
+                drawRadarWave(canvas, carLeft - 18f, carTop + carH * 0.18f, activeWaveColor)
+            }
+            RadarDirection.FRONT_RIGHT -> {
+                drawRadarWave(canvas, carRight + 18f, carTop + carH * 0.18f, activeWaveColor)
+            }
+            RadarDirection.REAR_LEFT -> {
+                drawRadarWave(canvas, carLeft - 16f, carBottom - 24f, activeWaveColor)
+            }
+            RadarDirection.REAR_RIGHT -> {
+                drawRadarWave(canvas, carRight + 16f, carBottom - 24f, activeWaveColor)
+            }
+            RadarDirection.ALL_AROUND -> {
+                drawRadarWave(canvas, carLeft - 18f, carTop + carH * 0.18f, activeWaveColor)
+                drawRadarWave(canvas, carRight + 18f, centerY, activeWaveColor)
+                drawRadarWave(canvas, centerX, carBottom + 16f, activeWaveColor)
+            }
+            RadarDirection.NONE -> {
+                // 安全待命态：仅在车身周围画极淡的绿色守护虚线
+                radarPaint.color = colorOk
+                radarPaint.alpha = 45
+                canvas.drawRoundRect(
+                    carLeft - 12f, carTop - 12f, carRight + 12f, carBottom + 12f,
+                    cornerRadius + 8f, cornerRadius + 8f, radarPaint
+                )
+            }
+        }
+    }
 
-        radarPaint.color = colorDanger
+    private fun drawRadarWave(canvas: Canvas, x: Float, y: Float, color: Int) {
+        radarPaint.color = color
         radarPaint.alpha = 180
-        canvas.drawCircle(shockX, shockY, 38f, radarPaint)
-        radarPaint.alpha = 80
-        canvas.drawCircle(shockX, shockY, 56f, radarPaint)
-
-        dotPaint.color = colorDanger
-        dotPaint.alpha = 50
-        canvas.drawCircle(shockX, shockY, 22f, dotPaint)
-        dotPaint.alpha = 255
-        canvas.drawCircle(shockX, shockY, 8f, dotPaint)
-
-        // 3. 绘制右侧靠近波纹 (橙黄警告色)
-        val warnX = carRight + 18f
-        val warnY = centerY - 10f
-
-        radarPaint.color = colorWarning
-        radarPaint.alpha = 180
-        canvas.drawCircle(warnX, warnY, 34f, radarPaint)
+        canvas.drawCircle(x, y, 34f, radarPaint)
         radarPaint.alpha = 70
-        canvas.drawCircle(warnX, warnY, 50f, radarPaint)
+        canvas.drawCircle(x, y, 52f, radarPaint)
 
-        dotPaint.color = colorWarning
+        dotPaint.color = color
         dotPaint.alpha = 50
-        canvas.drawCircle(warnX, warnY, 18f, dotPaint)
+        canvas.drawCircle(x, y, 18f, dotPaint)
         dotPaint.alpha = 255
-        canvas.drawCircle(warnX, warnY, 7f, dotPaint)
-
-        // 4. 绘制后方异常晃动波纹 (Flyme 蓝)
-        val vibeX = carLeft - 6f
-        val vibeY = carBottom - 24f
-
-        radarPaint.color = colorAccent
-        radarPaint.alpha = 160
-        canvas.drawCircle(vibeX, vibeY, 30f, radarPaint)
-
-        dotPaint.color = colorAccent
-        dotPaint.alpha = 40
-        canvas.drawCircle(vibeX, vibeY, 16f, dotPaint)
-        dotPaint.alpha = 255
-        canvas.drawCircle(vibeX, vibeY, 6f, dotPaint)
+        canvas.drawCircle(x, y, 7f, dotPaint)
     }
 }

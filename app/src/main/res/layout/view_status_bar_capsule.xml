@@ -23,19 +23,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:fontFamily="monospace"
-        android:text="00:00:00"
+        android:text="待命中"
         android:textColor="@color/sp_tx"
-        android:textSize="13sp"
+        android:textSize="@dimen/sp_t_label"
         android:textStyle="bold" />
 
-    <!--  U盘状态指示 -->
-    <TextView
+    <!-- 外接存储状态指示 -->
+    <ImageView
         android:id="@+id/tv_capsule_usb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginStart="6dp"
-        android:text="🖫"
-        android:textColor="@color/sp_ac"
-        android:textSize="12sp" />
+        android:contentDescription="外接存储状态"
+        android:src="@drawable/ic_usb_drive"
+        android:tint="@color/sp_ac" />
 
 </LinearLayout>

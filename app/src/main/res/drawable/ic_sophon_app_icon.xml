@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视 车规级官方应用图标 (App Icon / Logo)
+     车规智瞳圆形徽标体系（纯矢量）：
+     - 外层精密镜筒外圈（半径 44，完整圆形闭环闭合）
+     - 四向全维内嵌标尺刻度（前/后/左/右 四通道相机内嵌校准，严格在圆圈内部）
+     - 中层与内层光学光圈环（精密多阶镜片孔径）
+     - 领克破晓展翼流光弧（动感车规光痕）
+     - 核心智眸焦点与光学高光（透镜景深）
+     =================================================================== -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 0. 镜片深邃镀膜底盘 (深色光学微透底质，确保在任何背景下轮廓分明完整) -->
+    <path
+        android:pathData="M 54,10 A 44,44 0 1,1 53.99,10 Z"
+        android:fillColor="#1500D4AA" />
+
+    <!-- 1. 外层精密镜筒外圈 (外圈完整闭环，告别线条外溢) -->
+    <path
+        android:pathData="M 54,10 A 44,44 0 1,1 53.99,10 Z"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="10"
+                android:startY="10"
+                android:endX="98"
+                android:endY="98"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF00F5D4" />
+                <item android:offset="0.5" android:color="#FF00D4AA" />
+                <item android:offset="1.0" android:color="#FF007A5E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 2. 四向全维内嵌标尺刻度 (前/后/左/右 严格从外圈内壁向内延伸，完全内嵌在圆内) -->
+    <!-- 前 (North - 顶部长视距刻度) -->
+    <path
+        android:pathData="M 54,10 L 54,22"
+        android:strokeColor="#FF00F5D4"
+        android:strokeWidth="3.0"
+        android:strokeLineCap="round" />
+    <!-- 后 (South - 底部倒车视距刻度) -->
+    <path
+        android:pathData="M 54,86 L 54,98"
+        android:strokeColor="#FF00F5D4"
+        android:strokeWidth="3.0"
+        android:strokeLineCap="round" />
+    <!-- 左 (West - 左盲区补盲刻度) -->
+    <path
+        android:pathData="M 10,54 L 22,54"
+        android:strokeColor="#FF00F5D4"
+        android:strokeWidth="3.0"
+        android:strokeLineCap="round" />
+    <!-- 右 (East - 右盲区补盲刻度) -->
+    <path
+        android:pathData="M 86,54 L 98,54"
+        android:strokeColor="#FF00F5D4"
+        android:strokeWidth="3.0"
+        android:strokeLineCap="round" />
+
+    <!-- 3. 中层精密光学光圈环 (次级光阑) -->
+    <path
+        android:pathData="M 54,26 A 28,28 0 1,1 53.99,26 Z"
+        android:strokeColor="#4D00D4AA"
+        android:strokeWidth="1.8" />
+
+    <!-- 4. 内层光学聚焦环 (核心光阑) -->
+    <path
+        android:pathData="M 54,36 A 18,18 0 1,1 53.99,36 Z"
+        android:strokeColor="#8000F5D4"
+        android:strokeWidth="1.6" />
+
+    <!-- 5. 领克破晓展翼动感光弧 (车规级动感翼展流线) -->
+    <path
+        android:pathData="M 32,54 C 40,43 50,40 60,42 C 68,44 74,50 76,56"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="32"
+                android:startY="54"
+                android:endX="76"
+                android:endY="56"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#0000D4AA" />
+                <item android:offset="0.4" android:color="#FF00F5D4" />
+                <item android:offset="0.8" android:color="#FFFFFFFF" />
+                <item android:offset="1.0" android:color="#0000D4AA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 6. 核心全维感知智瞳 (高光焦点中心) -->
+    <path
+        android:pathData="M 54,46 A 8,8 0 1,1 53.99,46 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="50"
+                android:startY="50"
+                android:endX="58"
+                android:endY="58"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF00F5D4" />
+                <item android:offset="0.6" android:color="#FF00A382" />
+                <item android:offset="1.0" android:color="#FF005E4A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 7. 智瞳极亮光学高光点 (景深反射高光) -->
+    <path
+        android:pathData="M 51.5,51.5 m -1.8,0 a 1.8,1.8 0 1,0 3.6,0 a 1.8,1.8 0 1,0 -3.6,0"
+        android:fillColor="#FFFFFFFF" />
+
+</vector>

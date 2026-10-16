@@ -5,6 +5,7 @@
      视频为舞台，控件浮于其上；不使用卡片包边
      =================================================================== -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/sp_page"
@@ -17,247 +18,212 @@
         android:layout_height="match_parent"
         android:background="@color/sp_surf"
         android:orientation="vertical"
-        android:paddingTop="@dimen/sp_s_20"
+        android:paddingTop="16dp"
         android:paddingBottom="@dimen/sp_s_20">
 
-        <!-- 品牌区 -->
+        <!-- 品牌区：官方应用徽标与极视 SOPHON 品牌名 (横向合并，精简干练) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="@dimen/sp_s_20"
-            android:paddingEnd="@dimen/sp_s_16">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="14dp">
 
             <ImageView
-                android:layout_width="@dimen/sp_icon_24"
-                android:layout_height="@dimen/sp_icon_24"
-                android:layout_marginEnd="@dimen/sp_s_12"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="10dp"
                 android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_view_quad"
-                android:tint="@color/sp_ac" />
+                android:src="@mipmap/ic_launcher" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:letterSpacing="0.06"
-                    android:text="SOPHON"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.04"
+                    android:text="极视"
                     android:textColor="@color/sp_tx"
-                    android:textSize="@dimen/sp_t_title"
+                    android:textSize="19sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="极视 · 四向全维"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:letterSpacing="0.08"
+                    android:text="SOPHON"
                     android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
+                    android:textSize="12.5sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
+        <!-- 品牌区与菜单项之间的建筑感结构微线 -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginHorizontal="@dimen/sp_s_20"
-            android:layout_marginTop="@dimen/sp_s_16"
-            android:layout_marginBottom="@dimen/sp_s_12"
-            android:background="@color/sp_line" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/sp_line"
+            android:alpha="0.5" />
 
         <!-- 导航项 1：实时监看（选中） -->
         <LinearLayout
             android:id="@+id/btn_nav_live"
             style="@style/Widget.Sophon.NavItem"
+            android:layout_marginTop="8dp"
             android:background="@drawable/sp_bg_nav_item_active">
 
             <ImageView
+                android:id="@+id/iv_nav_live"
                 android:layout_width="@dimen/sp_icon_24"
                 android:layout_height="@dimen/sp_icon_24"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:contentDescription="@string/nav_live"
-                android:src="@drawable/ic_nav_live" />
+                android:src="@drawable/ic_nav_live"
+                android:tint="@color/sp_ac" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_nav_live_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nav_live"
-                    android:textColor="@color/sp_ac"
-                    android:textSize="@dimen/sp_t_subtitle"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="四路 · 录制中"
-                    android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
-            </LinearLayout>
+                android:text="@string/nav_live"
+                android:textColor="@color/sp_ac"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- 导航项 2：行车视频 -->
         <LinearLayout
             android:id="@+id/btn_nav_driving"
             style="@style/Widget.Sophon.NavItem"
+            android:layout_marginTop="@dimen/sp_s_6"
             android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
+                android:id="@+id/iv_nav_driving"
                 android:layout_width="@dimen/sp_icon_24"
                 android:layout_height="@dimen/sp_icon_24"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:contentDescription="@string/nav_driving"
-                android:src="@drawable/ic_nav_driving" />
+                android:src="@drawable/ic_nav_driving"
+                android:tint="@color/sp_tx2" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_nav_driving_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nav_driving"
-                    android:textColor="@color/sp_tx"
-                    android:textSize="@dimen/sp_t_subtitle"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="128 段 · 42.6 GB"
-                    android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
-            </LinearLayout>
+                android:text="@string/nav_driving"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- 导航项 3：哨兵事件 -->
         <LinearLayout
             android:id="@+id/btn_nav_sentry"
             style="@style/Widget.Sophon.NavItem"
+            android:layout_marginTop="@dimen/sp_s_6"
             android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
+                android:id="@+id/iv_nav_sentry"
                 android:layout_width="@dimen/sp_icon_24"
                 android:layout_height="@dimen/sp_icon_24"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:contentDescription="@string/nav_sentry"
-                android:src="@drawable/ic_nav_sentry" />
+                android:src="@drawable/ic_nav_sentry"
+                android:tint="@color/sp_tx2" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_nav_sentry_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nav_sentry"
-                    android:textColor="@color/sp_tx"
-                    android:textSize="@dimen/sp_t_subtitle"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="今日新增 2 条"
-                    android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
-            </LinearLayout>
+                android:text="@string/nav_sentry"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/badge_sentry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/sp_bg_pill_accent"
                 android:paddingHorizontal="@dimen/sp_s_8"
                 android:paddingVertical="@dimen/sp_s_2"
-                android:text="2"
+                android:text="0"
                 android:textColor="@color/sp_ac"
                 android:textSize="@dimen/sp_t_caption"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <!-- 导航项 4：相册图库 -->
         <LinearLayout
             android:id="@+id/btn_nav_photos"
             style="@style/Widget.Sophon.NavItem"
+            android:layout_marginTop="@dimen/sp_s_6"
             android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
+                android:id="@+id/iv_nav_photos"
                 android:layout_width="@dimen/sp_icon_24"
                 android:layout_height="@dimen/sp_icon_24"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:contentDescription="@string/nav_photos"
-                android:src="@drawable/ic_nav_photos" />
+                android:src="@drawable/ic_nav_photos"
+                android:tint="@color/sp_tx2" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_nav_photos_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nav_photos"
-                    android:textColor="@color/sp_tx"
-                    android:textSize="@dimen/sp_t_subtitle"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="36 张抓拍"
-                    android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
-            </LinearLayout>
+                android:text="@string/nav_photos"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <!-- 导航项 5：系统设置 -->
         <LinearLayout
             android:id="@+id/btn_nav_settings"
             style="@style/Widget.Sophon.NavItem"
+            android:layout_marginTop="@dimen/sp_s_6"
             android:background="@drawable/sp_bg_nav_item">
 
             <ImageView
+                android:id="@+id/iv_nav_settings"
                 android:layout_width="@dimen/sp_icon_24"
                 android:layout_height="@dimen/sp_icon_24"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:contentDescription="@string/nav_settings"
-                android:src="@drawable/ic_nav_settings" />
+                android:src="@drawable/ic_nav_settings"
+                android:tint="@color/sp_tx2" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_nav_settings_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nav_settings"
-                    android:textColor="@color/sp_tx"
-                    android:textSize="@dimen/sp_t_subtitle"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="固件 v1.4.0"
-                    android:textColor="@color/sp_tx3"
-                    android:textSize="@dimen/sp_t_caption" />
-            </LinearLayout>
+                android:text="@string/nav_settings"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <View
@@ -265,22 +231,31 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- 底部 U 盘存储卡：环形容量 + 状态 + 分段条 + 图例 -->
+        <!-- 底部外接存储：轻量座舱微胶囊 (参考特斯拉/小鹏：平常沉静指示，异常醒目提示，点击直达存储设置) -->
         <LinearLayout
+            android:id="@+id/layout_storage_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/sp_s_16"
-            android:background="@drawable/sp_bg_card"
-            android:elevation="@dimen/sp_elev_1"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/sp_bg_storage_capsule"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="@dimen/sp_s_12">
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="9dp">
 
-            <com.vongzh.sophon.ui.widget.StorageCapacityRingView
-                android:id="@+id/view_storage_ring_mini"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_marginEnd="@dimen/sp_s_12" />
+            <ImageView
+                android:id="@+id/iv_storage_usb_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_usb_drive"
+                android:tint="@color/sp_tx2"
+                android:contentDescription="存储设备" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -294,73 +269,49 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="U盘未就绪"
+                    android:text="外接存储未就绪"
                     android:textColor="@color/sp_wn"
-                    android:textSize="@dimen/sp_t_label"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="6dp"
-                    android:layout_marginTop="@dimen/sp_s_6"
-                    android:background="@drawable/sp_bg_pill"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="38"
-                        android:background="@color/ring_driving" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="16"
-                        android:background="@color/ring_sentry" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="8"
-                        android:background="@color/ring_photos" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="38" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- 异常状态说明 -->
+                <TextView
+                    android:id="@+id/tv_storage_unmounted_tip"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_s_6"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/sp_s_12"
-                        android:drawablePadding="4dp"
-                        android:text="行车"
-                        android:textColor="@color/sp_tx3"
-                        android:textSize="@dimen/sp_t_micro" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/sp_s_12"
-                        android:text="哨兵"
-                        android:textColor="@color/sp_tx3"
-                        android:textSize="@dimen/sp_t_micro" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="相册"
-                        android:textColor="@color/sp_tx3"
-                        android:textSize="@dimen/sp_t_micro" />
-                </LinearLayout>
+                    android:layout_marginTop="1dp"
+                    android:text="接入存储启用录制"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="10sp"
+                    android:visibility="visible" />
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_settings_storage"
+                android:tint="@color/sp_tx3"
+                android:contentDescription="设置" />
+
+            <!-- 保留代码安全引用的不可见控件 -->
+            <com.vongzh.sophon.ui.widget.StorageCapacityRingView
+                android:id="@+id/view_storage_ring_mini"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <com.vongzh.sophon.ui.widget.MultiSegmentStorageBarView
+                android:id="@+id/bar_storage_mini"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/layout_storage_legend"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>
@@ -371,169 +322,178 @@
         android:layout_height="match_parent"
         android:background="@color/sp_line2" />
 
-    <!-- ============ 右侧主内容区 ============ -->
-    <LinearLayout
+    <!-- ============ 右侧主内容区 (使用 FrameLayout 承载全屏顶部浮动 HUD) ============ -->
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="@dimen/sp_s_20">
+        android:layout_weight="1">
 
-        <!-- 顶部状态栏 -->
         <LinearLayout
-            android:id="@+id/layout_top_status_bar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sp_statusbar_h"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:text="14:02"
-                android:textColor="@color/sp_tx"
-                android:textSize="@dimen/sp_t_title"
-                android:textStyle="bold" />
+            <!-- 顶部状态栏与全局浮动 HUD 提示层 -->
+        <FrameLayout
+            android:id="@+id/layout_top_bar_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sp_statusbar_h">
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_marginHorizontal="@dimen/sp_s_12"
-                android:background="@color/sp_line2" />
-
-            <TextView
-                android:id="@+id/tv_telemetry_gear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P 挡"
-                android:textColor="@color/sp_tx"
-                android:textSize="@dimen/sp_t_subtitle"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_marginHorizontal="@dimen/sp_s_12"
-                android:background="@color/sp_line2" />
-
-            <TextView
-                android:id="@+id/tv_telemetry_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:text="0 km/h"
-                android:textColor="@color/sp_tx2"
-                android:textSize="@dimen/sp_t_subtitle"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_marginHorizontal="@dimen/sp_s_12"
-                android:background="@color/sp_line2" />
-
-            <TextView
-                android:id="@+id/tv_telemetry_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:text="24 ℃"
-                android:textColor="@color/sp_tx2"
-                android:textSize="@dimen/sp_t_subtitle" />
-
-            <TextView
-                android:id="@+id/tv_telemetry_gps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/sp_s_12"
-                android:text="AGPS ±3 m"
-                android:textColor="@color/sp_tx3"
-                android:textSize="@dimen/sp_t_caption" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <!-- 免流快传 -->
+            <!-- 顶部状态栏 -->
             <LinearLayout
-                android:id="@+id/btn_top_lan_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/sp_s_12"
-                android:background="@drawable/sp_bg_pill"
-                android:clickable="true"
-                android:focusable="true"
+                android:id="@+id/layout_top_status_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6">
+                android:paddingHorizontal="@dimen/sp_s_20">
 
-                <ImageView
-                    android:layout_width="@dimen/sp_icon_16"
-                    android:layout_height="@dimen/sp_icon_16"
-                    android:layout_marginEnd="@dimen/sp_s_6"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_top_lan_share"
-                    android:tint="@color/sp_ac" />
-
-                <TextView
+                <!-- 车规座舱行车遥测胶囊 (时间 · 挡位 · 车速) -->
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="免流快传"
-                    android:textColor="@color/sp_ac"
-                    android:textSize="@dimen/sp_t_label"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    android:layout_height="36dp"
+                    android:background="@drawable/sp_bg_telemetry_capsule"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
 
-            <!-- U 盘指示 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/sp_s_12"
-                android:background="@drawable/sp_bg_pill"
-                android:drawablePadding="@dimen/sp_s_6"
-                android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
-                android:text="U 盘"
-                android:textColor="@color/sp_tx2"
-                android:textSize="@dimen/sp_t_label" />
+                    <TextView
+                        android:id="@+id/tv_top_clock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="--:--"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-            <!-- REC 录制胶囊：录制状态上浮到全局视野 -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/sp_bg_pill_rec"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6">
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="@drawable/sp_dot_live_inactive" />
+
+                    <TextView
+                        android:id="@+id/tv_telemetry_gear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="P 挡"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="@drawable/sp_dot_live_inactive" />
+
+                    <TextView
+                        android:id="@+id/tv_telemetry_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="0 km/h"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:layout_marginEnd="@dimen/sp_s_8"
-                    android:background="@drawable/sp_dot_rec" />
+                    android:layout_width="1dp"
+                    android:layout_height="16dp"
+                    android:layout_marginHorizontal="@dimen/sp_s_12"
+                    android:visibility="gone"
+                    android:background="@color/sp_line2" />
 
+                <!-- 遥测温度/GPS：VehicleSignalBus 尚无对应信号源，常驻占位符属假占位。
+                     接入真实 VHAL 温度与定位信号后，删除两个视图的 visibility="gone" 即可。 -->
                 <TextView
+                    android:id="@+id/tv_telemetry_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:fontFamily="monospace"
-                    android:text="02:14:37"
-                    android:textColor="#FF1A1A1A"
-                    android:textSize="@dimen/sp_t_label"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
+                    android:text="-- ℃"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_subtitle" />
 
-        <!-- 页头 -->
-        <LinearLayout
+                <TextView
+                    android:id="@+id/tv_telemetry_gps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_s_12"
+                    android:visibility="gone"
+                    android:text="--"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_caption" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- 外接存储指示：左下角已有更完整直观的座舱胶囊指示，顶栏免去重复冗余（保留 GONE 控件以兼容代码引用） -->
+                <TextView
+                    android:id="@+id/tv_top_usb_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <!-- REC 录制胶囊：录制状态上浮到全局视野 -->
+                <LinearLayout
+                    android:id="@+id/layout_rec_capsule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sp_bg_pill_rec"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/sp_s_12"
+                    android:paddingVertical="@dimen/sp_s_6">
+
+                    <View
+                        android:id="@+id/dot_rec"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginEnd="@dimen/sp_s_8"
+                        android:background="@drawable/sp_dot_rec" />
+
+                    <TextView
+                        android:id="@+id/tv_top_rec_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="录制就绪"
+                        android:textColor="@color/sp_on_rec"
+                        android:textSize="@dimen/sp_t_label"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 主舞台内容区（包含实时监控舞台 与 其他 Tab Fragment 宿主） -->
+        <FrameLayout
+            android:id="@+id/container_stage_body"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/sp_s_16"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- 1. 实时监控舞台 (S1) -->
+            <LinearLayout
+                android:id="@+id/layout_stage_live"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/sp_s_20"
+                android:paddingBottom="@dimen/sp_s_12">
+
+                <!-- 页头（已按要求隐藏，最大化让位给视频监看舞台） -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -549,20 +509,22 @@
                     android:textAppearance="@style/TextAppearance.Sophon.Headline" />
 
                 <TextView
+                    android:id="@+id/tv_status_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sp_s_2"
-                    android:text="四路同步录制 · 循环覆盖已启用 · 灵敏度中"
+                    android:text="四路同步录制 · 循环覆盖已启用"
                     android:textAppearance="@style/TextAppearance.Sophon.Caption" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_main_res_fps_chip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/sp_bg_chip"
                 android:paddingHorizontal="@dimen/sp_s_12"
                 android:paddingVertical="@dimen/sp_s_6"
-                android:text="1080P · 30fps"
+                android:text="--"
                 android:textAppearance="@style/TextAppearance.Sophon.Label" />
         </LinearLayout>
 
@@ -572,347 +534,451 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <!-- 四路紧拼砖格（黑缝，20dp 外圆角） -->
-            <GridLayout
-                android:id="@+id/grid_quad_view"
+            <!-- 四路紧拼砖格（硬件级 16dp 圆角裁切卡片底盘，彻底杜绝外角黑色块层叠与锯齿外溢） -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/sp_bg_quad_frame"
-                android:columnCount="2"
-                android:rowCount="2">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/sp_quad_seam"
+                app:cardPreventCornerOverlap="false">
 
-            <!-- CH1 前路 -->
-            <FrameLayout
-                android:id="@+id/container_cam_front"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="@dimen/sp_s_2">
-
-                <SurfaceView
-                    android:id="@+id/surface_cam_front"
+                <GridLayout
+                    android:id="@+id/grid_quad_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:columnCount="2"
+                    android:rowCount="2">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/sp_grad_top_scrim" />
+                    <!-- CH1 前路 -->
+                    <FrameLayout
+                        android:id="@+id/container_cam_front"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:layout_margin="@dimen/sp_s_2">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/sp_grad_bottom_scrim" />
+                        <SurfaceView
+                            android:id="@+id/surface_cam_front"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginTop="@dimen/sp_s_12"
-                    android:orientation="vertical">
+                        <!-- 待命机位引导视图 (无画面时优雅沉浸：80dp 微拟态底盘 + 52dp 图标 + 待命引导文字) -->
+                        <LinearLayout
+                            android:id="@+id/layout_standby_front"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_4"
-                        android:text="前路 · 主摄"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textStyle="bold" />
+                            <FrameLayout
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/sp_bg_cam_standby_circle">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_4"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_2"
-                        android:text="1920×1080 · 30fps · f/1.8"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textSize="@dimen/sp_t_micro" />
-                </LinearLayout>
+                                <ImageView
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_cam_off"
+                                    android:tint="@color/sp_tx2"
+                                    android:alpha="0.45"
+                                    android:contentDescription="前向未接入" />
+                            </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginBottom="@dimen/sp_s_12"
-                    android:fontFamily="monospace"
-                    android:text="2026-10-14 14:02:37"
-                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                    android:textSize="@dimen/sp_t_micro" />
-            </FrameLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="前摄未接入"
+                                android:textColor="@color/sp_tx3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
-            <!-- CH2 后路 -->
-            <FrameLayout
-                android:id="@+id/container_cam_back"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="@dimen/sp_s_2">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/sp_grad_top_scrim" />
 
-                <SurfaceView
-                    android:id="@+id/surface_cam_back"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                        <!-- 机位标识胶囊：状态点 + 简明方位 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sp_s_12"
+                            android:layout_marginTop="@dimen/sp_s_8"
+                            android:background="@drawable/sp_bg_osd_chip"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/sp_grad_top_scrim" />
+                            <View
+                                android:id="@+id/dot_osd_status_front"
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/sp_dot_live_inactive" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/sp_grad_bottom_scrim" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="前视"
+                                android:textColor="@color/sp_osd_tx"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:textStyle="bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginTop="@dimen/sp_s_12"
-                    android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_osd_spec_front"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="monospace"
+                                android:textColor="@color/sp_osd_tx2"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:visibility="gone" />
+                        </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_4"
-                        android:text="后路 · 广角"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_osd_time_front"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+                    </FrameLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_4"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_2"
-                        android:text="1920×1080 · 30fps"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textSize="@dimen/sp_t_micro" />
-                </LinearLayout>
+                    <!-- CH2 后路 -->
+                    <FrameLayout
+                        android:id="@+id/container_cam_back"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:layout_margin="@dimen/sp_s_2">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginBottom="@dimen/sp_s_12"
-                    android:fontFamily="monospace"
-                    android:text="2026-10-14 14:02:37"
-                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                    android:textSize="@dimen/sp_t_micro" />
-            </FrameLayout>
+                        <SurfaceView
+                            android:id="@+id/surface_cam_back"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-            <!-- CH3 左路 -->
-            <FrameLayout
-                android:id="@+id/container_cam_left"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="@dimen/sp_s_2">
+                        <!-- 待命机位引导视图 (无画面时优雅沉浸：80dp 微拟态底盘 + 52dp 图标 + 待命引导文字) -->
+                        <LinearLayout
+                            android:id="@+id/layout_standby_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                <SurfaceView
-                    android:id="@+id/surface_cam_left"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                            <FrameLayout
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/sp_bg_cam_standby_circle">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/sp_grad_top_scrim" />
+                                <ImageView
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_cam_off"
+                                    android:tint="@color/sp_tx2"
+                                    android:alpha="0.45"
+                                    android:contentDescription="后向未接入" />
+                            </FrameLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/sp_grad_bottom_scrim" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="后摄未接入"
+                                android:textColor="@color/sp_tx3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginTop="@dimen/sp_s_12"
-                    android:orientation="vertical">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/sp_grad_top_scrim" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_4"
-                        android:text="左路 · 盲区"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textStyle="bold" />
+                        <!-- 机位标识胶囊：状态点 + 简明方位 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sp_s_12"
+                            android:layout_marginTop="@dimen/sp_s_8"
+                            android:background="@drawable/sp_bg_osd_chip"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_4"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_2"
-                        android:text="1280×720 · 25fps"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textSize="@dimen/sp_t_micro" />
-                </LinearLayout>
+                            <View
+                                android:id="@+id/dot_osd_status_back"
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/sp_dot_live_inactive" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginBottom="@dimen/sp_s_12"
-                    android:fontFamily="monospace"
-                    android:text="2026-10-14 14:02:37"
-                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                    android:textSize="@dimen/sp_t_micro" />
-            </FrameLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="后视"
+                                android:textColor="@color/sp_osd_tx"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:textStyle="bold" />
 
-            <!-- CH4 右路 -->
-            <FrameLayout
-                android:id="@+id/container_cam_right"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="@dimen/sp_s_2">
+                            <TextView
+                                android:id="@+id/tv_osd_spec_back"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="monospace"
+                                android:textColor="@color/sp_osd_tx2"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:visibility="gone" />
+                        </LinearLayout>
 
-                <SurfaceView
-                    android:id="@+id/surface_cam_right"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                        <TextView
+                            android:id="@+id/tv_osd_time_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+                    </FrameLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/sp_grad_top_scrim" />
+                    <!-- CH3 左路 -->
+                    <FrameLayout
+                        android:id="@+id/container_cam_left"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:layout_margin="@dimen/sp_s_2">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/sp_grad_bottom_scrim" />
+                        <SurfaceView
+                            android:id="@+id/surface_cam_left"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginTop="@dimen/sp_s_12"
-                    android:orientation="vertical">
+                        <!-- 待命机位引导视图 (无画面时优雅沉浸：80dp 微拟态底盘 + 52dp 图标 + 待命引导文字) -->
+                        <LinearLayout
+                            android:id="@+id/layout_standby_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_4"
-                        android:text="右路 · 盲区"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textStyle="bold" />
+                            <FrameLayout
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/sp_bg_cam_standby_circle">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_4"
-                        android:background="@drawable/sp_bg_osd_chip"
-                        android:paddingHorizontal="@dimen/sp_s_8"
-                        android:paddingVertical="@dimen/sp_s_2"
-                        android:text="1280×720 · 25fps"
-                        android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                        android:textSize="@dimen/sp_t_micro" />
-                </LinearLayout>
+                                <ImageView
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_cam_off"
+                                    android:tint="@color/sp_tx2"
+                                    android:alpha="0.45"
+                                    android:contentDescription="左向未接入" />
+                            </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="@dimen/sp_s_12"
-                    android:layout_marginBottom="@dimen/sp_s_12"
-                    android:fontFamily="monospace"
-                    android:text="2026-10-14 14:02:37"
-                    android:textAppearance="@style/TextAppearance.Sophon.Osd"
-                    android:textSize="@dimen/sp_t_micro" />
-            </FrameLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="左摄未接入"
+                                android:textColor="@color/sp_tx3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
-        </GridLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/sp_grad_top_scrim" />
 
-            <!-- 垂直玻璃悬浮操作条 (.fabv 依据 v3 设计稿 S1/S2 规范) -->
+                        <!-- 机位标识胶囊：状态点 + 简明方位 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sp_s_12"
+                            android:layout_marginTop="@dimen/sp_s_8"
+                            android:background="@drawable/sp_bg_osd_chip"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp">
+
+                            <View
+                                android:id="@+id/dot_osd_status_left"
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/sp_dot_live_inactive" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="左视"
+                                android:textColor="@color/sp_osd_tx"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_osd_spec_left"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="monospace"
+                                android:textColor="@color/sp_osd_tx2"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_osd_time_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <!-- CH4 右路 -->
+                    <FrameLayout
+                        android:id="@+id/container_cam_right"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:layout_margin="@dimen/sp_s_2">
+
+                        <SurfaceView
+                            android:id="@+id/surface_cam_right"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <!-- 待命机位引导视图 (无画面时优雅沉浸：80dp 微拟态底盘 + 52dp 图标 + 待命引导文字) -->
+                        <LinearLayout
+                            android:id="@+id/layout_standby_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <FrameLayout
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/sp_bg_cam_standby_circle">
+
+                                <ImageView
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_cam_off"
+                                    android:tint="@color/sp_tx2"
+                                    android:alpha="0.45"
+                                    android:contentDescription="右向未接入" />
+                            </FrameLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="右摄未接入"
+                                android:textColor="@color/sp_tx3"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/sp_grad_top_scrim" />
+
+                        <!-- 机位标识胶囊：状态点 + 简明方位 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/sp_s_12"
+                            android:layout_marginTop="@dimen/sp_s_8"
+                            android:background="@drawable/sp_bg_osd_chip"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="4dp">
+
+                            <View
+                                android:id="@+id/dot_osd_status_right"
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginEnd="6dp"
+                                android:background="@drawable/sp_dot_live_inactive" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="右视"
+                                android:textColor="@color/sp_osd_tx"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_osd_spec_right"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:fontFamily="monospace"
+                                android:textColor="@color/sp_osd_tx2"
+                                android:textSize="@dimen/sp_t_micro"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_osd_time_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                </GridLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 全局 REC 录制角标：录制中时常驻画布顶部中央，红点闪烁 + 实时时长。
+                 顶栏小胶囊在车机视角易被忽略，视频区内必须有强信号锚点 -->
             <LinearLayout
-                android:id="@+id/layout_stage_fabv"
+                android:id="@+id/layout_rec_banner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="@dimen/sp_s_16"
-                android:orientation="vertical">
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_pill_rec"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
+                android:visibility="gone">
 
-                <!-- 抓拍浮键 -->
-                <FrameLayout
-                    android:id="@+id/fab_snapshot"
-                    style="@style/Widget.Sophon.GlassButton"
-                    android:layout_marginBottom="@dimen/sp_s_12">
-                    <ImageView
-                        android:layout_width="@dimen/sp_icon_20"
-                        android:layout_height="@dimen/sp_icon_20"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ic_nav_photos"
-                        android:tint="@color/sp_tx" />
-                </FrameLayout>
+                <View
+                    android:id="@+id/dot_rec_banner"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_dot_rec" />
 
-                <!-- 紧急加锁浮键 -->
-                <FrameLayout
-                    android:id="@+id/fab_lock"
-                    style="@style/Widget.Sophon.GlassButton"
-                    android:layout_marginBottom="@dimen/sp_s_12">
-                    <ImageView
-                        android:layout_width="@dimen/sp_icon_20"
-                        android:layout_height="@dimen/sp_icon_20"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ic_action_lock"
-                        android:tint="@color/sp_dg" />
-                </FrameLayout>
-
-                <!-- 麦克风录音浮键 -->
-                <FrameLayout
-                    android:id="@+id/fab_mic"
-                    style="@style/Widget.Sophon.GlassButton"
-                    android:layout_marginBottom="@dimen/sp_s_12">
-                    <ImageView
-                        android:id="@+id/iv_fab_mic"
-                        android:layout_width="@dimen/sp_icon_20"
-                        android:layout_height="@dimen/sp_icon_20"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ic_status_record"
-                        android:tint="@color/sp_tx" />
-                </FrameLayout>
-
-                <!-- 视角切换浮键 -->
-                <FrameLayout
-                    android:id="@+id/fab_view_mode"
-                    style="@style/Widget.Sophon.GlassButton"
-                    android:background="@drawable/sp_bg_pill_accent">
-                    <ImageView
-                        android:layout_width="@dimen/sp_icon_20"
-                        android:layout_height="@dimen/sp_icon_20"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/ic_view_quad"
-                        android:tint="@color/sp_ac" />
-                </FrameLayout>
+                <TextView
+                    android:id="@+id/tv_rec_banner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:text="REC · 四路录制中"
+                    android:textColor="@color/sp_rec"
+                    android:textSize="@dimen/sp_t_label"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+
 
             <!-- S2 单路全屏专属密集 OSD 浮层 (由四路进入单路时呈现) -->
             <FrameLayout
@@ -942,9 +1008,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="monospace"
-                            android:text="42"
-                            android:textColor="#FFFFFFFF"
-                            android:textSize="52sp"
+                            android:text="0"
+                            android:textColor="@color/sp_osd_tx"
+                            android:textSize="@dimen/sp_t_giant"
                             android:textStyle="bold" />
 
                         <TextView
@@ -952,8 +1018,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="km/h"
-                            android:textColor="#D0FFFFFF"
-                            android:textSize="16sp"
+                            android:textColor="@color/sp_osd_tx2"
+                            android:textSize="@dimen/sp_t_subtitle"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -962,8 +1028,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="限速 60 · 文一西路 · 余杭段"
-                        android:textColor="#A0FFFFFF"
+                        android:text="自适应行车辅助 · 循环录制就绪"
+                        android:textColor="@color/sp_osd_tx3"
                         android:textSize="@dimen/sp_t_caption" />
                 </LinearLayout>
 
@@ -978,12 +1044,13 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_single_exposure"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/sp_bg_osd_chip"
                         android:paddingHorizontal="@dimen/sp_s_8"
                         android:paddingVertical="@dimen/sp_s_2"
-                        android:text="f/1.8 · ISO 320 · 1/60s"
+                        android:text="自动测光 · AE开启"
                         android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textSize="@dimen/sp_t_micro" />
 
@@ -995,137 +1062,179 @@
                         android:background="@drawable/sp_bg_osd_chip"
                         android:paddingHorizontal="@dimen/sp_s_8"
                         android:paddingVertical="@dimen/sp_s_2"
-                        android:text="GPS 30.2741°N 120.1552°E"
+                        android:text="GPS: --"
                         android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textSize="@dimen/sp_t_micro" />
 
                     <TextView
+                        android:id="@+id/tv_single_specs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sp_s_4"
                         android:background="@drawable/sp_bg_osd_chip"
                         android:paddingHorizontal="@dimen/sp_s_8"
                         android:paddingVertical="@dimen/sp_s_2"
-                        android:text="H.264 · 10 Mbps · 30fps"
+                        android:text="--"
                         android:textAppearance="@style/TextAppearance.Sophon.Osd"
                         android:textSize="@dimen/sp_t_micro" />
                 </LinearLayout>
             </FrameLayout>
 
-        </FrameLayout>
+            <!-- 车规级浮动 HUD 控制胶囊 (参考特斯拉/理想/小鹏：深色毛玻璃悬浮岛) -->
+            <!-- 全屏快门闪烁蒙层 (拍照瞬间产生 160ms 旗舰相机快门白闪动效) -->
+            <View
+                android:id="@+id/view_shutter_flash"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFF"
+                android:alpha="0"
+                android:visibility="gone" />
 
-        <!-- 底部快门行 -->
-        <LinearLayout
-            android:id="@+id/layout_shutter_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sp_shutter_h"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
 
-            <!-- 最近片段入口 -->
-            <FrameLayout
-                android:id="@+id/btn_recent_clip"
-                android:layout_width="88dp"
-                android:layout_height="52dp"
-                android:background="@drawable/sp_bg_card"
-                android:clickable="true"
-                android:focusable="true">
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_clip_scissors"
-                    android:tint="@color/sp_tx2" />
+            <!-- 车规级集成式悬浮操控岛 (参考特斯拉/理想：一体化毛玻璃宽幅底座，加宽留白，大气从容) -->
+            <LinearLayout
+                android:id="@+id/layout_floating_hud"
+                android:layout_width="wrap_content"
+                android:layout_height="64dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/sp_bg_hud_capsule_dock"
+                android:elevation="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <!-- 1. 麦克风录音键 (44dp，车规物理微弹触控反馈) -->
+                <FrameLayout
+                    android:id="@+id/fab_mic"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/sp_bg_dock_btn_idle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_fab_mic"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="录音"
+                        android:src="@drawable/ic_perm_mic"
+                        android:tint="@color/sp_tx_inverse" />
+
+                    <TextView
+                        android:id="@+id/tv_fab_mic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- 2. 居中核心相机快门 (52dp 毛玻璃双环快门，左右各 24dp 宽幅间距) -->
+                <FrameLayout
+                    android:id="@+id/fab_snapshot"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:background="@drawable/sp_bg_camera_shutter"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_fab_snapshot"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="抓拍"
+                        android:src="@drawable/ic_action_camera"
+                        android:tint="@color/sp_tx_inverse" />
+
+                    <TextView
+                        android:id="@+id/tv_fab_snapshot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <!-- 3. 视角模式切换键 (44dp，中性透光毛玻璃质感) -->
+                <FrameLayout
+                    android:id="@+id/fab_view_mode"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/sp_bg_dock_btn_idle"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/iv_fab_view_mode"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="视角"
+                        android:src="@drawable/ic_view_quad"
+                        android:tint="@color/sp_tx_inverse" />
+
+                    <TextView
+                        android:id="@+id/tv_fab_view_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+                </FrameLayout>
 
                 <TextView
+                    android:id="@+id/btn_view_toggle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="@dimen/sp_s_4"
-                    android:background="@drawable/sp_bg_osd_chip"
-                    android:fontFamily="monospace"
-                    android:paddingHorizontal="5dp"
-                    android:paddingVertical="1dp"
-                    android:text="3:12"
-                    android:textColor="@color/sp_osd_tx"
-                    android:textSize="@dimen/sp_t_micro" />
-            </FrameLayout>
+                    android:visibility="gone" />
+            </LinearLayout>
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
+        </FrameLayout>
 
-            <!-- 锁定当前片段 -->
-            <FrameLayout
-                android:id="@+id/btn_lock_current"
-                android:layout_width="@dimen/sp_glass_btn"
-                android:layout_height="@dimen/sp_glass_btn"
-                android:layout_marginEnd="@dimen/sp_s_16"
-                android:background="@drawable/sp_bg_glass_btn">
-
-                <ImageView
-                    android:layout_width="@dimen/sp_icon_20"
-                    android:layout_height="@dimen/sp_icon_20"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_action_lock"
-                    android:tint="@color/sp_tx" />
-            </FrameLayout>
-
-            <!-- 快门抓拍 -->
-            <FrameLayout
-                android:id="@+id/btn_shutter"
-                android:layout_width="@dimen/sp_shutter_btn"
-                android:layout_height="@dimen/sp_shutter_btn"
-                android:background="@drawable/sp_bg_shutter"
-                android:elevation="@dimen/sp_elev_2">
-
-                <View
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/sp_bg_pill_rec" />
-            </FrameLayout>
-
-            <!-- 紧急录像 -->
-            <FrameLayout
-                android:id="@+id/btn_emergency"
-                android:layout_width="@dimen/sp_glass_btn"
-                android:layout_height="@dimen/sp_glass_btn"
-                android:layout_marginStart="@dimen/sp_s_16"
-                android:background="@drawable/sp_bg_glass_btn">
-
-                <ImageView
-                    android:layout_width="@dimen/sp_icon_20"
-                    android:layout_height="@dimen/sp_icon_20"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_status_record"
-                    android:tint="@color/sp_rec" />
-            </FrameLayout>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <!--  视图切换 -->
-            <TextView
-                android:id="@+id/btn_view_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/sp_bg_pill"
-                android:drawablePadding="@dimen/sp_s_6"
-                android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
-                android:text="四路同屏"
-                android:textAppearance="@style/TextAppearance.Sophon.Label"
-                android:textColor="@color/sp_tx2" />
         </LinearLayout>
 
+        <!-- 2. 其他模块 Fragment 宿主容器 -->
+        <FrameLayout
+            android:id="@+id/container_fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
     </LinearLayout>
+
+        <!-- 抓拍成功浮动 HUD 胶囊 (位于右侧最顶层，直接自屏幕绝对顶端下滑浮现，绝不落入画面中央) -->
+        <LinearLayout
+            android:id="@+id/layout_capture_toast"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/sp_bg_capture_toast"
+            android:elevation="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="18dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_action_check"
+                android:tint="@color/sp_ac"
+                android:contentDescription="完成" />
+
+            <TextView
+                android:id="@+id/tv_capture_toast_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="四路原图已抓拍并存入相册"
+                android:textColor="#FFFFFF"
+                android:textSize="12.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

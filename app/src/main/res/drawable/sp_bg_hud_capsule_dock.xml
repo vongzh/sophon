@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 车规级集成悬浮操控岛底座 (Tesla / 理想 风格全包围毛玻璃胶囊岛) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="32dp" />
+    <solid android:color="#E6161B22" />
+    <stroke
+        android:width="1.2dp"
+        android:color="#26FFFFFF" />
+</shape>

@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 后路图标：车形/镜头朝后箭头 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,22l8,-7h-4V4H8v11H4L12,22z M12,18.5l-3,-2.6V6h4v9.9L12,18.5z"/>
+</vector>

@@ -46,6 +46,9 @@ class PowerStateMachine(
     private var lastRecordedVoltage = 12.8f
     private var isSystemSleeping = false
 
+    /** 围栏命中：在回家 / 公司等可信地点自动撤防哨兵 */
+    private var isSentrySuppressedByGeofence = false
+
     fun start() {
         Log.i(TAG, "Starting PowerStateMachine monitoring...")
         observeGearAndSpeed()
@@ -134,10 +137,34 @@ class PowerStateMachine(
             return
         }
 
-        if (preferences.isSentryModeEnabled) {
+        if (isSentrySuppressedByGeofence) {
+            transitionTo(PowerState.EMERGENCY_POWER_CUT, "Vehicle STR Suspend -> Sentry disarmed by home geofence")
+        } else if (preferences.isSentryModeEnabled) {
             transitionTo(PowerState.SENTRY_STANDBY, "Vehicle STR Suspend -> Sentry mode active")
         } else {
             transitionTo(PowerState.EMERGENCY_POWER_CUT, "Vehicle STR Suspend -> Sentry disabled, power cut")
+        }
+    }
+
+    /**
+     * 围栏状态变化 (回家自动撤防 / 离家自动布防)
+     *
+     * 命中围栏时不进入任何哨兵态；离开围栏且车辆已休眠时立即补回哨兵警戒。
+     */
+    fun setSentrySuppressedByGeofence(suppressed: Boolean) {
+        if (isSentrySuppressedByGeofence == suppressed) return
+        isSentrySuppressedByGeofence = suppressed
+
+        if (suppressed) {
+            if (_currentState.value == PowerState.SENTRY_STANDBY || _currentState.value == PowerState.SENTRY_ALERT) {
+                alertTimerJob?.cancel()
+                transitionTo(
+                    PowerState.EMERGENCY_POWER_CUT,
+                    "Home geofence hit -> Sentry disarmed at trusted location"
+                )
+            }
+        } else if (isSystemSleeping && preferences.isSentryModeEnabled) {
+            transitionTo(PowerState.SENTRY_STANDBY, "Left home geofence -> Sentry re-armed")
         }
     }
 
@@ -161,6 +188,10 @@ class PowerStateMachine(
      * 哨兵震动告警触发
      */
     fun notifySentryVibration(timestampMs: Long = System.currentTimeMillis()) {
+        if (isSentrySuppressedByGeofence) {
+            Log.i(TAG, "Sentry vibration ignored: suppressed by home geofence.")
+            return
+        }
         if (_currentState.value == PowerState.SENTRY_STANDBY || _currentState.value == PowerState.AWAKE_PARKED) {
             transitionTo(PowerState.SENTRY_ALERT, "Sentry shock triggered at $timestampMs")
 

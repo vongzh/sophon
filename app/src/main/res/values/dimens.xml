@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ===================================================================
-         Sophon Design System v3 · 尺度体系
-         基准来自盯盯车实测 dimen（main_preview_corner_radius=24dp、
-         nav_rail=384dp、hub_tile_elevation=28dp、page_header_title=36sp）
-         并按 Sophon 1280×800 横屏车机画布收敛
+         Sophon Design System v3 · 车规尺度体系
+         基于 FlymeAuto 车载大屏人机工效规范
+         （main_preview_corner_radius=20dp、nav_rail=300dp、hub_tile_elevation=28dp）
+         适配 1280×800 / 1920×1080 车机主流大屏
          =================================================================== -->
 
     <!-- 圆角层级：外框 / 瓷砖 / 卡片 / 控件 / chip -->
@@ -21,7 +21,9 @@
     <dimen name="sp_s_4">4dp</dimen>
     <dimen name="sp_s_6">6dp</dimen>
     <dimen name="sp_s_8">8dp</dimen>
+    <dimen name="sp_s_10">10dp</dimen>
     <dimen name="sp_s_12">12dp</dimen>
+    <dimen name="sp_s_14">14dp</dimen>
     <dimen name="sp_s_16">16dp</dimen>
     <dimen name="sp_s_20">20dp</dimen>
     <dimen name="sp_s_24">24dp</dimen>
@@ -29,6 +31,7 @@
 
     <!-- 车机字阶（等比放大，非手机尺度） -->
     <dimen name="sp_t_display">32sp</dimen>
+    <dimen name="sp_t_giant">52sp</dimen>
     <dimen name="sp_t_headline">26sp</dimen>
     <dimen name="sp_t_title">20sp</dimen>
     <dimen name="sp_t_subtitle">15sp</dimen>
@@ -38,10 +41,10 @@
     <dimen name="sp_t_micro">11sp</dimen>
 
     <!-- 结构尺寸 -->
-    <dimen name="sp_nav_width">300dp</dimen>
-    <dimen name="sp_nav_item_h">64dp</dimen>
+    <dimen name="sp_nav_width">220dp</dimen>
+    <dimen name="sp_nav_item_h">50dp</dimen>
     <dimen name="sp_statusbar_h">56dp</dimen>
-    <dimen name="sp_shutter_h">96dp</dimen>
+    <dimen name="sp_shutter_h">60dp</dimen>
     <dimen name="sp_touch_min">48dp</dimen>
     <dimen name="sp_quad_seam">4dp</dimen>
     <dimen name="sp_icon_24">24dp</dimen>
@@ -56,6 +59,6 @@
     <!--  控件 -->
     <dimen name="sp_slider_track">14dp</dimen>
     <dimen name="sp_slider_thumb">26dp</dimen>
-    <dimen name="sp_shutter_btn">88dp</dimen>
-    <dimen name="sp_glass_btn">48dp</dimen>
+    <dimen name="sp_shutter_btn">52dp</dimen>
+    <dimen name="sp_glass_btn">42dp</dimen>
 </resources>

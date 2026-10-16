@@ -12,7 +12,7 @@
     <!-- 页头 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="56dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="@dimen/sp_s_20"
@@ -28,8 +28,8 @@
             android:drawablePadding="@dimen/sp_s_6"
             android:drawableTint="@color/sp_ac"
             android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/sp_s_16"
-            android:paddingVertical="@dimen/sp_s_8"
+            android:paddingHorizontal="@dimen/sp_s_12"
+            android:paddingVertical="@dimen/sp_s_6"
             android:text="返回"
             android:textColor="@color/sp_ac"
             android:textSize="@dimen/sp_t_label"
@@ -46,13 +46,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="四路同步事件回放"
-                android:textAppearance="@style/TextAppearance.Sophon.Headline" />
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_player_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sp_s_2"
-                android:text="2026-10-14 09:12 · 事件 3 处 · 已加锁"
+                android:layout_marginTop="2dp"
+                android:text="等待载入视频源"
                 android:textAppearance="@style/TextAppearance.Sophon.Caption" />
         </LinearLayout>
 
@@ -63,15 +66,15 @@
             android:background="@drawable/sp_bg_card"
             android:elevation="@dimen/sp_elev_1"
             android:orientation="horizontal"
-            android:padding="@dimen/sp_s_4">
+            android:padding="2dp">
 
             <TextView
                 android:id="@+id/btn_view_quad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/sp_bg_pill_accent"
-                android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
                 android:text="四分屏"
                 android:textColor="@color/sp_ac"
                 android:textSize="@dimen/sp_t_label"
@@ -81,8 +84,8 @@
                 android:id="@+id/btn_view_front"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
                 android:text="前视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
@@ -91,9 +94,29 @@
                 android:id="@+id/btn_view_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
                 android:text="后视"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
+
+            <TextView
+                android:id="@+id/btn_view_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
+                android:text="左视"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label" />
+
+            <TextView
+                android:id="@+id/btn_view_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:paddingVertical="@dimen/sp_s_6"
+                android:text="右视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
         </LinearLayout>
@@ -124,23 +147,25 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_player_osd_cam"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/sp_bg_osd_chip"
                 android:paddingHorizontal="@dimen/sp_s_8"
                 android:paddingVertical="@dimen/sp_s_4"
-                android:text="前路 · 主摄"
+                android:text="四路合成 · 全景"
                 android:textAppearance="@style/TextAppearance.Sophon.Osd"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_player_osd_specs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sp_s_4"
                 android:background="@drawable/sp_bg_osd_chip"
                 android:paddingHorizontal="@dimen/sp_s_8"
                 android:paddingVertical="@dimen/sp_s_2"
-                android:text="1920×1080 · 30fps"
+                android:text="--"
                 android:textAppearance="@style/TextAppearance.Sophon.Osd"
                 android:textSize="@dimen/sp_t_micro" />
         </LinearLayout>
@@ -152,15 +177,16 @@
             android:layout_gravity="bottom"
             android:background="@drawable/sp_grad_bottom_scrim" />
 
-        <!-- 底部 OSD：录制水印（静态，非播放进度） -->
+        <!-- 底部 OSD：真实录制水印与时间同步 -->
         <TextView
+            android:id="@+id/tv_player_osd_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:layout_marginStart="@dimen/sp_s_16"
             android:layout_marginBottom="@dimen/sp_s_16"
             android:fontFamily="monospace"
-            android:text="2026-10-14 09:12:00"
+            android:text="--:--:--"
             android:textAppearance="@style/TextAppearance.Sophon.Osd"
             android:textSize="@dimen/sp_t_micro" />
     </FrameLayout>
@@ -190,36 +216,39 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_prev_marker"
                 android:layout_width="@dimen/sp_glass_btn"
                 android:layout_height="@dimen/sp_glass_btn"
                 android:background="@drawable/sp_bg_circle_glass"
-                android:gravity="center"
-                android:text="⏮"
-                android:textColor="@color/sp_tx"
-                android:textSize="@dimen/sp_t_subtitle" />
+                android:contentDescription="上一个标记"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="14dp"
+                android:src="@drawable/ic_media_prev"
+                android:tint="@color/sp_tx" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_play_pause"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_marginHorizontal="@dimen/sp_s_12"
                 android:background="@drawable/sp_bg_circle_btn"
-                android:gravity="center"
-                android:text="❚❚"
-                android:textColor="#FFFFFFFF"
-                android:textSize="@dimen/sp_t_title" />
+                android:contentDescription="播放 / 暂停"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="16dp"
+                android:src="@drawable/ic_media_pause"
+                android:tint="@color/sp_osd_tx" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_next_marker"
                 android:layout_width="@dimen/sp_glass_btn"
                 android:layout_height="@dimen/sp_glass_btn"
                 android:background="@drawable/sp_bg_circle_glass"
-                android:gravity="center"
-                android:text="⏭"
-                android:textColor="@color/sp_tx"
-                android:textSize="@dimen/sp_t_subtitle" />
+                android:contentDescription="下一个标记"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="14dp"
+                android:src="@drawable/ic_media_next"
+                android:tint="@color/sp_tx" />
 
             <TextView
                 android:id="@+id/tv_time_progress"
@@ -230,7 +259,7 @@
                 android:fontFamily="monospace"
                 android:paddingHorizontal="@dimen/sp_s_12"
                 android:paddingVertical="@dimen/sp_s_6"
-                android:text="00:00 / 01:00"
+                android:text="--:-- / --:--"
                 android:textAppearance="@style/TextAppearance.Sophon.Label" />
 
             <View

@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视座舱相册图库
+     顶部 4 KPI 卡 + 实时搜索/刷新/多选 + 照片网格流 + 大图沉浸式预览浮层
+     =================================================================== -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_page">
+
+    <!-- 主展示容器 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingHorizontal="@dimen/sp_s_20"
+        android:paddingBottom="12dp">
+
+        <!-- 顶部操作栏 (规范 42dp 高度对齐车规左侧导航基线) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_photo_header_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="相册图库"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:text="抓拍照片集中回看，支持原图浏览与局域网快传"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="10.5sp" />
+            </LinearLayout>
+
+            <!-- 搜索框 (紧凑车规输入框) -->
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="@dimen/sp_s_10"
+                android:background="@drawable/sp_bg_input_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginEnd="5dp"
+                    android:contentDescription="搜索"
+                    android:src="@drawable/ic_action_search"
+                    android:tint="@color/sp_tx3" />
+
+                <EditText
+                    android:id="@+id/et_photo_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="搜索照片"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:textColor="@color/sp_tx"
+                    android:textColorHint="@color/sp_tx3"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/sp_line2" />
+
+            <!-- 局域网快传 -->
+            <TextView
+                android:id="@+id/btn_photo_lan_share"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/sp_bg_pill"
+                android:drawableStart="@drawable/ic_top_lan_share"
+                android:drawablePadding="@dimen/sp_s_6"
+                android:drawableTint="@color/sp_ac"
+                android:gravity="center"
+                android:paddingHorizontal="13dp"
+                android:text="局域网快传"
+                android:textColor="@color/sp_ac"
+                android:textSize="11.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 4 张 KPI 统计指标卡片 (严格车规 58dp 等高网格架构) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginTop="8dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <!-- 卡片 1：总照片 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/sp_s_10"
+                android:layout_weight="1"
+                android:background="@drawable/sp_bg_card_raised"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="7dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/sp_bg_circle_glass"
+                    android:contentDescription="总照片"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_nav_photos"
+                    android:tint="@color/sp_ac" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="总照片"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_photo_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0 张"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 2：今日新增 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/sp_s_10"
+                android:layout_weight="1"
+                android:background="@drawable/sp_bg_card_raised"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="7dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/sp_bg_circle_glass"
+                    android:contentDescription="今日新增"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_action_calendar"
+                    android:tint="@color/sp_ac" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="今日新增"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_photo_today"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0 张"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 3：存储占用 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/sp_s_10"
+                android:layout_weight="1"
+                android:background="@drawable/sp_bg_card_raised"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="7dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/sp_bg_circle_glass"
+                    android:contentDescription="存储占用"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_action_chart"
+                    android:tint="@color/sp_ac" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="存储占用"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_photo_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0.0 MB"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 卡片 4：待删资源 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/sp_bg_card_raised"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="7dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/sp_bg_circle_glass"
+                    android:contentDescription="本月新增"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_action_chart"
+                    android:tint="@color/sp_ac" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="本月新增"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_photo_trash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0 张"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 列表表头与排序/管理操作工具栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_photo_list_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="全部照片"
+                android:textColor="@color/sp_tx"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <!-- 排序切换 -->
+            <TextView
+                android:id="@+id/btn_photo_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/sp_bg_pill"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:text="按时间倒序 ▾"
+                android:textColor="@color/sp_tx2"
+                android:textSize="11sp" />
+
+            <!-- 细垂直分隔线 -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_marginHorizontal="6dp"
+                android:background="@color/sp_line2" />
+
+            <!-- 刷新 (带顺滑旋转与触觉回弹) -->
+            <LinearLayout
+                android:id="@+id/btn_photo_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/sp_bg_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <ImageView
+                    android:id="@+id/iv_photo_refresh_icon"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginEnd="5dp"
+                    android:contentDescription="刷新"
+                    android:src="@drawable/ic_action_refresh"
+                    android:tint="@color/sp_tx" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="刷新"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="11.5sp" />
+            </LinearLayout>
+
+            <!-- 批量管理全选按钮 (在开启批量管理模式时动态呈现) -->
+            <TextView
+                android:id="@+id/btn_photo_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/sp_bg_pill"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="5dp"
+                android:drawableTint="@color/sp_tx2"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:text="全选"
+                android:textColor="@color/sp_tx"
+                android:textSize="11.5sp"
+                android:visibility="gone" />
+
+            <!-- 批量管理 -->
+            <TextView
+                android:id="@+id/btn_photo_multi_select"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/sp_bg_pill"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="5dp"
+                android:drawableTint="@color/sp_tx2"
+                android:gravity="center"
+                android:paddingHorizontal="13dp"
+                android:text="批量管理"
+                android:textColor="@color/sp_tx"
+                android:textSize="11.5sp" />
+        </LinearLayout>
+
+        <!-- 网格与空状态容器 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_photos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/sp_s_12" />
+
+            <LinearLayout
+                android:id="@+id/layout_empty_photos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_nav_photos"
+                    android:tint="@color/sp_tx3"
+                    android:contentDescription="暂无照片" />
+
+                <TextView
+                    android:id="@+id/tv_empty_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:text="暂无抓拍照片文件\n可点击快捷快门或方向盘自定义按键抓拍"
+                    android:textAlignment="center"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="@dimen/sp_t_body" />
+
+                <TextView
+                    android:id="@+id/btn_empty_take_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_16"
+                    android:background="@drawable/sp_bg_pill"
+                    android:drawableStart="@drawable/ic_action_camera"
+                    android:drawablePadding="@dimen/sp_s_8"
+                    android:drawableTint="@color/sp_ac"
+                    android:paddingHorizontal="@dimen/sp_s_20"
+                    android:paddingVertical="@dimen/sp_s_10"
+                    android:text="立即抓拍照片"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_label"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- 沉浸式大图查看全屏浮层 (初始隐藏) -->
+    <!-- 沉浸式大图查看全屏浮层 (纯黑深邃背景，完全遮盖下层且永不透字) -->
+    <FrameLayout
+        android:id="@+id/layout_fullscreen_viewer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF0B0F17"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <!-- 顶部操作条 (适配全局浅色主题，告别纯黑硬块，融合车规白底胶囊与精致边线) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/sp_page"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/sp_s_20">
+
+            <TextView
+                android:id="@+id/btn_fullscreen_close"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/sp_bg_pill"
+                android:drawableStart="@drawable/ic_action_back"
+                android:drawablePadding="@dimen/sp_s_6"
+                android:drawableTint="@color/sp_ac"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="返回图库"
+                android:textColor="@color/sp_ac"
+                android:textSize="@dimen/sp_t_label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_fullscreen_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/sp_s_16"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="抓拍照片"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_subtitle"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_fullscreen_index"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginEnd="@dimen/sp_s_16"
+                android:background="@drawable/sp_bg_pill"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/sp_s_12"
+                android:text="1 / 1"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_caption" />
+
+            <TextView
+                android:id="@+id/btn_fullscreen_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/sp_bg_pill"
+                android:drawableStart="@drawable/ic_action_trash"
+                android:drawablePadding="@dimen/sp_s_6"
+                android:drawableTint="@color/sp_dg"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/sp_s_16"
+                android:text="删除照片"
+                android:textColor="@color/sp_dg"
+                android:textSize="@dimen/sp_t_label"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- 顶栏下分割线 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="56dp"
+            android:background="@color/sp_line" />
+
+        <!-- 大图主视窗 (顶部留出 56dp 顶栏空间，四周微留白，照片内容与 OSD 信息完整显现绝不被顶栏遮挡) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="57dp"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/iv_fullscreen_display"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="大图全屏"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
+
+        <!-- 左右悬浮翻页按钮 (侧边吸附磨砂玻璃微圆盘) -->
+        <FrameLayout
+            android:id="@+id/btn_fullscreen_prev"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/sp_s_16"
+            android:background="@drawable/sp_bg_circle_glass"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="上一张"
+                android:src="@drawable/ic_action_back"
+                android:tint="@color/sp_tx" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/btn_fullscreen_next"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="@dimen/sp_s_16"
+            android:background="@drawable/sp_bg_circle_glass"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="下一张"
+                android:rotation="180"
+                android:src="@drawable/ic_action_back"
+                android:tint="@color/sp_tx" />
+        </FrameLayout>
+    </FrameLayout>
+
+</FrameLayout>

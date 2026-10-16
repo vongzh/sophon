@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 车规独立悬浮按键激活背景：高亮青色激活底 + 纯白高光外框 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#00D4FF" />
+    <stroke
+        android:width="1.5dp"
+        android:color="#FFFFFF" />
+    <size
+        android:width="46dp"
+        android:height="46dp" />
+</shape>

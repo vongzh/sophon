@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     哨兵模式 · 事件复盘看板
+     顶部日期横向滑动筛选 + 风险等级过滤 + 3 条核心 KPI 卡 + 雷达方位态势 + 底部守护提示
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sp_page"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="12dp">
+
+    <!-- 页头 (紧凑 42dp 车规基线) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/sp_s_20">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="哨兵事件"
+                android:textColor="@color/sp_tx"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_sentry_header_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:text="守护车辆安全，记录每一次异常 · 驻车熄火持续布防中"
+                android:textColor="@color/sp_tx3"
+                android:textSize="10.5sp" />
+        </LinearLayout>
+
+        <!-- 范围筛选选择器 -->
+        <TextView
+            android:id="@+id/btn_sentry_choose_dir"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/sp_bg_pill"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:drawableStart="@drawable/ic_folder"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_tx2"
+            android:text="扫描范围: 驻车 + 锁存 ▾"
+            android:textColor="@color/sp_tx"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@color/sp_line2" />
+
+        <!-- 1. 局域网快传 -->
+        <TextView
+            android:id="@+id/btn_sentry_lan_share"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:background="@drawable/sp_bg_pill"
+            android:drawableStart="@drawable/ic_top_lan_share"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:drawableTint="@color/sp_ac"
+            android:gravity="center"
+            android:paddingHorizontal="13dp"
+            android:text="局域网快传"
+            android:textColor="@color/sp_ac"
+            android:textSize="11.5sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 3 条 KPI 趋势指标卡片 (严格车规 58dp 等高网格架构) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginHorizontal="@dimen/sp_s_20"
+        android:layout_marginTop="8dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- KPI 1：异常事件总数 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/sp_s_10"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card_raised"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="7dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/sp_bg_circle_glass"
+                android:contentDescription="异常事件总数"
+                android:padding="6dp"
+                android:src="@drawable/ic_nav_sentry"
+                android:tint="@color/sp_ac" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="异常事件总数"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="10.5sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_kpi_events_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:includeFontPadding="false"
+                        android:text="起"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_events_trend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/sp_bg_pill"
+                        android:includeFontPadding="false"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="1.5dp"
+                        android:singleLine="true"
+                        android:text="较昨日 +0"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="9.5sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- KPI 2：蓄电池电压与健康 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/sp_s_10"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card_raised"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="7dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/sp_bg_circle_glass"
+                android:contentDescription="12V 小电瓶电压"
+                android:padding="6dp"
+                android:src="@drawable/ic_battery_shield"
+                android:tint="@color/sp_ac" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="12V 小电瓶电压"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="10.5sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_kpi_battery_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="12.6"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:includeFontPadding="false"
+                        android:text="V"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_battery_sub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/sp_bg_pill"
+                        android:includeFontPadding="false"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="1.5dp"
+                        android:singleLine="true"
+                        android:text="健壮·速率正常"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="9.5sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- KPI 3：累计守护布防时长 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card_raised"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="7dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/sp_bg_circle_glass"
+                android:contentDescription="累计驻车布防时长"
+                android:padding="6dp"
+                android:src="@drawable/ic_action_timer"
+                android:tint="@color/sp_ac" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="累计驻车布防时长"
+                    android:textColor="@color/sp_tx3"
+                    android:textSize="10.5sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_kpi_duration_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:includeFontPadding="false"
+                        android:text="0.0"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:includeFontPadding="false"
+                        android:text="小时"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="10.5sp" />
+
+                    <TextView
+                        android:id="@+id/tv_kpi_duration_sub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/sp_bg_pill"
+                        android:includeFontPadding="false"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="1.5dp"
+                        android:singleLine="true"
+                        android:text="11.8V 自动熔断就绪"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="9.5sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 横向水平滑动日期胶囊栏 + 风险级别筛选 (下沉至 KPI 卡片下方，34dp 紧凑车规交互带) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/sp_page"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/sp_s_20">
+
+        <!-- 横向滚动日期 Pills -->
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/layout_sentry_date_pills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- 动态填充或静态预置日期胶囊 -->
+                <TextView
+                    android:id="@+id/pill_sentry_all_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill_accent"
+                    android:gravity="center"
+                    android:paddingHorizontal="13dp"
+                    android:text="全部"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/pill_sentry_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:gravity="center"
+                    android:paddingHorizontal="13dp"
+                    android:text="今天"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/pill_sentry_yesterday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:gravity="center"
+                    android:paddingHorizontal="13dp"
+                    android:text="昨天"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/pill_sentry_day_before"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:gravity="center"
+                    android:paddingHorizontal="13dp"
+                    android:text="前天"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@color/sp_line2" />
+
+        <!-- 风险等级筛选 Pills -->
+        <TextView
+            android:id="@+id/btn_sentry_filter_risk_all"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginEnd="@dimen/sp_s_6"
+            android:background="@drawable/sp_bg_pill_accent"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="全部风险"
+            android:textColor="@color/sp_ac"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btn_sentry_filter_risk_high"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginEnd="@dimen/sp_s_6"
+            android:background="@drawable/sp_bg_pill"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:drawableStart="@drawable/sp_dot_danger"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:text="高风险"
+            android:textColor="@color/sp_dg"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/btn_sentry_filter_risk_low"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="@drawable/sp_bg_pill"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:drawableStart="@drawable/sp_dot_wn"
+            android:drawablePadding="@dimen/sp_s_6"
+            android:text="低风险"
+            android:textColor="@color/sp_wn"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- 中间主体：左侧事件时间线列表 + 右侧车身雷达拓扑与回放面板 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/sp_s_20"
+        android:layout_marginTop="@dimen/sp_s_12"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- 左侧事件列表卡片容器 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/sp_s_12"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card_raised"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <!-- 列表表头与操作工具栏 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/sp_s_8"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_sentry_list_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="事件列表"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <!-- 刷新 (带顺滑 360 度旋转与弹性物理按压) -->
+                <LinearLayout
+                    android:id="@+id/btn_sentry_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <ImageView
+                        android:id="@+id/iv_sentry_refresh_icon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="@dimen/sp_s_6"
+                        android:contentDescription="刷新"
+                        android:src="@drawable/ic_action_refresh"
+                        android:tint="@color/sp_tx" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="刷新"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_label" />
+                </LinearLayout>
+
+                <!-- 全选按钮 (批量管理时动态呈现) -->
+                <TextView
+                    android:id="@+id/btn_sentry_select_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:drawableStart="@drawable/ic_action_check"
+                    android:drawablePadding="@dimen/sp_s_6"
+                    android:drawableTint="@color/sp_tx2"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="全选"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_label"
+                    android:visibility="gone" />
+
+                <!-- 批量管理 -->
+                <TextView
+                    android:id="@+id/btn_sentry_multi_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/sp_bg_pill"
+                    android:drawableStart="@drawable/ic_action_check"
+                    android:drawablePadding="@dimen/sp_s_6"
+                    android:drawableTint="@color/sp_tx2"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:text="批量管理"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_label" />
+            </LinearLayout>
+
+            <!-- 列表与空状态容器 -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_sentry_events"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="@dimen/sp_s_8" />
+
+                <LinearLayout
+                    android:id="@+id/layout_sentry_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_sentry_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_nav_sentry"
+                        android:drawablePadding="@dimen/sp_s_12"
+                        android:drawableTint="@color/sp_tx3"
+                        android:gravity="center"
+                        android:text="未找到符合条件的哨兵事件\n驻车期间车辆平稳安全，未受到异常震动碰撞"
+                        android:textColor="@color/sp_tx3"
+                        android:textSize="@dimen/sp_t_body" />
+
+                    <TextView
+                        android:id="@+id/btn_empty_sentry_refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginTop="@dimen/sp_s_12"
+                        android:background="@drawable/sp_bg_pill_accent"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/sp_s_16"
+                        android:drawableStart="@drawable/ic_action_refresh"
+                        android:drawablePadding="@dimen/sp_s_6"
+                        android:drawableTint="@color/sp_ac"
+                        android:text="刷新检索"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_caption"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- 右侧：车身雷达拓扑态势与四路联动回看面板 -->
+        <LinearLayout
+            android:layout_width="380dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/sp_bg_card_raised"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <!-- 顶部状态 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_sentry_radar_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="哨兵雷达态势"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_subtitle"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_sentry_radar_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sp_bg_pill_accent"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:text="待命中"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_micro" />
+            </LinearLayout>
+
+            <!-- 雷达波拓扑视图 -->
+            <com.vongzh.sophon.ui.sentry.SentryVehicleRadarView
+                android:id="@+id/view_sentry_radar"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginVertical="@dimen/sp_s_8"
+                android:layout_weight="1" />
+
+            <!-- 方位统计 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_pill"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/sp_s_8">
+
+                <TextView
+                    android:id="@+id/tv_legend_collision_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="前方 0 起"
+                    android:textColor="@color/sp_dg"
+                    android:textSize="@dimen/sp_t_micro" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="12dp"
+                    android:layout_marginHorizontal="@dimen/sp_s_12"
+                    android:background="@color/sp_line2" />
+
+                <TextView
+                    android:id="@+id/tv_legend_approach_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="后方 0 起"
+                    android:textColor="@color/sp_wn"
+                    android:textSize="@dimen/sp_t_micro" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="12dp"
+                    android:layout_marginHorizontal="@dimen/sp_s_12"
+                    android:background="@color/sp_line2" />
+
+                <TextView
+                    android:id="@+id/tv_legend_vibe_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="侧向 0 起"
+                    android:textColor="@color/sp_ac"
+                    android:textSize="@dimen/sp_t_micro" />
+            </LinearLayout>
+
+            <!-- 四路同步回看按钮 -->
+            <TextView
+                android:id="@+id/btn_sentry_view_all_clips"
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sp_bg_pill_accent"
+                android:gravity="center"
+                android:text="四路同步回看事件瞬间"
+                android:textColor="@color/sp_ac"
+                android:textSize="11.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 底部守护声明提示条 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="28dp"
+        android:layout_marginHorizontal="@dimen/sp_s_20"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/sp_bg_pill"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/sp_s_12">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_battery_shield"
+            android:tint="@color/sp_ac"
+            android:contentDescription="守护" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="哨兵影像仅在车辆受到外力触碰、剧烈震动或人员异常贴近时加锁保存，请及时查看重要录像"
+            android:textColor="@color/sp_tx2"
+            android:textSize="10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/ic_action_info"
+            android:drawablePadding="3dp"
+            android:drawableTint="@color/sp_ac"
+            android:text="了解更多"
+            android:textColor="@color/sp_ac"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</LinearLayout>

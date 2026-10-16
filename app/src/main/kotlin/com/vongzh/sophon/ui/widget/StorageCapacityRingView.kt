@@ -33,6 +33,12 @@ class StorageCapacityRingView @JvmOverloads constructor(
         color = ContextCompat.getColor(context, R.color.ring_free)
     }
 
+    private val paintOther = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+        color = ContextCompat.getColor(context, R.color.ring_other)
+    }
+
     private val paintDriving = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
@@ -64,6 +70,7 @@ class StorageCapacityRingView @JvmOverloads constructor(
         strokeWidthPx = (size * 0.16f).coerceIn(6f, 32f)
 
         paintFree.strokeWidth = strokeWidthPx
+        paintOther.strokeWidth = strokeWidthPx
         paintDriving.strokeWidth = strokeWidthPx
         paintSentry.strokeWidth = strokeWidthPx
         paintPhotos.strokeWidth = strokeWidthPx
@@ -90,28 +97,35 @@ class StorageCapacityRingView @JvmOverloads constructor(
 
         var startAngle = -90f
 
+        val sweepOther = (breakdown.otherBytes.toFloat() / total) * 360f
         val sweepDriving = (breakdown.drivingBytes.toFloat() / total) * 360f
-        val sweepSentry = (breakdown.sentryBytes.toFloat() / total) * 360f
         val sweepPhotos = (breakdown.photoBytes.toFloat() / total) * 360f
+        val sweepSentry = (breakdown.sentryBytes.toFloat() / total) * 360f
 
         // 1. 底环 (可用空间)
         canvas.drawArc(rectF, 0f, 360f, false, paintFree)
 
-        // 2. 行车记录
+        // 2. 其他系统/车载占用
+        if (sweepOther > 0f) {
+            canvas.drawArc(rectF, startAngle, sweepOther, false, paintOther)
+            startAngle += sweepOther
+        }
+
+        // 3. 行车记录
         if (sweepDriving > 0f) {
             canvas.drawArc(rectF, startAngle, sweepDriving, false, paintDriving)
             startAngle += sweepDriving
         }
 
-        // 3. 哨兵事件
-        if (sweepSentry > 0f) {
-            canvas.drawArc(rectF, startAngle, sweepSentry, false, paintSentry)
-            startAngle += sweepSentry
-        }
-
         // 4. 抓拍相册
         if (sweepPhotos > 0f) {
             canvas.drawArc(rectF, startAngle, sweepPhotos, false, paintPhotos)
+            startAngle += sweepPhotos
+        }
+
+        // 5. 哨兵事件
+        if (sweepSentry > 0f) {
+            canvas.drawArc(rectF, startAngle, sweepSentry, false, paintSentry)
         }
     }
 }

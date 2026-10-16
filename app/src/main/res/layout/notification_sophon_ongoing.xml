@@ -13,7 +13,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_status_record" />
+        android:src="@drawable/ic_status_record"  android:contentDescription="极视录制状态图标" />
+        android:contentDescription="极视录制状态图标"
 
     <!-- 文本信息区 -->
     <LinearLayout
@@ -33,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"
                 android:textColor="@color/sp_ac"
-                android:textSize="15sp"
+                android:textSize="@dimen/sp_t_subtitle"
                 android:textStyle="bold" />
 
             <TextView
@@ -41,9 +42,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="● 正在录制 00:00:00"
-                android:textColor="@color/sp_dg"
-                android:textSize="13sp"
+                android:text="○ 待机守护中"
+                android:textColor="@color/sp_tx2"
+                android:textSize="@dimen/sp_t_label"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -52,9 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="U盘状态: 已挂载"
+            android:text="外接存储: 已挂载"
             android:textColor="@color/sp_tx2"
-            android:textSize="12sp" />
+            android:textSize="@dimen/sp_t_caption" />
     </LinearLayout>
 
     <!-- 快捷动作按钮组 -->
@@ -74,7 +75,7 @@
             android:paddingVertical="6dp"
             android:text="抓拍"
             android:textColor="@color/sp_tx"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
         <!-- 加锁按键 -->
         <TextView
@@ -87,7 +88,7 @@
             android:paddingVertical="6dp"
             android:text="加锁"
             android:textColor="@color/sp_wn"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
         <!--  主页按键 -->
         <TextView
@@ -100,7 +101,7 @@
             android:paddingVertical="6dp"
             android:text="主页"
             android:textColor="@color/sp_ac"
-            android:textSize="13sp" />
+            android:textSize="@dimen/sp_t_label" />
 
     </LinearLayout>
 

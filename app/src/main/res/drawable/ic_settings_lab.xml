@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 实验室 · 试剂瓶 -->
+    <path
+        android:pathData="M 9.2,3 L 14.8,3"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+    <path
+        android:pathData="M 10.4,3 L 10.4,8.8 L 6.4,17.2 C 5.7,18.7 6.8,20.5 8.6,20.5 L 15.4,20.5 C 17.2,20.5 18.3,18.7 17.6,17.2 L 13.6,8.8 L 13.6,3"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+    <path
+        android:pathData="M 7.6,15.8 L 16.4,15.8"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+</vector>

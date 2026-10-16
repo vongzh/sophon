@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 风险等级指示点：显式声明固有尺寸，便于作为 TextView 复合 drawable 使用 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <size
+        android:width="8dp"
+        android:height="8dp" />
+    <solid android:color="@color/sp_dg" />
+</shape>

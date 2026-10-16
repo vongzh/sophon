@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     车规座舱快门按键：精致深邃微透同心圆结构（深色半透质感，非突兀纯白，防眩光）
+     =================================================================== -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 1. 外层发丝微光圆环 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#1AFFFFFF" />
+            <stroke
+                android:width="1.2dp"
+                android:color="#33FFFFFF" />
+        </shape>
+    </item>
+
+    <!-- 2. 内层透光同心快门圆盘 (高级暗色毛玻璃半透底，非纯白) -->
+    <item
+        android:bottom="4dp"
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp">
+        <shape android:shape="oval">
+            <solid android:color="#28FFFFFF" />
+            <stroke
+                android:width="1dp"
+                android:color="#4DFFFFFF" />
+        </shape>
+    </item>
+</layer-list>

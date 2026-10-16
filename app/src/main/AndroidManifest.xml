@@ -10,6 +10,8 @@
     <!-- 前台服务权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
 
     <!-- 车机悬浮窗权限 (打灯盲区辅助) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -18,9 +20,63 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- 网络通信与状态监听权限 (用于 Bark / Telegram / 飞书 远程预警与局域网快传) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- 哨兵围栏：读取当前 Wi-Fi SSID 作为地理围栏判据。
+         Android 13+ 走 NEARBY_WIFI_DEVICES 且声明 neverForLocation，不涉及位置信息采集；
+         Android 12L 及以下 SSID 读取受位置权限保护，仅在用户主动配置围栏白名单时按需申请。 -->
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="33" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="32" />
+
+    <!-- 车内录音权限 (循环录像音轨) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 通知权限 (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- 外部 U 盘存储访问权限 (严格禁止写入内部闪存) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" tools:ignore="ScopedStorage" />
+
+    <!-- ===================================================================
+         车规车身信号权限 (Android Automotive VHAL 只读订阅)
+         对应 NativeVehiclePropertyObserver 反射调用的 CarPropertyManager 属性：
+         车速 / 挡位 / 转向灯 / 电源 / 动态状态 / 能量 / 车外环境温度 / 车身信息
+
+         【重要前提】CAR_* 权限保护级别为 signature|privileged，普通第三方用户态
+         应用即便声明也不会被系统授予。若 APK 未预装至 /system/priv-app 或未使用
+         平台签名，registerCallback 与 getProperty 仍会抛 SecurityException。
+         该异常已在 NativeVehiclePropertyObserver 中单独捕获并显式告警，
+         通过 VehicleSignalBus.vhalAuthError 上抛，避免"静默降级为 0 / P 挡"。
+         =================================================================== -->
+    <!-- 车速 PERF_VEHICLE_SPEED (0x11600207) -->
+    <uses-permission android:name="android.car.permission.CAR_SPEED" />
+    <!-- 挡位 GEAR_SELECTION (0x11400400) -->
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
+    <!-- 转向灯 TURN_SIGNAL_STATE (0x11400408) -->
+    <uses-permission android:name="android.car.permission.CAR_EXTERIOR_LIGHTS" />
+    <!-- 电源状态 (哨兵模式低功耗休眠判定) -->
+    <uses-permission android:name="android.car.permission.CAR_POWER" />
+    <!-- 车身动态状态与制动 -->
+    <uses-permission android:name="android.car.permission.CAR_DYNAMICS_STATE" />
+    <!-- 12V 蓄电池电压与能耗 -->
+    <uses-permission android:name="android.car.permission.CAR_ENERGY" />
+    <!-- 车外环境温度 (状态栏温度数据源) -->
+    <uses-permission android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT" />
+    <!-- 车门与车身静态信息 -->
+    <uses-permission android:name="android.car.permission.CAR_INFO" />
+    <!-- 车厂私有扩展属性 (领克 / 极氪 座舱) -->
+    <uses-permission android:name="android.car.permission.CAR_VENDOR_EXTENSION" />
+    <!-- 车速单位换算 (km/h 与 mph 显示单位) -->
+    <uses-permission android:name="android.car.permission.READ_CAR_DISPLAY_UNITS" />
 
     <application
         android:name=".SophonApp"
@@ -55,48 +111,19 @@
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
-        <!-- 哨兵事件复盘看板 (设计稿 S5) -->
-        <activity
-            android:name=".ui.sentry.SentryEventReviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Sophon"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <!-- 四路同步回放播放器 -->
+<!-- 四路同步回放播放器 -->
         <activity
             android:name=".ui.playback.QuadSyncPlayerActivity"
             android:exported="false"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
 
-        <!-- 车载抓拍相册大图查看器 -->
-        <activity
-            android:name=".ui.photo.PhotoViewerActivity"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <!-- 车载历史录像文件资料库 -->
-        <activity
-            android:name=".ui.history.RecordingHistoryActivity"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <!-- 座舱系统偏好设置界面 -->
-        <activity
-            android:name=".ui.settings.SophonSettingsActivity"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" />
-
-        <!-- 核心视觉与录制前台服务 (统一前台进程，避免多进程单例双花与状态孤岛) -->
+<!-- 核心视觉与录制前台服务 (统一前台进程，避免多进程单例双花与状态孤岛) -->
         <service
             android:name=".service.SophonCoreService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="camera" />
+            android:foregroundServiceType="camera|dataSync|microphone" />
 
         <!-- 盲区补盲悬浮窗服务 -->
         <service
@@ -107,6 +134,24 @@
         <!-- 顶部状态栏常驻胶囊与快捷卡片服务 -->
         <service
             android:name=".ui.statusbar.StatusBarCapsuleService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- 悬浮窗矩阵 · 后视角小窗 (R 挡联动，替代流媒体后视镜) -->
+        <service
+            android:name=".service.RearViewOverlayService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- 悬浮窗矩阵 · 车辆状态小窗 (车速 / 挡位 / 电压 / 录制 / 哨兵 / 存储) -->
+        <service
+            android:name=".service.VehicleStatusOverlayService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- 悬浮窗矩阵 · 功能悬浮球 (可拖拽快捷菜单) -->
+        <service
+            android:name=".service.AssistBallOverlayService"
             android:enabled="true"
             android:exported="false" />
 
@@ -166,6 +211,11 @@
             </intent-filter>
         </receiver>
 
-    </application>
+            <activity
+            android:name=".ui.OnboardingActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Sophon" />
+</application>
 
 </manifest>

@@ -82,4 +82,8 @@ data class StorageUsageBreakdown(
     val sentryBytes: Long = 0L,
     val photoBytes: Long = 0L,
     val otherBytes: Long = 0L
-)
+) {
+    val usedBytes: Long
+        get() = (totalBytes - freeBytes).coerceAtLeast(0L)
+}
+

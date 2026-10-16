@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视座舱 · 用户免责与安全须知 结构化车规弹窗
+     特点：
+     - 摒弃枯燥纯文字平铺，采用现代车规级模块化卡片与看板布局
+     - 顶部 3 栏核心安全红线看板
+     - 条款分级卡片：采用警示徽章 + 核心提炼 + 重点标黄提示
+     - 宽屏与横屏自适应滚动
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sp_bg_card_raised"
+    android:orientation="vertical"
+    android:padding="@dimen/sp_s_24">
+
+    <!-- 1. 顶部 Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- 警示图标 -->
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/sp_s_12"
+            android:background="@drawable/sp_bg_pill"
+            android:contentDescription="免责声明"
+            android:padding="6dp"
+            android:src="@drawable/ic_action_warning"
+            android:tint="@color/sp_wn" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="极视座舱 · 用户免责与安全须知"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:paddingHorizontal="@dimen/sp_s_8"
+                    android:paddingVertical="@dimen/sp_s_2"
+                    android:text="行车安全规范"
+                    android:textColor="@color/sp_wn"
+                    android:textSize="@dimen/sp_t_micro"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="驾驶辅助定位 · 驾驶员第一责任 · 外置存储介质免责"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_caption" />
+        </LinearLayout>
+
+        <!-- 关闭按钮 -->
+        <ImageView
+            android:id="@+id/btn_dialog_close"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/sp_bg_pill"
+            android:contentDescription="关闭"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="11dp"
+            android:src="@drawable/ic_action_close"
+            android:tint="@color/sp_tx2" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="@dimen/sp_s_16"
+        android:background="@color/sp_line" />
+
+    <!-- 2. 三大核心安全红线横向看板 (结构化布局) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- 看板 1: 驾驶员第一责任 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_s_8"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_warning"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_wn"
+                android:text="驾驶第一责任"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="辅助视窗绝不代替肉眼观测，驾驶员为车辆安全唯一主体"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <!-- 看板 2: 恶劣环境限制 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_s_8"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_warning"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_wn"
+                android:text="环境感知局限"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="强光暴雨/镜头污损可能导致视野受阻或盲区，需提高警惕"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <!-- 看板 3: U 盘介质免责 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_warning"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_wn"
+                android:text="外部存储免责"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="因 U 盘老化/松动/损毁造成的视频丢失，应用免除赔付责任"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. 详细结构化条款滚动区 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginTop="@dimen/sp_s_12"
+        android:fadeScrollbars="false"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 模块 1：非主机厂原生声明 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 1 条"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="第三方独立软件性质声明"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="极视 (Sophon) 属于第三方独立开发者研发的车机辅助视窗与行车记录增强工具，并非任何汽车整车制造商的官方原生软件。车主在自行侧载或安装本软件前，应了解整车制造商品牌质保政策，并独立承担软件安装与运行的相关风险。"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+
+            <!-- 模块 2：辅助视觉边界与安全声明 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 2 条"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="功能辅助边界与驾驶员主观注意"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_action_warning"
+                        android:drawablePadding="@dimen/sp_s_8"
+                        android:drawableTint="@color/sp_wn"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="打灯补盲悬浮窗、DOW 开门预警、低压断电保护等功能纯属辅助视野扩展，绝不等于自动驾驶或防碰撞保证。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:drawableStart="@drawable/ic_action_warning"
+                        android:drawablePadding="@dimen/sp_s_8"
+                        android:drawableTint="@color/sp_wn"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="摄像头视场角存在物理盲区，夜间低照度、暴雨泥水遮挡或逆光均可能造成画面失真；变道前务必配合后视镜与肉眼观察确认安全。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/sp_bg_pill"
+                        android:padding="@dimen/sp_s_10"
+                        android:text="【特别声明】驾驶员始终对行车安全与道路交通安全法规负有唯一完整的法律注意义务。"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_caption"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 模块 3：外置存储与数据免责 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 3 条"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="外置 U 盘硬件健康与视频完整性"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="为保护车身闪存寿命，极视完全依赖外置 USB 介质进行连续写入。因 U 盘品质劣质、未采用高耐久颗粒、颠簸松脱或高温损坏导致的关键录像缺失，开发者不承担赔付责任。请车主务必选用正品车规/监控级存储设备，并定期在设置中运行健康测速。"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+
+            <!-- 模块 4：免责总则 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 4 条"
+                        android:textColor="@color/sp_wn"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="免责总则与责任范围限定"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="在适用法律最大许可范围内，因使用或无法使用本软件所产生的直接或间接财产损失、人身伤亡、事故判定纠纷等，开发者均不承担连带赔偿责任。使用极视即视为您已完整阅读并自愿承诺遵循本须知全部内容。"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="@dimen/sp_s_16"
+        android:background="@color/sp_line" />
+
+    <!-- 4. 底部动作条 -->
+    <TextView
+        android:id="@+id/btn_dialog_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/sp_bg_pill_accent"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="我已知悉行车安全责任并遵循"
+        android:textColor="@color/sp_ac"
+        android:textSize="@dimen/sp_t_label"
+        android:textStyle="bold" />
+</LinearLayout>

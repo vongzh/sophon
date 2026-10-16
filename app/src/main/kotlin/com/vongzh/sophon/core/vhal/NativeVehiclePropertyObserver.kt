@@ -131,6 +131,12 @@ class NativeVehiclePropertyObserver(
             } else {
                 Log.w(TAG, "registerCallback method not matching signature on CarPropertyManager")
             }
+        } catch (e: SecurityException) {
+            // 权限未授予：普通第三方应用不会获得 CAR_* (signature|privileged) 授权，
+            // 必须显式上抛，否则车速/挡位/转向灯会静默恒为默认值而被误判为真数据。
+            signalBus.dispatchVhalAuthFailure(
+                "CarPropertyManager 注册被拒绝：${e.message}。需声明 android.car.permission.* 且使用平台签名或预装至 /system/priv-app"
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Failed to initialize CarPropertyManager", e)
         }
@@ -197,6 +203,8 @@ class NativeVehiclePropertyObserver(
                     signalBus.dispatchTurnSignalUpdate(state)
                 }
             }
+        } catch (e: SecurityException) {
+            signalBus.dispatchVhalAuthFailure("读取车身属性被拒绝：${e.message}")
         } catch (e: Exception) {
             Log.w(TAG, "Error processing CarPropertyValue update", e)
         }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视 车规官方应用徽标 (Sophon Brand Badge)
+     采用 FlymeAuto 科技蓝圆角矩形质感底座 + 四路全维几何光学透镜标尺
+     =================================================================== -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+
+    <!-- 1. 领克破晓深空蓝 高质感圆角底座 (11dp 倒角 Squircle) -->
+    <path
+        android:pathData="M 11,0 L 29,0 A 11,11 0 0,1 40,11 L 40,29 A 11,11 0 0,1 29,40 L 11,40 A 11,11 0 0,1 0,29 L 0,11 A 11,11 0 0,1 11,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="40"
+                android:endY="40"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF3875F6" />
+                <item android:offset="0.5" android:color="#FF255BDB" />
+                <item android:offset="1.0" android:color="#FF1542B3" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 2. 顶部微弱高光边弧 (金属倒角质感) -->
+    <path
+        android:pathData="M 11,1 L 29,1 A 10,10 0 0,1 39,11"
+        android:strokeColor="#50FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round" />
+
+    <!-- 3. 四向全维协同感知角标 (前/后/左/右 四通道相机取景微框) -->
+    <!-- 左上 (前视主摄 / 左侧盲区) -->
+    <path
+        android:pathData="M 11,15.5 L 11,11 L 15.5,11"
+        android:strokeColor="#E6FFFFFF"
+        android:strokeWidth="2.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 右上 (前视主摄 / 右侧盲区) -->
+    <path
+        android:pathData="M 24.5,11 L 29,11 L 29,15.5"
+        android:strokeColor="#E6FFFFFF"
+        android:strokeWidth="2.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 左下 (后视广角 / 左侧盲区) -->
+    <path
+        android:pathData="M 11,24.5 L 11,29 L 15.5,29"
+        android:strokeColor="#E6FFFFFF"
+        android:strokeWidth="2.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 右下 (后视广角 / 右侧盲区) -->
+    <path
+        android:pathData="M 24.5,29 L 29,29 L 29,24.5"
+        android:strokeColor="#E6FFFFFF"
+        android:strokeWidth="2.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 4. 中层光学光圈孔径 (Central Aperture Iris) -->
+    <path
+        android:pathData="M 20,15 A 5,5 0 1,1 19.99,15 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round" />
+
+    <!-- 5. 核心全维感知晶片 (Core Sensor Focus) -->
+    <path
+        android:pathData="M 20,20 m -2.2,0 a 2.2,2.2 0 1,0 4.4,0 a 2.2,2.2 0 1,0 -4.4,0"
+        android:fillColor="#FFFFFFFF" />
+</vector>

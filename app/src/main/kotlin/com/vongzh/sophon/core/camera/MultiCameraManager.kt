@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,13 +36,18 @@ class MultiCameraManager(
         private const val CAMERA_OPEN_BARRIER_DELAY_MS = 150L // 串行打开栅栏安全间隔
     }
 
-    private val managerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var managerJob = SupervisorJob()
+    private var managerScope = CoroutineScope(managerJob + Dispatchers.Default)
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
     private val sessions = ConcurrentHashMap<CameraPosition, SingleCameraSession>()
+    private val pendingPreviewSurfaces = ConcurrentHashMap<CameraPosition, android.view.Surface>()
 
     private val _isAllCamerasStreaming = MutableStateFlow(false)
     val isAllCamerasStreaming: StateFlow<Boolean> = _isAllCamerasStreaming.asStateFlow()
+
+    private val _availableCameras = MutableStateFlow<Set<CameraPosition>>(emptySet())
+    val availableCameras: StateFlow<Set<CameraPosition>> = _availableCameras.asStateFlow()
 
     private var isStarting = false
 
@@ -51,6 +57,11 @@ class MultiCameraManager(
     fun startAllCameras() {
         if (isStarting) return
         isStarting = true
+
+        if (!managerJob.isActive) {
+            managerJob = SupervisorJob()
+            managerScope = CoroutineScope(managerJob + Dispatchers.Default)
+        }
 
         managerScope.launch {
             Log.i(TAG, "Starting Multi-Camera Pipeline with Concurrency Barrier...")
@@ -63,6 +74,8 @@ class MultiCameraManager(
                 CameraPosition.RIGHT
             )
 
+            val openedPositions = mutableSetOf<CameraPosition>()
+
             for (pos in sequence) {
                 val physicalId = cameraIds[pos] ?: continue
                 Log.d(TAG, "Entering barrier for camera: $pos (ID: $physicalId)")
@@ -73,8 +86,16 @@ class MultiCameraManager(
                 // 2. 创建并打开单路会话
                 val session = SingleCameraSession(context, pos, physicalId)
                 sessions[pos] = session
+                pendingPreviewSurfaces[pos]?.let { surface ->
+                    if (surface.isValid) {
+                        session.setPreviewSurface(surface)
+                    }
+                }
                 val success = session.open(surfaceTexture)
-                if (!success) {
+                if (success) {
+                    openedPositions.add(pos)
+                    _availableCameras.value = openedPositions.toSet()
+                } else {
                     Log.w(TAG, "Camera $pos failed to open, continuing other cameras.")
                 }
 
@@ -82,9 +103,9 @@ class MultiCameraManager(
                 delay(CAMERA_OPEN_BARRIER_DELAY_MS)
             }
 
-            _isAllCamerasStreaming.value = true
+            _isAllCamerasStreaming.value = openedPositions.isNotEmpty()
             isStarting = false
-            Log.i(TAG, "All cameras configured through concurrency barrier successfully.")
+            Log.i(TAG, "All cameras configured through concurrency barrier successfully. Available: $openedPositions")
         }
     }
 
@@ -121,11 +142,43 @@ class MultiCameraManager(
     }
 
     /**
+     * 动态挂载或解绑单路摄像头 UI 预览 Surface
+     */
+    fun setPreviewSurface(position: CameraPosition, surface: android.view.Surface?) {
+        if (surface != null && surface.isValid) {
+            pendingPreviewSurfaces[position] = surface
+        } else {
+            pendingPreviewSurfaces.remove(position)
+        }
+        sessions[position]?.setPreviewSurface(surface)
+    }
+
+    /**
+     * 影像参数热更新：向所有已建立会话的摄像头重发采集请求
+     *
+     * 不重建 CaptureSession，避免 USB 摄像头在多路并发下出现 HAL 抖动与掉帧。
+     */
+    fun refreshImageTuning() {
+        if (sessions.isEmpty()) {
+            Log.i(TAG, "No active camera session, image tuning will apply on next camera start.")
+            return
+        }
+        sessions.values.forEach { session ->
+            try {
+                session.refreshImageTuning()
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to refresh image tuning on ${session.position}: ${e.message}")
+            }
+        }
+    }
+
+    /**
      * 安全停止所有摄像头并释放显存与硬件锁
      */
     fun stopAllCameras() {
         Log.i(TAG, "Stopping all camera sessions...")
         _isAllCamerasStreaming.value = false
+        _availableCameras.value = emptySet()
         sessions.values.forEach { session ->
             try {
                 session.close()
@@ -134,6 +187,6 @@ class MultiCameraManager(
             }
         }
         sessions.clear()
-        managerScope.cancel()
+        managerJob.cancelChildren()
     }
 }

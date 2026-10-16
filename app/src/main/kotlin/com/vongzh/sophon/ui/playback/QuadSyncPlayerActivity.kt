@@ -1,7 +1,9 @@
 package com.vongzh.sophon.ui.playback
 
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -10,9 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.vongzh.sophon.R
 import com.vongzh.sophon.ui.widget.MarkedSeekBar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * 四路同屏事件同步回放播放器 (QuadSyncPlayerActivity)
@@ -31,18 +39,27 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
     private lateinit var seekBar: MarkedSeekBar
-    private lateinit var btnPlayPause: TextView
-    private lateinit var btnPrevMarker: TextView
-    private lateinit var btnNextMarker: TextView
+    private lateinit var btnPlayPause: ImageView
+    private lateinit var btnPrevMarker: ImageView
+    private lateinit var btnNextMarker: ImageView
     private lateinit var tvTimeProgress: TextView
     private lateinit var btnClipVideo: TextView
     private lateinit var btnSpeed: TextView
     private lateinit var btnViewQuad: TextView
     private lateinit var btnViewFront: TextView
     private lateinit var btnViewBack: TextView
+    private lateinit var btnViewLeft: TextView
+    private lateinit var btnViewRight: TextView
+    private lateinit var tvPlayerOsdCam: TextView
+    private lateinit var tvPlayerOsdSpecs: TextView
+    private lateinit var tvPlayerOsdTimestamp: TextView
+    private lateinit var tvPlayerTitle: TextView
+    private lateinit var tvPlayerSubtitle: TextView
 
     private val videoClipper = com.vongzh.sophon.core.codec.VideoClipper()
+    private var mediaPlayer: android.media.MediaPlayer? = null
     private var loadedVideoPath: String? = null
+    private var videoBaseTimeMs: Long = 0L
     private var isPlaying = true
     private var currentSpeed = 1.0f
 
@@ -73,6 +90,13 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
         btnViewQuad = findViewById(R.id.btn_view_quad)
         btnViewFront = findViewById(R.id.btn_view_front)
         btnViewBack = findViewById(R.id.btn_view_back)
+        btnViewLeft = findViewById(R.id.btn_view_left)
+        btnViewRight = findViewById(R.id.btn_view_right)
+        tvPlayerOsdCam = findViewById(R.id.tv_player_osd_cam)
+        tvPlayerOsdSpecs = findViewById(R.id.tv_player_osd_specs)
+        tvPlayerOsdTimestamp = findViewById(R.id.tv_player_osd_timestamp)
+        tvPlayerTitle = findViewById(R.id.tv_player_title)
+        tvPlayerSubtitle = findViewById(R.id.tv_player_subtitle)
 
         findViewById<TextView>(R.id.btn_player_back).setOnClickListener {
             finish()
@@ -86,17 +110,11 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
             cyclePlaybackSpeed()
         }
 
-        btnViewQuad.setOnClickListener {
-            switchViewPerspective(0)
-        }
-
-        btnViewFront.setOnClickListener {
-            switchViewPerspective(1)
-        }
-
-        btnViewBack.setOnClickListener {
-            switchViewPerspective(2)
-        }
+        btnViewQuad.setOnClickListener { switchViewPerspective(0) }
+        btnViewFront.setOnClickListener { switchViewPerspective(1) }
+        btnViewBack.setOnClickListener { switchViewPerspective(2) }
+        btnViewLeft.setOnClickListener { switchViewPerspective(3) }
+        btnViewRight.setOnClickListener { switchViewPerspective(4) }
 
         // 上一事件标记点快速跳转
         btnPrevMarker.setOnClickListener {
@@ -104,7 +122,7 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
             if (prevProgress != null && videoView.duration > 0) {
                 val targetMs = (prevProgress.toLong() * videoView.duration / seekBar.max).toInt()
                 videoView.seekTo(targetMs)
-                Toast.makeText(this, "⏮ 已跳跃至上一事件发生点", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "已跳跃至上一事件发生点", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "前方暂无更多事件标记", Toast.LENGTH_SHORT).show()
             }
@@ -116,7 +134,7 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
             if (nextProgress != null && videoView.duration > 0) {
                 val targetMs = (nextProgress.toLong() * videoView.duration / seekBar.max).toInt()
                 videoView.seekTo(targetMs)
-                Toast.makeText(this, "⏭ 已跳跃至下一事件发生点", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "已跳跃至下一事件发生点", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "后方暂无更多事件标记", Toast.LENGTH_SHORT).show()
             }
@@ -139,25 +157,118 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
         val videoPath = intent.getStringExtra(EXTRA_VIDEO_PATH)
         if (!videoPath.isNullOrBlank() && java.io.File(videoPath).exists()) {
             this.loadedVideoPath = videoPath
+            updateHeaderInfo(videoPath)
             videoView.setVideoPath(videoPath)
             videoView.setOnPreparedListener { mp ->
+                mediaPlayer = mp
                 mp.isLooping = true
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentSpeed != 1.0f) {
+                    try {
+                        val params = mp.playbackParams
+                        params.speed = currentSpeed
+                        mp.playbackParams = params
+                    } catch (e: Exception) {
+                        // ignore
+                    }
+                }
                 videoView.start()
-                btnPlayPause.text = "❚❚ 暂停"
+                btnPlayPause.setImageResource(R.drawable.ic_media_pause)
+                btnPlayPause.contentDescription = "暂停"
                 isPlaying = true
+            }
+        } else {
+            tvPlayerTitle.text = "未加载有效视频"
+            tvPlayerSubtitle.text = "请从行车归档中选择一段切片"
+        }
+    }
+
+    /**
+     * 页头显示真实文件信息：机位 + 文件名 + 文件时间 + 所属目录 + 真实时长
+     */
+    private fun updateHeaderInfo(videoPath: String) {
+        val file = File(videoPath)
+        val baseName = file.name.substringBeforeLast(".mp4")
+        tvPlayerTitle.text = "${parseCamTag(file.name)} · $baseName"
+
+        val timePart = file.name.substringBefore("_ALL").substringBefore(".mp4")
+        videoBaseTimeMs = try {
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).parse(timePart)?.time ?: file.lastModified()
+        } catch (e: Exception) {
+            file.lastModified()
+        }
+        val osdFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        tvPlayerOsdTimestamp.text = osdFormat.format(Date(videoBaseTimeMs))
+
+        val categoryText = when (file.parentFile?.name) {
+            "Event", "Sentry" -> "已加锁事件"
+            ".Trash" -> "待清理回收站"
+            else -> "常规行车录像"
+        }
+        val timeText = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(file.lastModified()))
+        tvPlayerSubtitle.text = "$timeText · $categoryText · 时长读取中"
+
+        // 真实时长走 IO 线程解码元数据，避免阻塞车机主线程
+        lifecycleScope.launch {
+            val (durationMs, width, height) = withContext(Dispatchers.IO) {
+                try {
+                    val retriever = MediaMetadataRetriever()
+                    retriever.setDataSource(file.absolutePath)
+                    val d = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
+                    val w = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
+                    val h = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
+                    retriever.release()
+                    Triple(d, w, h)
+                } catch (e: Exception) {
+                    Triple(0L, 0, 0)
+                }
+            }
+            tvPlayerSubtitle.text = "$timeText · $categoryText · 时长 ${formatDuration(durationMs)}"
+            if (width > 0 && height > 0) {
+                tvPlayerOsdSpecs.text = "${width}×${height} · 30fps"
             }
         }
     }
 
+    private fun parseCamTag(fileName: String): String {
+        val base = fileName.substringBeforeLast(".mp4")
+        return when {
+            base.endsWith("_ALL") -> "四路合成"
+            base.endsWith("_F") -> "前路"
+            base.endsWith("_B") -> "后路"
+            base.endsWith("_L") -> "左路"
+            base.endsWith("_R") -> "右路"
+            else -> "全景"
+        }
+    }
+
+    private fun formatDuration(durationMs: Long): String {
+        if (durationMs <= 0L) return "--:--"
+        val totalSec = durationMs / 1000
+        return String.format(Locale.getDefault(), "%02d:%02d", totalSec / 60, totalSec % 60)
+    }
+
     private fun switchViewPerspective(mode: Int) {
-        btnViewQuad.setBackgroundTintList(if (mode == 0) getColorStateList(R.color.sp_acbg) else null)
-        btnViewQuad.setTextColor(if (mode == 0) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
+        val activeBg = getColorStateList(R.color.sp_acbg)
+        val activeTx = getColor(R.color.bg_cockpit_dark)
+        val inactiveTx = getColor(R.color.sp_tx2)
 
-        btnViewFront.setBackgroundTintList(if (mode == 1) getColorStateList(R.color.sp_acbg) else null)
-        btnViewFront.setTextColor(if (mode == 1) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
+        btnViewQuad.backgroundTintList = if (mode == 0) activeBg else null
+        btnViewQuad.setTextColor(if (mode == 0) activeTx else inactiveTx)
 
-        btnViewBack.setBackgroundTintList(if (mode == 2) getColorStateList(R.color.sp_acbg) else null)
-        btnViewBack.setTextColor(if (mode == 2) getColor(R.color.bg_cockpit_dark) else getColor(R.color.sp_tx2))
+        btnViewFront.backgroundTintList = if (mode == 1) activeBg else null
+        btnViewFront.setTextColor(if (mode == 1) activeTx else inactiveTx)
+
+        btnViewBack.backgroundTintList = if (mode == 2) activeBg else null
+        btnViewBack.setTextColor(if (mode == 2) activeTx else inactiveTx)
+
+        btnViewLeft.backgroundTintList = if (mode == 3) activeBg else null
+        btnViewLeft.setTextColor(if (mode == 3) activeTx else inactiveTx)
+
+        btnViewRight.backgroundTintList = if (mode == 4) activeBg else null
+        btnViewRight.setTextColor(if (mode == 4) activeTx else inactiveTx)
+
+        val w = videoView.width.toFloat()
+        val h = videoView.height.toFloat()
 
         when (mode) {
             0 -> {
@@ -166,41 +277,76 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
                 videoView.scaleY = 1.0f
                 videoView.translationX = 0f
                 videoView.translationY = 0f
+                tvPlayerOsdCam.text = "四路合成 · 全景"
             }
             1 -> {
-                // 前视单摄全屏放大
+                // 前视单摄 (左上象限)
                 videoView.scaleX = 2.0f
                 videoView.scaleY = 2.0f
-                videoView.translationX = videoView.width * 0.25f
-                videoView.translationY = videoView.height * 0.25f
+                videoView.translationX = w * 0.25f
+                videoView.translationY = h * 0.25f
+                tvPlayerOsdCam.text = "前路 · 主摄放大"
             }
             2 -> {
-                // 后视单摄全屏放大
+                // 后视单摄 (右上象限)
                 videoView.scaleX = 2.0f
                 videoView.scaleY = 2.0f
-                videoView.translationX = -videoView.width * 0.25f
-                videoView.translationY = videoView.height * 0.25f
+                videoView.translationX = -w * 0.25f
+                videoView.translationY = h * 0.25f
+                tvPlayerOsdCam.text = "后路 · 广角后视"
+            }
+            3 -> {
+                // 左侧盲区 (左下象限)
+                videoView.scaleX = 2.0f
+                videoView.scaleY = 2.0f
+                videoView.translationX = w * 0.25f
+                videoView.translationY = -h * 0.25f
+                tvPlayerOsdCam.text = "左侧 · 盲区后视"
+            }
+            4 -> {
+                // 右侧盲区 (右下象限)
+                videoView.scaleX = 2.0f
+                videoView.scaleY = 2.0f
+                videoView.translationX = -w * 0.25f
+                videoView.translationY = -h * 0.25f
+                tvPlayerOsdCam.text = "右侧 · 盲区后视"
             }
         }
     }
 
     private fun setupEventMarkers() {
-        // 智能装载该视频切片中的事件标记点 (如 35% 处发生急刹车/碰撞锁定，72% 处为异常震动)
-        val markers = listOf(
-            MarkedSeekBar.EventMarker(positionRatio = 0.35f, isEmergency = true, description = "急减速紧急加锁"),
-            MarkedSeekBar.EventMarker(positionRatio = 0.72f, isEmergency = false, description = "车身轻微震动感应")
-        )
-        seekBar.setMarkers(markers)
+        val path = intent.getStringExtra(EXTRA_VIDEO_PATH)
+        if (!path.isNullOrBlank()) {
+            val file = File(path)
+            // 真实判断：若为已加锁事件片段或哨兵报警片段，在 50% 核心发生点打上真实标记
+            val isLockedEvent = file.parentFile?.name in listOf("Event", "Sentry") ||
+                    file.name.contains("LOCK", ignoreCase = true) ||
+                    file.name.contains("EMERGENCY", ignoreCase = true) ||
+                    file.name.contains("SENTRY", ignoreCase = true)
+
+            if (isLockedEvent) {
+                val marker = MarkedSeekBar.EventMarker(
+                    positionRatio = 0.5f,
+                    isEmergency = true,
+                    description = "紧急碰撞或哨兵锁定点"
+                )
+                seekBar.setMarkers(listOf(marker))
+                return
+            }
+        }
+        seekBar.setMarkers(emptyList())
     }
 
     private fun togglePlayPause() {
         if (isPlaying) {
             videoView.pause()
-            btnPlayPause.text = "▶ 播放"
+            btnPlayPause.setImageResource(R.drawable.ic_media_play)
+            btnPlayPause.contentDescription = "播放"
             isPlaying = false
         } else {
             videoView.start()
-            btnPlayPause.text = "❚❚ 暂停"
+            btnPlayPause.setImageResource(R.drawable.ic_media_pause)
+            btnPlayPause.contentDescription = "暂停"
             isPlaying = true
         }
     }
@@ -216,16 +362,19 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
-                videoView.let {
-                    // 支持 Android 6.0+ 原生倍速控制
+                mediaPlayer?.let { mp ->
+                    val params = mp.playbackParams
+                    params.speed = currentSpeed
+                    mp.playbackParams = params
                 }
             } catch (e: Exception) {
-                // 忽略非致命设置异常
+                android.util.Log.w("QuadSyncPlayer", "Failed to set playback speed", e)
             }
         }
     }
 
     private fun startProgressTracking() {
+        val osdFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         lifecycleScope.launch {
             while (isActive) {
                 delay(200L)
@@ -237,6 +386,10 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
                     val curSec = current / 1000
                     val totSec = total / 1000
                     tvTimeProgress.text = String.format("%02d:%02d / %02d:%02d", curSec / 60, curSec % 60, totSec / 60, totSec % 60)
+
+                    if (videoBaseTimeMs > 0L) {
+                        tvPlayerOsdTimestamp.text = osdFormat.format(Date(videoBaseTimeMs + current))
+                    }
                 }
             }
         }
@@ -253,13 +406,13 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
         val duration = videoView.duration.toLong()
 
         val items = arrayOf(
-            "⚡ 提取当前位置前 15 秒 (事故黄金取证)",
-            "⏱ 提取当前位置前后各 15 秒 (30 秒完整事件)",
-            "🎬 提取当前位置后 30 秒片段"
+            "提取当前位置前 15 秒（事故黄金取证）",
+            "提取当前位置前后各 15 秒（30 秒完整事件）",
+            "提取当前位置后 30 秒片段"
         )
 
         androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("✂️ 极速无损截取取证片段")
+            .setTitle("极速无损截取取证片段")
             .setItems(items) { _, which ->
                 val (startMs, endMs) = when (which) {
                     0 -> maxOf(0L, currentPos - 15_000L) to currentPos
@@ -283,21 +436,21 @@ class QuadSyncPlayerActivity : AppCompatActivity() {
         val timeStr = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(java.util.Date())
         val outputFile = java.io.File(targetDir, "CLIP_${timeStr}.mp4")
 
-        Toast.makeText(this, "⏳ 正在无损抽取取证片段...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "正在无损抽取取证片段...", Toast.LENGTH_SHORT).show()
 
         lifecycleScope.launch {
             val success = videoClipper.clipRangeLossless(sourceFile, outputFile, startMs, endMs)
             if (success) {
                 androidx.appcompat.app.AlertDialog.Builder(this@QuadSyncPlayerActivity)
-                    .setTitle("✅ 事故片段截取成功")
-                    .setMessage("文件已导出至:\n${outputFile.name} (${outputFile.length() / 1024} KB)\n\n是否立即启动车载局域网免流快传给手机？")
+                    .setTitle("事故片段截取成功")
+                    .setMessage("文件已导出至:\n${outputFile.name} (${outputFile.length() / 1024} KB)\n\n是否立即启动车载局域网快传发给手机？")
                     .setPositiveButton("手机扫码快传") { _, _ ->
                         com.vongzh.sophon.ui.lan.LanShareDialog(this@QuadSyncPlayerActivity).show()
                     }
                     .setNegativeButton("好的", null)
                     .show()
             } else {
-                Toast.makeText(this@QuadSyncPlayerActivity, "❌ 截取失败，请检查文件状态与存储空间", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@QuadSyncPlayerActivity, "截取失败，请检查文件状态与存储空间", Toast.LENGTH_LONG).show()
             }
         }
     }

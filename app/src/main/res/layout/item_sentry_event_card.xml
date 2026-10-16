@@ -11,6 +11,7 @@
     android:background="@drawable/sp_bg_card"
     android:clickable="true"
     android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="@dimen/sp_s_8">
@@ -19,14 +20,15 @@
     <FrameLayout
         android:layout_width="112dp"
         android:layout_height="64dp"
-        android:background="@drawable/sp_bg_chip"
+        android:background="@drawable/sp_bg_card_inner"
         android:clipToOutline="true">
 
         <ImageView
             android:id="@+id/iv_sentry_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:contentDescription="哨兵事件缩略图" />
 
         <!-- 危险等级 / 类型标记 (左上角) -->
         <TextView
@@ -39,9 +41,9 @@
             android:backgroundTint="@color/sp_dg"
             android:paddingHorizontal="6dp"
             android:paddingVertical="1dp"
-            android:text="碰撞"
-            android:textColor="#FFFFFFFF"
-            android:textSize="9sp"
+            android:text="--"
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="@dimen/sp_t_micro"
             android:textStyle="bold" />
 
         <!-- 机位角标 (右下角) -->
@@ -54,9 +56,9 @@
             android:background="@drawable/sp_bg_osd_chip"
             android:paddingHorizontal="5dp"
             android:paddingVertical="1dp"
-            android:text="左前盲区"
+            android:text="--"
             android:textColor="@color/sp_osd_tx"
-            android:textSize="9sp" />
+            android:textSize="@dimen/sp_t_micro" />
     </FrameLayout>
 
     <!-- 事件元数据区 -->
@@ -73,7 +75,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="车身剧烈震动 / 碰撞警报"
+            android:text="--"
             android:textColor="@color/sp_tx"
             android:textSize="@dimen/sp_t_body"
             android:textStyle="bold" />
@@ -83,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="14:02:18  ·  触发亮屏威慑  ·  已自动加锁"
+            android:text="--:--:--"
             android:textColor="@color/sp_tx3"
             android:textSize="@dimen/sp_t_caption" />
     </LinearLayout>

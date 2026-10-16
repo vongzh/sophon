@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 车规浮动 HUD 控制胶囊底色：深色毛玻璃微透 + 细腻反光边框 (参考特斯拉/理想) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#D912161A" />
+    <corners android:radius="26dp" />
+    <stroke
+        android:width="1dp"
+        android:color="#33FFFFFF" />
+</shape>

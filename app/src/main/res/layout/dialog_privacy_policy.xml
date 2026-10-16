@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视座舱 · 隐私权保护指引 结构化车规弹窗
+     特点：
+     - 摒弃枯燥纯文字长篇平铺，采用现代车规级模块化卡片与看板布局
+     - 顶部 4 栏核心安全承诺高亮看板
+     - 条款分级卡片：采用 Badge 徽章 + 核心提炼 + 结构化属性对比
+     - 宽屏与横屏自适应滚动
+     =================================================================== -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/sp_bg_card_raised"
+    android:orientation="vertical"
+    android:padding="@dimen/sp_s_24">
+
+    <!-- 1. 顶部 Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- 盾牌安全图标 -->
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/sp_s_12"
+            android:background="@drawable/sp_bg_pill_accent"
+            android:contentDescription="隐私安全"
+            android:padding="6dp"
+            android:src="@drawable/ic_action_lock"
+            android:tint="@color/sp_ac" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="极视座舱 · 隐私权保护指引"
+                    android:textColor="@color/sp_tx"
+                    android:textSize="@dimen/sp_t_title"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sp_s_8"
+                    android:background="@drawable/sp_bg_pill"
+                    android:paddingHorizontal="@dimen/sp_s_8"
+                    android:paddingVertical="@dimen/sp_s_2"
+                    android:text="车规安全认证"
+                    android:textColor="@color/sp_ok"
+                    android:textSize="@dimen/sp_t_micro"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="100% 车规芯片本地计算 · 零写系统闪存 · 尊重车主数据主权"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_caption" />
+        </LinearLayout>
+
+        <!-- 关闭按钮 -->
+        <ImageView
+            android:id="@+id/btn_dialog_close"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/sp_bg_pill"
+            android:contentDescription="关闭"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="11dp"
+            android:src="@drawable/ic_action_close"
+            android:tint="@color/sp_tx2" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="@dimen/sp_s_16"
+        android:background="@color/sp_line" />
+
+    <!-- 2. 四大安全承诺横向看板 (结构化网格布局) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <!-- 承诺 1: 零写闪存 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_s_8"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_ok"
+                android:text="零写车机闪存"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="未插 U 盘拒绝落盘，全力保护原厂总线闪存寿命"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <!-- 承诺 2: 芯片本地运算 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_s_8"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_ac"
+                android:text="100% 本地运算"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="视频编码与传感器推理全闭环，绝无云端截流"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <!-- 承诺 3: 录音自主掌控 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/sp_s_8"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_ok"
+                android:text="座舱音频自主"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="麦克风随时一键启闭，关闭仅记录纯净视频画面"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+
+        <!-- 承诺 4: 私有直连通道 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/sp_bg_card"
+            android:orientation="vertical"
+            android:padding="@dimen/sp_s_12">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_action_check"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/sp_ac"
+                android:text="私有通道直达"
+                android:textColor="@color/sp_tx"
+                android:textSize="@dimen/sp_t_caption"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="远程预警直发个人端点，无任何第三方中转服务"
+                android:textColor="@color/sp_tx3"
+                android:textSize="@dimen/sp_t_micro" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 3. 详细结构化条款滚动区 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginTop="@dimen/sp_s_12"
+        android:fadeScrollbars="false"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 模块 1：数据采集明细表 (双列结构化布局) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill_accent"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 1 部分"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="数据采集范围与用途清单"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 条目 1: 影像 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_12"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="96dp"
+                        android:layout_height="wrap_content"
+                        android:text="车外四路影像"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="前/后/左/右四通道摄像头硬件，仅在行车及哨兵模式开启期间录制，用于行车安全取证与异常震动锁定。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@color/sp_line" />
+
+                <!-- 条目 2: 座舱音频 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="96dp"
+                        android:layout_height="wrap_content"
+                        android:text="座舱环境音频"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="调用车内录音麦克风，录像文件同步封装 AAC 音轨。此项受系统权限保护且在设置中提供独立软开关，随时可完全关闭。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@color/sp_line" />
+
+                <!-- 条目 3: 车辆信号 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="96dp"
+                        android:layout_height="wrap_content"
+                        android:text="VHAL 车身状态"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="只读订阅车速、挡位、转向灯、12V 蓄电池电压及环境温度。用于视频画面 OSD 水印与盲区自动唤醒，绝不下发任何控制总线指令。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 模块 2：存储与数据隔离机制 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill_accent"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 2 部分"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="存储物理隔离与安全保障"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_action_check"
+                        android:drawablePadding="@dimen/sp_s_8"
+                        android:drawableTint="@color/sp_ok"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="纯物理介质隔离：录像完全写入自备外置 U 盘，拔下即可物理断开并由车主直接带离掌控。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:drawableStart="@drawable/ic_action_check"
+                        android:drawablePadding="@dimen/sp_s_8"
+                        android:drawableTint="@color/sp_ok"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="免流局域网快传：仅限手机与车机处于同一本地局域网时建立免流直传通道，不经公网转发。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:drawableStart="@drawable/ic_action_check"
+                        android:drawablePadding="@dimen/sp_s_8"
+                        android:drawableTint="@color/sp_ok"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="零云端第三方留存：开发者不自设任何集中式服务器，无任何收集、转卖、分析车主行车隐私的行为。"
+                        android:textColor="@color/sp_tx2"
+                        android:textSize="@dimen/sp_t_caption" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 模块 3：车主控制权 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sp_s_12"
+                android:background="@drawable/sp_bg_card"
+                android:orientation="vertical"
+                android:padding="@dimen/sp_s_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_pill_accent"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:text="第 3 部分"
+                        android:textColor="@color/sp_ac"
+                        android:textSize="@dimen/sp_t_micro"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/sp_s_8"
+                        android:text="车主完全自主支配权利"
+                        android:textColor="@color/sp_tx"
+                        android:textSize="@dimen/sp_t_body"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sp_s_10"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="车主拥有随时撤回权限的自由。在系统设置中支持随时清理格式化外置存储、备份或导出配置；卸载极视后本地不保留任何数据残余。"
+                    android:textColor="@color/sp_tx2"
+                    android:textSize="@dimen/sp_t_caption" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="@dimen/sp_s_16"
+        android:background="@color/sp_line" />
+
+    <!-- 4. 底部动作条 -->
+    <TextView
+        android:id="@+id/btn_dialog_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/sp_bg_pill_accent"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:text="我已充分阅读并知悉"
+        android:textColor="@color/sp_ac"
+        android:textSize="@dimen/sp_t_label"
+        android:textStyle="bold" />
+</LinearLayout>

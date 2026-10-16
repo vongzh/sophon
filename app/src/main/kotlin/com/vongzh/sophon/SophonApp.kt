@@ -2,6 +2,11 @@ package com.vongzh.sophon
 
 import android.app.Application
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import com.vongzh.sophon.core.storage.StorageVaultImpl
 import com.vongzh.sophon.core.vhal.VehicleSignalBusImpl
 import com.vongzh.sophon.domain.contract.IStorageVault
@@ -35,6 +40,18 @@ class SophonApp : Application() {
 
         lateinit var powerStateMachine: com.vongzh.sophon.core.power.PowerStateMachine
             private set
+
+        lateinit var sentryHomeGeofence: com.vongzh.sophon.core.geofence.SentryHomeGeofence
+            private set
+
+        fun applyThemeMode(mode: Int) {
+            val nightMode = when (mode) {
+                com.vongzh.sophon.core.config.SophonPreferences.THEME_MODE_LIGHT -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                com.vongzh.sophon.core.config.SophonPreferences.THEME_MODE_DARK -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                else -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode)
+        }
     }
 
     override fun onCreate() {
@@ -43,6 +60,8 @@ class SophonApp : Application() {
         setupSandboxCrashIsolation()
 
         preferences = com.vongzh.sophon.core.config.SophonPreferences(this)
+        applyThemeMode(preferences.themeMode)
+
         storageVault = StorageVaultImpl(this)
         vehicleSignalBus = VehicleSignalBusImpl(this).apply {
             startListening()
@@ -54,6 +73,23 @@ class SophonApp : Application() {
         ).apply {
             start()
         }
+        val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+        sentryHomeGeofence = com.vongzh.sophon.core.geofence.SentryHomeGeofence(
+            context = this,
+            preferences = preferences,
+            scope = appScope
+        ).apply {
+            start()
+        }
+
+        // 围栏命中时自动撤防哨兵
+        appScope.launch {
+            sentryHomeGeofence.isAtHome.collect { atHome ->
+                powerStateMachine.setSentrySuppressedByGeofence(atHome)
+            }
+        }
+
         remoteDispatcher = com.vongzh.sophon.core.remote.RemoteDispatcher(this).apply {
             startRemoteServices()
         }

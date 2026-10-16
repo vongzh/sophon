@@ -23,7 +23,7 @@ output.json
 .DS_Store
 Thumbs.db
 
-# === 竞品分析：原始 APK、解包与反编译产物一律不入库（只保留分析结论 .md）===
-docs/竞品分析/
-docs/competitor/*
-!docs/competitor/*.md
+# === 文档与测试构建临时产物 ===
+docs/**/*.apk
+docs/**/*.jar
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 车载待命机位引导盘底：88dp 圆形微拟态毛玻璃盘，带细腻高光外描边 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#2610151C" />
+    <stroke
+        android:width="1.5dp"
+        android:color="#24FFFFFF" />
+</shape>

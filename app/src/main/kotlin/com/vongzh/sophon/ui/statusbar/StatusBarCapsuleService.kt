@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.vongzh.sophon.R
@@ -33,9 +34,9 @@ import kotlin.math.abs
 /**
  * 车机顶部状态栏胶囊与快捷卡片服务 (StatusBarCapsuleService)
  *
- * 【对标盯盯车核心交互】
+ * 【车规原生灵动交互】
  * 1. 悬停于领克 08 屏幕最顶端状态栏 (Gravity.TOP)；
- * 2. 实时常驻展示：🔴 录制呼吸红点 + 00:00:00 秒表 + 🖫 U 盘指示；
+ * 2. 实时常驻展示：录制呼吸红点 + 00:00:00 秒表 + U 盘图标指示；
  * 3. 支持左右水平拖动调整位置并持久化保存 (island_x)；
  * 4. 单手轻触弹出快捷控制卡片 (抓拍/加锁/主页)，4 秒无操作自动收起；
  * 5. 严格落实【底线一】：挂入 R 挡或原厂 360 全景激活时，50ms 内极速隐身让位！
@@ -64,10 +65,6 @@ class StatusBarCapsuleService : Service() {
     private var panelParams: WindowManager.LayoutParams? = null
     private var isPanelAttached = false
     private var panelDismissJob: Job? = null
-
-    // 运行状态
-    private var recordingDurationSec = 0L
-    private var isRecording = true
 
     override fun onCreate() {
         super.onCreate()
@@ -175,13 +172,13 @@ class StatusBarCapsuleService : Service() {
             y = 44 // 在胶囊正下方弹出
         }
 
-        panelView?.findViewById<TextView>(R.id.tv_panel_close)?.setOnClickListener {
+        panelView?.findViewById<ImageView>(R.id.tv_panel_close)?.setOnClickListener {
             dismissQuickPanel()
         }
 
         // 抓拍按钮
         panelView?.findViewById<TextView>(R.id.btn_panel_snapshot)?.setOnClickListener {
-            Toast.makeText(this, "📷 已触发四向即时抓拍", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "已触发四向即时抓拍", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SophonCoreService::class.java).apply {
                 action = SophonCoreService.ACTION_TRIGGER_SNAPSHOT
             }
@@ -191,7 +188,7 @@ class StatusBarCapsuleService : Service() {
 
         // 加锁按钮
         panelView?.findViewById<TextView>(R.id.btn_panel_lock)?.setOnClickListener {
-            Toast.makeText(this, "🔒 当前视频切片已加锁保护", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "当前视频切片已加锁保护", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SophonCoreService::class.java).apply {
                 action = SophonCoreService.ACTION_TRIGGER_LOCK
             }
@@ -199,7 +196,7 @@ class StatusBarCapsuleService : Service() {
             resetDismissTimer()
         }
 
-        // 免流快传按钮
+        // 局域网快传按钮
         panelView?.findViewById<TextView>(R.id.btn_panel_share)?.setOnClickListener {
             dismissQuickPanel()
             val mainIntent = Intent(this, MainActivity::class.java).apply {
@@ -249,6 +246,21 @@ class StatusBarCapsuleService : Service() {
         params.x = maxOf(20, capParams.x - 70)
         params.y = capParams.y + 36
 
+        // 真实更新录制状态与存储状态
+        val isRec = SophonCoreService.instance?.isRecordingFlow?.value ?: false
+        val tvStatus = view.findViewById<TextView>(R.id.tv_panel_status)
+        if (isRec) {
+            tvStatus?.text = "● 录制中"
+            tvStatus?.setTextColor(getColor(R.color.sp_dg))
+        } else {
+            tvStatus?.text = "○ 待命中"
+            tvStatus?.setTextColor(getColor(R.color.sp_tx2))
+        }
+
+        val isUsbMounted = SophonApp.storageVault.isUsbMounted.value
+        val storageInfo = view.findViewById<TextView>(R.id.tv_panel_storage_info)
+        storageInfo?.text = if (isUsbMounted) "外接存储: 正常已挂载" else "外接存储: 未插入或离线"
+
         if (!isPanelAttached) {
             try {
                 wm.addView(view, params)
@@ -283,7 +295,7 @@ class StatusBarCapsuleService : Service() {
     }
 
     /**
-     * 响应式监听车身总线与 U 盘状态
+     * 响应式监听车身总线与外接存储状态
      */
     private fun observeSystemTelemetry() {
         val bus = SophonApp.vehicleSignalBus
@@ -302,36 +314,55 @@ class StatusBarCapsuleService : Service() {
             }
         }
 
-        // 2. U 盘插拔状态
+        // 2. 外接存储插拔状态
         serviceScope.launch {
             storage.isUsbMounted.collectLatest { isMounted ->
-                capsuleView?.findViewById<TextView>(R.id.tv_capsule_usb)?.let { tv ->
-                    if (isMounted) {
-                        tv.text = "🖫"
-                        tv.setTextColor(getColor(R.color.sp_ac))
-                    } else {
-                        tv.text = "✕"
-                        tv.setTextColor(getColor(R.color.sp_wn))
-                    }
+                capsuleView?.findViewById<ImageView>(R.id.tv_capsule_usb)?.let { iv ->
+                    iv.setImageResource(
+                        if (isMounted) R.drawable.ic_usb_drive else R.drawable.ic_action_warning
+                    )
+                    iv.setColorFilter(getColor(if (isMounted) R.color.sp_ac else R.color.sp_wn))
+                    iv.contentDescription =
+                        if (isMounted) "外接存储已挂载" else "未检测到外接存储"
                 }
                 panelView?.findViewById<TextView>(R.id.tv_panel_storage_info)?.text =
-                    if (isMounted) "U盘状态: 正常已挂载" else "U盘状态: 未插入 (待机模式)"
+                    if (isMounted) "外接存储: 正常已挂载" else "外接存储: 未插入 (待机模式)"
             }
         }
     }
 
     private fun startLiveTimerLoop() {
         serviceScope.launch {
+            val tvTime = capsuleView?.findViewById<TextView>(R.id.tv_capsule_time)
+            val dot = capsuleView?.findViewById<View>(R.id.view_rec_dot)
+
             while (isActive) {
-                delay(1000L)
-                if (isRecording) {
-                    recordingDurationSec++
-                    val h = recordingDurationSec / 3600
-                    val m = (recordingDurationSec % 3600) / 60
-                    val s = recordingDurationSec % 60
-                    val timeStr = String.format("%02d:%02d:%02d", h, m, s)
-                    capsuleView?.findViewById<TextView>(R.id.tv_capsule_time)?.text = timeStr
+                val isRec = SophonCoreService.instance?.isRecordingFlow?.value ?: false
+                val duration = SophonCoreService.instance?.recordingDurationSecFlow?.value ?: 0L
+
+                if (isRec) {
+                    val h = duration / 3600
+                    val m = (duration % 3600) / 60
+                    val s = duration % 60
+                    tvTime?.text = String.format("%02d:%02d:%02d", h, m, s)
+                    dot?.alpha = if (duration % 2L == 0L) 1.0f else 0.35f
+                } else {
+                    tvTime?.text = "待命中"
+                    dot?.alpha = 0.35f
                 }
+
+                if (isPanelAttached && panelView != null) {
+                    val tvStatus = panelView?.findViewById<TextView>(R.id.tv_panel_status)
+                    if (isRec) {
+                        tvStatus?.text = "● 录制中"
+                        tvStatus?.setTextColor(getColor(R.color.sp_dg))
+                    } else {
+                        tvStatus?.text = "○ 待命中"
+                        tvStatus?.setTextColor(getColor(R.color.sp_tx2))
+                    }
+                }
+
+                delay(1000L)
             }
         }
     }

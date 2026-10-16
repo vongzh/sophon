@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 车规独立悬浮按键默认背景：深色半透明毛玻璃底 + 微细发光外框 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#D9161B22" />
+    <stroke
+        android:width="1.2dp"
+        android:color="#40FFFFFF" />
+    <size
+        android:width="46dp"
+        android:height="46dp" />
+</shape>

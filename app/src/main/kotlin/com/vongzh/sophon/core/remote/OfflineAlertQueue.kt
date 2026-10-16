@@ -114,18 +114,22 @@ class OfflineAlertQueue(
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .build()
 
-        connectivityManager.registerNetworkCallback(request, object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                isNetworkAvailable = true
-                Log.i(TAG, "Network connection restored! Triggering offline alert flush...")
-                flushPendingAlerts()
-            }
+        try {
+            connectivityManager.registerNetworkCallback(request, object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    isNetworkAvailable = true
+                    Log.i(TAG, "Network connection restored! Triggering offline alert flush...")
+                    flushPendingAlerts()
+                }
 
-            override fun onLost(network: Network) {
-                isNetworkAvailable = false
-                Log.w(TAG, "Network connection lost (e.g. entering underground basement).")
-            }
-        })
+                override fun onLost(network: Network) {
+                    isNetworkAvailable = false
+                    Log.w(TAG, "Network connection lost (e.g. entering underground basement).")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to register network callback: ${e.message}")
+        }
     }
 
     /**

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 极视 车规智瞳官方应用徽标 (全矢量 · 纯正座舱光学科技美学) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+
+    <!-- 1. 精密钛黑光学镜筒底盘 -->
+    <path
+        android:pathData="M20,20m-18,0a18,18 0 1,0 36,0a18,18 0 1,0 -36,0"
+        android:fillColor="#151A23"
+        android:strokeColor="#2F64D7"
+        android:strokeWidth="1.8" />
+
+    <!-- 2. 中层光圈刻度环 (半透明科技蓝) -->
+    <path
+        android:pathData="M20,20m-13,0a13,13 0 1,0 26,0a13,13 0 1,0 -26,0"
+        android:strokeColor="#405B9BFF"
+        android:strokeWidth="1.0" />
+
+    <!-- 3. 四向全维感知标尺准星 (前/后/左/右 4 通道指示微刻度) -->
+    <path
+        android:pathData="M20,3.5 L20,7.5 M20,32.5 L20,36.5 M3.5,20 L7.5,20 M32.5,20 L36.5,20"
+        android:strokeColor="#5B9BFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+
+    <!-- 4. 核心透镜瞳孔 (高光渐变聚焦) -->
+    <path
+        android:pathData="M20,20m-7,0a7,7 0 1,0 14,0a7,7 0 1,0 -14,0"
+        android:fillColor="#2F64D7" />
+
+    <!-- 5. 中心光学感光元 (明亮反射高光) -->
+    <path
+        android:pathData="M20,20m-3,0a3,3 0 1,0 6,0a3,3 0 1,0 -6,0"
+        android:fillColor="#FFFFFF" />
+
+    <!-- 6. 极亮折射光斑 -->
+    <path
+        android:pathData="M18,18m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0"
+        android:fillColor="#FFFFFF" />
+</vector>

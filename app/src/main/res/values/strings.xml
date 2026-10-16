@@ -3,7 +3,7 @@
     <string name="channel_core_service_name">极视车载核心服务</string>
     <string name="channel_core_service_desc">用于维持车机四向行车记录与盲区补盲的后台运行</string>
     <string name="recording_active">极视全维行车记录正在运行中</string>
-    <string name="no_usb_warning">未检测到外置 U 盘，录制已挂起（保持盲区补盲模式）</string>
+    <string name="no_usb_warning">未检测到外接存储，录制已挂起（保持盲区补盲模式）</string>
     
     <!--  Navigation Rail -->
     <string name="nav_live">实时监控</string>
@@ -12,4 +12,65 @@
     <string name="nav_trip">行程记录</string>
     <string name="nav_photos">相册图库</string>
     <string name="nav_settings">系统设置</string>
+    <string name="privacy_policy_content">一、采集的信息
+1. 影像：四路摄像头采集的车外画面（用于行车录制、紧急加锁、哨兵守护）；
+2. 声音：车内录音（可在设置中随时关闭，关闭后不影响录像）；
+3. 车辆信号：车速、挡位、转向灯、12V 电压等只读车身数据（仅用于 OSD 水印与安全判定，不用于控制车辆）；
+4. 存储内容：写入外接存储的视频切片与抓拍照片。
+
+二、信息的使用
+上述信息仅在您的车机本地处理，用于行车安全录制、碰撞/急刹自动加锁、驻车哨兵守护，以及您主动配置并启用的远程告警推送（Bark / Telegram / 飞书）。
+
+三、信息的存储与对外提供
+1. 所有视频与照片仅写入您自有的外接存储，不写入车机内置闪存；
+2. 我们不会将您的影像上传至任何服务器；仅在您主动启用远程告警时，才向您自行填写的推送通道发送告警文本与您选择的抓拍图片；
+3. 除法律法规要求或您另行授权外，我们不会向第三方提供上述信息。
+
+四、您的权利
+您可随时在设置中关闭车内录音、关闭远程推送、关闭 OSD 水印，也可在行车归档中删除或加锁任意视频切片。卸载应用将移除本地配置，外接存储中的视频文件由您自行保管。
+
+五、联系我们
+如对本协议有任何疑问，可通过应用分发页面公示的开发者联系方式与我们联系。
+
+六、协议更新
+本协议条款发生重大变更时，应用会在启动时重新征得您的明示同意。</string>
+
+    <string name="disclaimer_content">一、非官方产品声明
+极视 (Sophon) 为第三方独立开发的车载应用，并非汽车制造商或其授权服务商的官方产品。安装与使用本应用可能受到原厂保修条款或用户协议的约束，请您在安装前自行确认并承担相应后果。
+
+二、功能定位声明
+1. 本应用提供的盲区补盲、开门预警、窄道会车辅助等功能均为驾驶辅助性质，不能替代驾驶员的观察与判断，也不构成对行车安全的任何承诺；
+2. 受摄像头硬件能力、天气、光照、镜头污损等因素影响，影像可能存在盲区、畸变或识别延迟；
+3. 驾驶员始终是车辆安全的唯一责任人，应始终遵守道路交通安全法规并保持对车辆及周边环境的直接观察。
+
+三、数据与存储声明
+1. 本应用严格遵循「零写内部闪存」原则，未检测到外接存储时不会向车机内置存储写入任何录像数据；
+2. 视频与照片仅保存在您自有的外接存储中，因外接存储损坏、拔除、文件系统错误导致的资料丢失，本应用不承担赔偿责任；
+3. 远程告警推送仅在您主动配置并启用后生效，推送内容与送达时效受您所选第三方通道与网络状况影响。
+
+四、责任限制
+在法律允许的最大范围内，开发者不对因使用或无法使用本应用导致的任何直接或间接损失承担责任，包括但不限于数据丢失、设备故障、行车事故及第三方索赔。
+
+五、继续使用
+您继续使用本应用即表示已完整阅读、理解并同意接受本声明全部条款的约束。</string>
+
+    <!-- 权限页：逐项展示真实授权状态，不使用静态说明替代 -->
+    <string name="perm_camera_name">相机</string>
+    <string name="perm_camera_desc">四路车外画面采集，用于行车录制与哨兵抓拍</string>
+    <string name="perm_audio_name">麦克风</string>
+    <string name="perm_audio_desc">座舱内录音，可在设置中随时关闭且不影响录像</string>
+    <string name="perm_notify_name">通知</string>
+    <string name="perm_notify_desc">录制状态常驻通知与哨兵告警提醒</string>
+    <string name="perm_overlay_name">悬浮窗</string>
+    <string name="perm_overlay_desc">打灯补盲、后视小窗与功能悬浮球，需系统「显示在其他应用上层」授权</string>
+    <string name="perm_car_name">车身信号 (VHAL)</string>
+    <string name="perm_car_desc">车速、挡位、转向灯等只读信号，属系统签名级权限，需由车机系统预置授予</string>
+    <string name="perm_status_granted">已授权</string>
+    <string name="perm_status_denied">未授权</string>
+    <string name="perm_status_system">需系统授予</string>
+    <string name="perm_action_grant">去授权</string>
+    <string name="perm_action_open">去设置</string>
+    <string name="perm_action_done">已完成</string>
+    <string name="perm_summary_all_granted">基础权限已全部授予</string>
+    <string name="perm_summary_pending">仍有 %1$d 项权限待授予</string>
 </resources>

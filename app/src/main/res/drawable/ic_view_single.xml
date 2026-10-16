@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- 单路全屏镜头监看视窗 (Single Full View - 摒弃原加号，升级为车规级全屏镜头取景框) -->
+    <!-- 外层监视器屏幕视窗 -->
+    <path
+        android:pathData="M 3,4.5 C 3,3.7 3.7,3 4.5,3 L 15.5,3 C 16.3,3 17,3.7 17,4.5 L 17,15.5 C 17,16.3 16.3,17 15.5,17 L 4.5,17 C 3.7,17 3,16.3 3,15.5 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- 居中主摄镜头光圈 -->
+    <path
+        android:pathData="M 10,7 C 11.66,7 13,8.34 13,10 C 13,11.66 11.66,13 10,13 C 8.34,13 7,11.66 7,10 C 7,8.34 8.34,7 10,7 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.4" />
+
+    <!-- 镜头核心光斑 -->
+    <path
+        android:pathData="M 10,9 C 10.55,9 11,9.45 11,10 C 11,10.55 10.55,11 10,11 C 9.45,11 9,10.55 9,10 C 9,9.45 9.45,9 10,9 Z"
+        android:fillColor="#FFFFFF" />
+</vector>

@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 无画面 / 镜头未接入简洁矢量图标 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M21,6.5l-4,4V7c0,-0.55 -0.45,-1 -1,-1H9.82L21,17.18V6.5z M3.27,2L2,3.27l4.73,4.73H4c-0.55,0 -1,0.45 -1,1v10c0,0.55 0.45,1 1,1h12c0.21,0 0.39,-0.08 0.55,-0.18L19.73,22 21,20.73 3.27,2z M5,18V10h3.73l8,8H5z"/>
+</vector>

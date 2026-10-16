@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 主操作按键背景：抓拍等高频首选操作，高对比度实心品牌底 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/sp_r_pill" />
+    <solid android:color="@color/sp_ac" />
+</shape>

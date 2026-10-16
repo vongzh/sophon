@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 相册图库网格单项卡片 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:layout_margin="6dp"
+    android:background="@drawable/sp_bg_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clipToOutline="true">
+
+    <!-- 缩略图 -->
+    <ImageView
+        android:id="@+id/iv_grid_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="照片缩略图" />
+
+    <!-- 顶部半透明机位标签 -->
+    <TextView
+        android:id="@+id/tv_grid_cam_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/sp_bg_chip"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:text="前路"
+        android:textColor="@color/sp_tx"
+        android:textSize="@dimen/sp_t_micro" />
+
+    <!-- 多选复选标记 -->
+    <ImageView
+        android:id="@+id/iv_grid_check"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:background="@drawable/sp_bg_circle_glass"
+        android:src="@drawable/ic_action_check"
+        android:tint="@color/sp_ac"
+        android:visibility="gone"
+        android:contentDescription="选中标记" />
+
+    <!-- 底部渐变信息阴影条 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_gravity="bottom"
+        android:background="#A0000000"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/tv_grid_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:text="12:00:00"
+            android:textColor="@color/sp_tx"
+            android:textSize="@dimen/sp_t_micro" />
+
+        <TextView
+            android:id="@+id/tv_grid_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.2 MB"
+            android:textColor="@color/sp_tx3"
+            android:textSize="@dimen/sp_t_micro" />
+    </LinearLayout>
+
+</FrameLayout>

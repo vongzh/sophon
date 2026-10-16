@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 影像目录 -->
+    <path
+        android:pathData="M 3,6.4 C 3,5.6 3.6,5 4.4,5 L 8.8,5 C 9.5,5 10.2,5.4 10.5,6 L 11.8,7.8 L 19.6,7.8 C 20.4,7.8 21,8.4 21,9.2 L 21,17.6 C 21,18.4 20.4,19 19.6,19 L 4.4,19 C 3.6,19 3,18.4 3,17.6 Z"
+        android:strokeColor="@color/sp_tx2"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+    />
+</vector>

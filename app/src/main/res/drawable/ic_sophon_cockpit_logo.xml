@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ===================================================================
+     极视 纯正车规级抽象几何智瞳徽标 (Minimalist Cyber Vision Emblem)
+     彻底摒弃写实眼球与靶心准星，采用高端豪华智能车机几何透镜美学：
+     1. 外层：双弧全维环形轨道 (前瞻与广角流线)
+     2. 中层：4 通道精密光学四棱光阀 (几何对称快门叶片)
+     3. 核心：纯净璀璨高光透镜晶体
+     =================================================================== -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="36"
+    android:viewportHeight="36">
+
+    <!-- 1. 深邃黑曜石微透底座 -->
+    <path
+        android:pathData="M 18,1 A 17,17 0 1,1 17.99,1 Z"
+        android:fillColor="#1C141E2B" />
+
+    <!-- 2. 外层：双弧全维环形轨道 (主视野弧光，青蓝渐变流线) -->
+    <path
+        android:pathData="M 18,2 C 26.84,2 34,9.16 34,18 C 34,26.84 26.84,34 18,34 C 9.16,34 2,26.84 2,18 C 2,9.16 9.16,2 18,2 Z"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="2"
+                android:startY="2"
+                android:endX="34"
+                android:endY="34"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF00D4AA" />
+                <item android:offset="0.5" android:color="#FF2F64D7" />
+                <item android:offset="1.0" android:color="#2000D4AA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 3. 内嵌精密刻度环 (精细光学镜组内槽) -->
+    <path
+        android:pathData="M 18,6 A 12,12 0 1,1 17.99,6 Z"
+        android:strokeColor="#3000D4AA"
+        android:strokeWidth="1.0" />
+
+    <!-- 4. 四路全维几何光学叶片 (4-Blade Geometric Shutter) -->
+    <!-- 上叶片 (前视主摄) -->
+    <path
+        android:pathData="M 18,8 L 23,15 L 18,17 L 13,15 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="18"
+                android:startY="8"
+                android:endX="18"
+                android:endY="17"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF00D4AA" />
+                <item android:offset="1.0" android:color="#8000D4AA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 下叶片 (后视广角) -->
+    <path
+        android:pathData="M 18,28 L 13,21 L 18,19 L 23,21 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="18"
+                android:startY="28"
+                android:endX="18"
+                android:endY="19"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF2F64D7" />
+                <item android:offset="1.0" android:color="#802F64D7" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 左叶片 (左视补盲) -->
+    <path
+        android:pathData="M 8,18 L 15,13 L 17,18 L 15,23 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="8"
+                android:startY="18"
+                android:endX="17"
+                android:endY="18"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#CC00D4AA" />
+                <item android:offset="1.0" android:color="#6000D4AA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 右叶片 (右视补盲) -->
+    <path
+        android:pathData="M 28,18 L 21,23 L 19,18 L 21,13 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="28"
+                android:startY="18"
+                android:endX="19"
+                android:endY="18"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#CC2F64D7" />
+                <item android:offset="1.0" android:color="#602F64D7" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 5. 核心：纯净光学聚焦透镜 (钻石级中心感光点) -->
+    <path
+        android:pathData="M 18,18 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0"
+        android:fillColor="#FF0F172A"
+        android:strokeColor="#FF00D4AA"
+        android:strokeWidth="1.2" />
+
+    <!-- 6. 纯白通透高光聚光点 -->
+    <path
+        android:pathData="M 17.5,17.5 m -1,0 a 1,1 0 1,0 2,0 a 1,1 0 1,0 -2,0"
+        android:fillColor="#FFFFFFFF" />
+
+</vector>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--  功能悬浮球：普及色实心圆 + 细描边，保证在任何画面上都可读  -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/sp_ac" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/sp_tx_inverse" />
+</shape>
