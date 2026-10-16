@@ -1,48 +1,71 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512" fill="none">
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="256" height="256" fill="none">
   <defs>
-    <linearGradient id="lensGrad" x1="10" y1="10" x2="98" y2="98" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00F5D4"/>
-      <stop offset="50%" stop-color="#00D4AA"/>
-      <stop offset="100%" stop-color="#007A5E"/>
+    <!-- Background disc gradient -->
+    <linearGradient id="bgGrad" x1="54" y1="0" x2="54" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#F2F7F9" />
+      <stop offset="100%" stop-color="#E2ECF2" />
     </linearGradient>
-    <linearGradient id="arcGrad" x1="32" y1="54" x2="76" y2="56" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00D4AA" stop-opacity="0"/>
-      <stop offset="40%" stop-color="#00F5D4" stop-opacity="1"/>
-      <stop offset="80%" stop-color="#FFFFFF" stop-opacity="1"/>
-      <stop offset="100%" stop-color="#00D4AA" stop-opacity="0"/>
+    <!-- Right glow -->
+    <radialGradient id="glowGrad" cx="68" cy="44" r="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" stop-opacity="0.30" />
+      <stop offset="100%" stop-color="#00D4AA" stop-opacity="0" />
+    </radialGradient>
+    <!-- Base plate -->
+    <linearGradient id="plateGrad" x1="54" y1="22" x2="54" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#00A382" stop-opacity="0.04" />
     </linearGradient>
-    <linearGradient id="pupilGrad" x1="50" y1="50" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#00F5D4"/>
-      <stop offset="60%" stop-color="#00A382"/>
-      <stop offset="100%" stop-color="#005E4A"/>
+    <!-- Outer optical ring -->
+    <linearGradient id="ringGrad" x1="32" y1="32" x2="76" y2="76" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" />
+      <stop offset="100%" stop-color="#0A84FF" />
     </linearGradient>
+    <!-- Iris gradient -->
+    <linearGradient id="irisGrad" x1="41" y1="41" x2="67" y2="67" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" />
+      <stop offset="70%" stop-color="#009E7E" />
+      <stop offset="100%" stop-color="#0A84FF" />
+    </linearGradient>
+    <!-- Wing arc gradient -->
+    <linearGradient id="wingGrad" x1="66" y1="36" x2="79" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" />
+      <stop offset="100%" stop-color="#00D4AA" stop-opacity="0.25" />
+    </linearGradient>
+    <!-- Subtle drop shadow for depth on light background -->
+    <filter id="discShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0D1520" flood-opacity="0.10" />
+    </filter>
   </defs>
 
-  <!-- 0. 深邃光学镜片底盘 (微透质感，自适应深浅背景) -->
-  <circle cx="54" cy="54" r="44" fill="#0E1624" stroke="#1E2A3B" stroke-width="1.6" />
-  <circle cx="54" cy="54" r="44" fill="#00D4AA" fill-opacity="0.08" />
+  <!-- 0. Circular icon disc background (FlymeAuto porcelain white/dawn cyan) -->
+  <circle cx="54" cy="54" r="44" fill="url(#bgGrad)" stroke="#D6E4EC" stroke-width="1.2" filter="url(#discShadow)" />
+  <circle cx="68" cy="44" r="28" fill="url(#glowGrad)" />
 
-  <!-- 1. 外层精密镜筒外圈 -->
-  <circle cx="54" cy="54" r="44" stroke="url(#lensGrad)" stroke-width="3.2" stroke-linecap="round" />
+  <!-- 1. 底座微光大圆 -->
+  <circle cx="54" cy="54" r="32" fill="url(#plateGrad)" />
 
-  <!-- 2. 四向全维内嵌标尺刻度 (前/后/左/右 四通道相机，内嵌对齐) -->
-  <line x1="54" y1="13" x2="54" y2="24" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
-  <line x1="54" y1="84" x2="54" y2="95" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
-  <line x1="13" y1="54" x2="24" y2="54" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
-  <line x1="84" y1="54" x2="95" y2="54" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
+  <!-- 2. 四向全维感知标尺刻度 -->
+  <line x1="54" y1="24" x2="54" y2="29" stroke="#00A382" stroke-width="2.2" stroke-linecap="round" />
+  <line x1="54" y1="79" x2="54" y2="84" stroke="#00A382" stroke-width="2.2" stroke-linecap="round" />
+  <line x1="24" y1="54" x2="29" y2="54" stroke="#00A382" stroke-width="2.2" stroke-linecap="round" />
+  <line x1="79" y1="54" x2="84" y2="54" stroke="#00A382" stroke-width="2.2" stroke-linecap="round" />
 
-  <!-- 3. 中层精密光学光圈环 -->
-  <circle cx="54" cy="54" r="28" stroke="#00D4AA" stroke-opacity="0.35" stroke-width="1.8" />
+  <!-- 3. 外层精密光学环 -->
+  <circle cx="54" cy="54" r="22" stroke="url(#ringGrad)" stroke-width="2.4" stroke-linecap="round" fill="none" />
 
-  <!-- 4. 内层光学聚焦环 -->
-  <circle cx="54" cy="54" r="18" stroke="#00F5D4" stroke-opacity="0.55" stroke-width="1.6" />
+  <!-- 4. 极视核心：中层智瞳光圈孔径 -->
+  <circle cx="54" cy="54" r="13" fill="url(#irisGrad)" />
 
-  <!-- 5. 领克破晓展翼动感光弧 -->
-  <path d="M 32,54 C 40,43 50,40 60,42 C 68,44 74,50 76,56" stroke="url(#arcGrad)" stroke-width="2.6" stroke-linecap="round" />
+  <!-- 5. 镜头核心深邃晶体瞳孔 -->
+  <circle cx="54" cy="54" r="7" fill="#0D1520" />
 
-  <!-- 6. 核心全维感知智瞳 -->
-  <circle cx="54" cy="54" r="8" fill="url(#pupilGrad)" />
+  <!-- 6. 镜头高光反射弧 -->
+  <path d="M 49,50 C 51,48 54,48 56,49" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" fill="none" />
 
-  <!-- 7. 智瞳极亮光学高光点 -->
-  <circle cx="51.5" cy="51.5" r="1.8" fill="#FFFFFF" />
+  <!-- 7. 领克08 破晓之光灵动流线 (右侧展翼光弧) -->
+  <path d="M 66,36 C 75,41 79,48 79,55 C 79,62 75,69 66,74" stroke="url(#wingGrad)" stroke-width="2.8" stroke-linecap="round" fill="none" />
+
+  <!-- 8. 灵动星芒能量点 -->
+  <circle cx="82" cy="34" r="1.8" fill="#00D4AA" />
 </svg>
