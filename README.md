@@ -1,7 +1,7 @@
 # 极视 (Sophon) - 车规级四向行车记录与智能视觉安全系统
 
 <p align="center">
-  <img src="app/src/main/res/drawable/ic_sophon_logo.xml" width="128" height="128" alt="Sophon Logo" />
+  <img src="docs/logo.png" width="128" height="128" alt="Sophon Logo" />
 </p>
 
 <p align="center">
@@ -116,42 +116,42 @@
 ## 🏛️ 系统分层架构
 
 ```mermaid
-graph TD
-    subgraph 车机硬件与系统层 (Hardware & System HAL)
-        CAM[Camera2 API / HAL3 四路摄像头]
-        CAN[VHAL / gRPC 车身信号总线]
-        USB[Linux V4L2 / USB OTG 高速存储]
-        VPU[龙鹰一号 VPU 硬件编解码器]
+flowchart TD
+    subgraph SUB_HAL ["车机硬件与系统层 (Hardware & System HAL)"]
+        CAM["Camera2 API / HAL3 四路摄像头"]
+        CAN["VHAL / gRPC 车身信号总线"]
+        USB["Linux V4L2 / USB OTG 高速存储"]
+        VPU["龙鹰一号 VPU 硬件编解码器"]
     end
 
-    subgraph 核心引擎层 (Sophon Core Service)
-        HAL_MGR[多路摄像头采集管理器]
-        GPU_PIPE[OpenGL ES 3.0 FBO 合流与增强管线]
-        CODEC[MediaCodec 硬件编码引擎]
-        AUDIO[座舱音频采集与编码器]
-        MUXER[0ms IDR 热切片与容灾封装]
-        STORAGE[8MB 环形内存缓冲与存储调度器]
-        SIGNAL[只读车身信号自适应总线]
-        POWER[车载电源状态机管理]
+    subgraph SUB_CORE ["核心引擎层 (Sophon Core Service)"]
+        HAL_MGR["多路摄像头采集管理器"]
+        GPU_PIPE["OpenGL ES 3.0 FBO 合流与增强管线"]
+        CODEC["MediaCodec 硬件编码引擎"]
+        AUDIO["座舱音频采集与编码器"]
+        MUXER["0ms IDR 热切片与容灾封装"]
+        STORAGE["8MB 环形内存缓冲与存储调度器"]
+        SIGNAL["只读车身信号自适应总线"]
+        POWER["车载电源状态机管理"]
     end
 
-    subgraph 业务守护层 (Guard & Services)
-        SENTRY[哨兵与驻车监控守护]
-        GEOFENCE[常用地点安全围栏]
-        OVERLAY_CTRL[全场景悬浮窗矩阵控制器]
-        KEEPALIVE[车机多级保活与前台服务]
-        REMOTE_SRV[Telegram / 飞书 / Bark 远程调度]
+    subgraph SUB_GUARD ["业务守护层 (Guard & Services)"]
+        SENTRY["哨兵与驻车监控守护"]
+        GEOFENCE["常用地点安全围栏"]
+        OVERLAY_CTRL["全场景悬浮窗矩阵控制器"]
+        KEEPALIVE["车机多级保活与前台服务"]
+        REMOTE_SRV["Telegram / 飞书 / Bark 远程调度"]
     end
 
-    subgraph 交互与呈现层 (FlymeAuto Presentation)
-        MAIN_UI[MainActivity 主控 + Navigation Rail]
-        LIVE_FRAG[实时全景监看面板]
-        HIST_FRAG[RecordingHistoryFragment 录像库]
-        SENTRY_FRAG[SentryEventReviewFragment 哨兵复盘]
-        PHOTO_FRAG[PhotoViewerFragment 相册图库]
-        SETTING_FRAG[SophonSettingsFragment 偏好设置]
-        CAPSULE[StatusBarCapsuleService 状态栏胶囊]
-        WEB_PORTAL[局域网免流 H5 快传服务]
+    subgraph SUB_UI ["交互与呈现层 (FlymeAuto Presentation)"]
+        MAIN_UI["MainActivity 主控 + Navigation Rail"]
+        LIVE_FRAG["实时全景监看面板"]
+        HIST_FRAG["RecordingHistoryFragment 录像库"]
+        SENTRY_FRAG["SentryEventReviewFragment 哨兵复盘"]
+        PHOTO_FRAG["PhotoViewerFragment 相册图库"]
+        SETTING_FRAG["SophonSettingsFragment 偏好设置"]
+        CAPSULE["StatusBarCapsuleService 状态栏胶囊"]
+        WEB_PORTAL["局域网免流 H5 快传服务"]
     end
 
     CAM --> HAL_MGR
@@ -168,9 +168,9 @@ graph TD
     POWER --> SENTRY
     GEOFENCE --> SENTRY
 
-    KEEPALIVE -.保活守护.-> 核心引擎层
-    REMOTE_SRV <==> 核心引擎层
-    核心引擎层 <== IPC / Flow ==> 交互与呈现层
+    KEEPALIVE -. 保活守护 .-> SUB_CORE
+    REMOTE_SRV <--> SUB_CORE
+    SUB_CORE <-->|IPC / StateFlow| SUB_UI
 ```
 
 ---
@@ -213,7 +213,8 @@ Sophon/
 │   ├── SYSTEM_SAFETY_PRINCIPLES.md        # 车载系统安全与稳定性最高准则
 │   ├── BENCHMARK_AND_CAPABILITY_MATRIX.md # 技术能力与行业方案对照矩阵
 │   ├── design/                            # 车规 HMI 设计系统规范与双主题设计稿
-│   └── screenshots/                       # 车机界面高清预览截图
+│   ├── screenshots/                       # 车机界面高清预览截图
+│   └── logo.png                           # 官方车规品牌徽标
 ├── gradle/                    # Gradle 包装器
 ├── build.gradle.kts           # 顶级工程构建脚本
 ├── settings.gradle.kts        # 工程模块索引

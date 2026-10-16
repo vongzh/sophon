@@ -1,0 +1,48 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512" fill="none">
+  <defs>
+    <linearGradient id="lensGrad" x1="10" y1="10" x2="98" y2="98" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="50%" stop-color="#00D4AA"/>
+      <stop offset="100%" stop-color="#007A5E"/>
+    </linearGradient>
+    <linearGradient id="arcGrad" x1="32" y1="54" x2="76" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00D4AA" stop-opacity="0"/>
+      <stop offset="40%" stop-color="#00F5D4" stop-opacity="1"/>
+      <stop offset="80%" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#00D4AA" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="pupilGrad" x1="50" y1="50" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="60%" stop-color="#00A382"/>
+      <stop offset="100%" stop-color="#005E4A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 0. 深邃光学镜片底盘 (微透质感，自适应深浅背景) -->
+  <circle cx="54" cy="54" r="44" fill="#0E1624" stroke="#1E2A3B" stroke-width="1.6" />
+  <circle cx="54" cy="54" r="44" fill="#00D4AA" fill-opacity="0.08" />
+
+  <!-- 1. 外层精密镜筒外圈 -->
+  <circle cx="54" cy="54" r="44" stroke="url(#lensGrad)" stroke-width="3.2" stroke-linecap="round" />
+
+  <!-- 2. 四向全维内嵌标尺刻度 (前/后/左/右 四通道相机，内嵌对齐) -->
+  <line x1="54" y1="13" x2="54" y2="24" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
+  <line x1="54" y1="84" x2="54" y2="95" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
+  <line x1="13" y1="54" x2="24" y2="54" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
+  <line x1="84" y1="54" x2="95" y2="54" stroke="#00F5D4" stroke-width="3.0" stroke-linecap="round" />
+
+  <!-- 3. 中层精密光学光圈环 -->
+  <circle cx="54" cy="54" r="28" stroke="#00D4AA" stroke-opacity="0.35" stroke-width="1.8" />
+
+  <!-- 4. 内层光学聚焦环 -->
+  <circle cx="54" cy="54" r="18" stroke="#00F5D4" stroke-opacity="0.55" stroke-width="1.6" />
+
+  <!-- 5. 领克破晓展翼动感光弧 -->
+  <path d="M 32,54 C 40,43 50,40 60,42 C 68,44 74,50 76,56" stroke="url(#arcGrad)" stroke-width="2.6" stroke-linecap="round" />
+
+  <!-- 6. 核心全维感知智瞳 -->
+  <circle cx="54" cy="54" r="8" fill="url(#pupilGrad)" />
+
+  <!-- 7. 智瞳极亮光学高光点 -->
+  <circle cx="51.5" cy="51.5" r="1.8" fill="#FFFFFF" />
+</svg>
