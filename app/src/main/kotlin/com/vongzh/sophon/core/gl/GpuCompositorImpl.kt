@@ -303,14 +303,24 @@ class GpuCompositorImpl : ICompositor {
                 }
                 val timeStr = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.getDefault()).format(java.util.Date())
                 val brakeText = if (osdIsBraking) "ON" else "OFF"
-                val watermark = "$timeStr | %.0f km/h | $osdGearText 挡 | 刹车:$brakeText | 转向:$osdTurnText | 领克08 · 极视".format(osdSpeedKmh)
+                val gnss = com.vongzh.sophon.SophonApp.vehicleSignalBus.gnssTelemetry.value
+                val gpsPart = if (gnss.hasFix) " | " + gnss.toCoordinateString() else ""
+                val watermark = "$timeStr | %.0f km/h | $osdGearText 挡 | 刹车:$brakeText | 转向:$osdTurnText$gpsPart | 领克08 · 极视".format(osdSpeedKmh)
                 canvas.drawText(watermark, 32f, 1048f, paint)
             }
 
-            java.io.FileOutputStream(outputFile).use { out ->
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 95, out)
+            val finalBitmap = if (com.vongzh.sophon.SophonApp.preferences.isPrivacyMaskingExportEnabled) {
+                val anonymized = com.vongzh.sophon.core.security.PrivacyAnonymizer.anonymizeBitmap(bitmap)
+                bitmap.recycle()
+                anonymized
+            } else {
+                bitmap
             }
-            bitmap.recycle()
+
+            java.io.FileOutputStream(outputFile).use { out ->
+                finalBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 95, out)
+            }
+            finalBitmap.recycle()
             Log.i(TAG, "Snapshot captured and written to: ${outputFile.absolutePath}")
             callback(true)
         } catch (e: Exception) {

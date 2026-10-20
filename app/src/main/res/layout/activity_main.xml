@@ -1105,20 +1105,23 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="24dp">
 
-                <!-- 1. 麦克风录音键 (44dp，车规物理微弹触控反馈) -->
-                <FrameLayout
+                <!-- 1. 麦克风录音键 (车规物理微弹触控反馈，自适应图标与文字胶囊) -->
+                <LinearLayout
                     android:id="@+id/fab_mic"
-                    android:layout_width="44dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="44dp"
+                    android:minWidth="44dp"
                     android:background="@drawable/sp_bg_dock_btn_idle"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="11dp">
 
                     <ImageView
                         android:id="@+id/iv_fab_mic"
                         android:layout_width="22dp"
                         android:layout_height="22dp"
-                        android:layout_gravity="center"
                         android:contentDescription="录音"
                         android:src="@drawable/ic_perm_mic"
                         android:tint="@color/sp_tx_inverse" />
@@ -1127,8 +1130,13 @@
                         android:id="@+id/tv_fab_mic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="录音中"
+                        android:textColor="@color/sp_tx_inverse"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
                         android:visibility="gone" />
-                </FrameLayout>
+                </LinearLayout>
 
                 <!-- 2. 居中核心相机快门 (52dp 毛玻璃双环快门，左右各 24dp 宽幅间距) -->
                 <FrameLayout
@@ -1156,20 +1164,23 @@
                         android:visibility="gone" />
                 </FrameLayout>
 
-                <!-- 3. 视角模式切换键 (44dp，中性透光毛玻璃质感) -->
-                <FrameLayout
+                <!-- 3. 视角模式切换键 (中性透光毛玻璃质感，自适应图标与文字胶囊) -->
+                <LinearLayout
                     android:id="@+id/fab_view_mode"
-                    android:layout_width="44dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="44dp"
+                    android:minWidth="44dp"
                     android:background="@drawable/sp_bg_dock_btn_idle"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="11dp">
 
                     <ImageView
                         android:id="@+id/iv_fab_view_mode"
                         android:layout_width="22dp"
                         android:layout_height="22dp"
-                        android:layout_gravity="center"
                         android:contentDescription="视角"
                         android:src="@drawable/ic_view_quad"
                         android:tint="@color/sp_tx_inverse" />
@@ -1178,8 +1189,13 @@
                         android:id="@+id/tv_fab_view_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="四路"
+                        android:textColor="@color/sp_tx_inverse"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
                         android:visibility="gone" />
-                </FrameLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/btn_view_toggle"
@@ -1202,6 +1218,61 @@
     </FrameLayout>
 
     </LinearLayout>
+
+        <!-- 紧急加锁专属全屏视效浮层 (当触发碰撞或加锁时，金盾锁标弹入并伴随警示光晕) -->
+        <FrameLayout
+            android:id="@+id/layout_emergency_lock_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="70dp"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/v_emergency_lock_flash"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33FF453A"
+                android:alpha="0" />
+
+            <LinearLayout
+                android:id="@+id/card_emergency_lock_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/sp_bg_hud_capsule_dock"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="36dp"
+                android:paddingVertical="26dp">
+
+                <ImageView
+                    android:id="@+id/iv_emergency_lock_icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_action_lock"
+                    android:tint="@color/sp_dg"
+                    android:contentDescription="加锁" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="EMERGENCY LOCKED"
+                    android:textColor="@color/sp_dg"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1" />
+
+                <TextView
+                    android:id="@+id/tv_emergency_lock_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="前后 60 秒关键证据视频已加锁存证"
+                    android:textColor="@color/sp_tx_inverse"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </FrameLayout>
 
         <!-- 抓拍成功浮动 HUD 胶囊 (位于右侧最顶层，直接自屏幕绝对顶端下滑浮现，绝不落入画面中央) -->
         <LinearLayout
@@ -1230,7 +1301,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="四路原图已抓拍并存入相册"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/sp_osd_tx"
                 android:textSize="12.5sp"
                 android:textStyle="bold" />
         </LinearLayout>

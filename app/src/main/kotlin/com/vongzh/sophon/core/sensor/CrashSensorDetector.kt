@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import com.vongzh.sophon.core.power.PowerState
 import kotlin.math.sqrt
 
 /**
@@ -66,18 +67,35 @@ class CrashSensorDetector(
         val magnitude = sqrt((linearX * linearX + linearY * linearY + linearZ * linearZ).toDouble()).toFloat()
         val impactG = magnitude / GRAVITY_STANDARD
 
+        val powerState = try {
+            com.vongzh.sophon.SophonApp.powerStateMachine.currentState.value
+        } catch (e: Exception) {
+            null
+        }
+        val isSentryMode = powerState == PowerState.SENTRY_STANDBY ||
+            (powerState == PowerState.AWAKE_PARKED && com.vongzh.sophon.SophonApp.preferences.isSentryModeEnabled)
+
         val sensitivityIndex = com.vongzh.sophon.SophonApp.preferences.crashSensitivity
-        val thresholdG = when (sensitivityIndex) {
-            0 -> 3.5f // 低灵敏度
-            2 -> 1.8f // 高灵敏度
-            else -> 2.5f // 中灵敏度 (标准)
+        val thresholdG = if (isSentryMode) {
+            when (sensitivityIndex) {
+                0 -> 0.70f // 哨兵低灵敏度：大力推车 / 剧烈晃动
+                2 -> 0.35f // 哨兵高灵敏度：轻敲玻璃 / 轻微刮蹭
+                else -> 0.50f // 哨兵中灵敏度 (标准)：倒车剐蹭 / 关门震动
+            }
+        } else {
+            when (sensitivityIndex) {
+                0 -> 3.5f // 行车低灵敏度
+                2 -> 1.8f // 行车高灵敏度
+                else -> 2.5f // 行车中灵敏度 (标准)
+            }
         }
 
         if (impactG >= thresholdG) {
             val now = System.currentTimeMillis()
             if (now - lastTriggerTimeMs > TRIGGER_COOLDOWN_MS) {
                 lastTriggerTimeMs = now
-                Log.w(TAG, "CRASH / EMERGENCY DECELERATION DETECTED! Impact: %.2f G (Threshold: %.1f G)".format(impactG, thresholdG))
+                val stateTag = if (isSentryMode) "SENTRY SHOCK" else "CRASH / EMERGENCY DECEL"
+                Log.w(TAG, "$stateTag DETECTED! Impact: %.2f G (Threshold: %.2f G, SentryMode: $isSentryMode)".format(impactG, thresholdG))
                 onCrashDetected(impactG)
             }
         }

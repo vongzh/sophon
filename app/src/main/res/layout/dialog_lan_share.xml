@@ -84,7 +84,7 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- 提示与操作链接 -->
+    <!-- 提示与操作链接 (点击一键复制，带分享图标) -->
     <TextView
         android:id="@+id/tv_share_url"
         android:layout_width="wrap_content"
@@ -92,8 +92,12 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:background="@drawable/sp_bg_pill"
+        android:drawableEnd="@drawable/ic_action_share"
+        android:drawablePadding="8dp"
+        android:drawableTint="@color/sp_ac"
+        android:gravity="center"
         android:paddingHorizontal="18dp"
-        android:paddingVertical="7dp"
+        android:paddingVertical="8dp"
         android:text="http://--:8088"
         android:textColor="@color/sp_ac"
         android:textSize="@dimen/sp_t_subtitle"

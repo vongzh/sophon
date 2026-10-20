@@ -58,6 +58,23 @@ class MultiSegmentStorageBarView @JvmOverloads constructor(
         invalidate()
     }
 
+    /**
+     * 响应车机白昼/黑夜模式动态切换，重新绑定 Paint 语义色
+     */
+    fun refreshThemeColors() {
+        paintFree.color = ContextCompat.getColor(context, R.color.ring_free)
+        paintOther.color = ContextCompat.getColor(context, R.color.ring_other)
+        paintDriving.color = ContextCompat.getColor(context, R.color.ring_driving)
+        paintPhotos.color = ContextCompat.getColor(context, R.color.ring_photos)
+        paintSentry.color = ContextCompat.getColor(context, R.color.ring_sentry)
+        invalidate()
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        refreshThemeColors()
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         barRect.set(0f, 0f, w.toFloat(), h.toFloat())

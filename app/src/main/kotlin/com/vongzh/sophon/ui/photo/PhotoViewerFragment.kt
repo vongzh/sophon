@@ -120,6 +120,13 @@ class PhotoViewerFragment : Fragment() {
         loadPhotosFromUsb()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && isAdded) {
+            loadPhotosFromUsb()
+        }
+    }
+
     private fun observeSnapshotEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -237,8 +244,19 @@ class PhotoViewerFragment : Fragment() {
 
         // 大图操作
         btnFullscreenClose.setOnClickListener {
-            layoutFullscreen.visibility = View.GONE
+            layoutFullscreen.animate().alpha(0f).setDuration(160).withEndAction {
+                layoutFullscreen.visibility = View.GONE
+            }.start()
         }
+
+        // 车规触控物理反馈
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRefresh, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnSelectAll, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnMultiSelect, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnSort, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnEmptyTakePhoto, 0.92f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnFullscreenClose, 0.90f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnFullscreenDelete, 0.92f)
 
         btnFullscreenPrev.setOnClickListener {
             if (displayedPhotos.isNotEmpty()) {
@@ -269,11 +287,20 @@ class PhotoViewerFragment : Fragment() {
         btnFullscreenDelete.setOnClickListener {
             if (displayedPhotos.isNotEmpty() && currentFullscreenIndex in displayedPhotos.indices) {
                 val item = displayedPhotos[currentFullscreenIndex]
-                if (item.file.delete()) {
-                    Toast.makeText(context, "照片已删除", Toast.LENGTH_SHORT).show()
-                    loadPhotosFromUsb()
-                    layoutFullscreen.visibility = View.GONE
-                }
+                AlertDialog.Builder(requireContext())
+                    .setTitle("删除照片")
+                    .setMessage("确定要从存储设备中删除当前抓拍照片吗？\n${item.file.name}\n此操作无法撤销。")
+                    .setPositiveButton("删除") { _, _ ->
+                        if (item.file.delete()) {
+                            Toast.makeText(context, "照片已删除", Toast.LENGTH_SHORT).show()
+                            loadPhotosFromUsb()
+                            layoutFullscreen.visibility = View.GONE
+                        } else {
+                            Toast.makeText(context, "删除失败，请检查存储设备写权限", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setNegativeButton("取消", null)
+                    .show()
             }
         }
     }
@@ -369,19 +396,11 @@ class PhotoViewerFragment : Fragment() {
         val usbRoot = storage.currentUsbRoot.value
         val photoDirs = mutableListOf<File>()
 
-        // 1. 优先扫描外接 U 盘目录
+        // 严格遵守 No USB, No Write 车规安全红线：仅扫描外接 U 盘目录
         if (usbRoot != null && storage.isUsbMounted.value) {
             val usbSnapshotDir = File(File(usbRoot, "SophonRecord"), RecordCategory.SNAPSHOT.dirName)
             if (usbSnapshotDir.exists() && usbSnapshotDir.isDirectory) {
                 photoDirs.add(usbSnapshotDir)
-            }
-        }
-
-        // 2. 扫描应用私有沙盒目录（无外接存储或测试环境下的抓拍）
-        context?.let { ctx ->
-            val internalSnapshotDir = File(ctx.getExternalFilesDir(null), "SophonRecord/${RecordCategory.SNAPSHOT.dirName}")
-            if (internalSnapshotDir.exists() && internalSnapshotDir.isDirectory) {
-                photoDirs.add(internalSnapshotDir)
             }
         }
 
@@ -406,9 +425,7 @@ class PhotoViewerFragment : Fragment() {
                 file.lastModified()
             }
 
-            val isSandbox = file.absolutePath.contains("Android/data") ||
-                    (context?.packageName?.let { file.absolutePath.contains(it) } == true)
-            val camTag = if (isSandbox) "四路合成 (机身沙盒)" else "四路合成抓拍"
+            val camTag = "四路合成抓拍"
 
 
             val sizeBytes = file.length()
@@ -460,13 +477,28 @@ class PhotoViewerFragment : Fragment() {
 
         tvListHeader.text = "全部照片 (共 ${displayedPhotos.size} 张)"
         layoutEmpty.visibility = if (displayRows.isEmpty()) View.VISIBLE else View.GONE
+        if (displayRows.isEmpty()) {
+            val storage = SophonApp.storageVault
+            val isUsbMounted = storage.isUsbMounted.value && storage.currentUsbRoot.value != null
+            if (!isUsbMounted) {
+                tvEmpty.text = "未检测到外置 U 盘\n插入 U 盘后方可进行原图抓拍与归档回看"
+            } else if (query.isNotEmpty()) {
+                tvEmpty.text = "未找到匹配的照片\n请尝试更换搜索关键字"
+            } else {
+                tvEmpty.text = "暂无抓拍照片\n点击下方按钮或在主界面拍照"
+            }
+        }
         adapter.notifyDataSetChanged()
     }
 
     private fun showFullscreenPhoto(index: Int) {
         if (index !in displayedPhotos.indices) return
         currentFullscreenIndex = index
-        layoutFullscreen.visibility = View.VISIBLE
+        if (layoutFullscreen.visibility != View.VISIBLE) {
+            layoutFullscreen.alpha = 0f
+            layoutFullscreen.visibility = View.VISIBLE
+            layoutFullscreen.animate().alpha(1f).setDuration(180).start()
+        }
         renderFullscreenImage(direction = 0)
     }
 

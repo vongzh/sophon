@@ -273,6 +273,19 @@ class SentryEventReviewFragment : Fragment() {
                 Toast.makeText(context, "暂无可选事件视频进行四路回看", Toast.LENGTH_SHORT).show()
             }
         }
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnViewAllClips, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(pillAllDate, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(pillToday, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(pillYesterday, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(pillDayBefore, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRiskAll, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRiskHigh, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRiskLow, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRefresh, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnChooseDir, 0.95f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnSelectAll, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnMultiSelect, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnEmptyRefresh, 0.94f)
 
         // 12V 蓄电池电压：持续订阅真实信号源，读不到时显示 "--" 而不是编一个 12.6
         viewLifecycleOwner.lifecycleScope.launch {
@@ -293,6 +306,13 @@ class SentryEventReviewFragment : Fragment() {
                 }
                 tvHeaderSubtitle.text = "$desc · 今日新增 ${allEvents.count { it.dateDay == todayStr }} 条"
             }
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && isAdded) {
+            loadSentryEvents()
         }
     }
 
@@ -448,9 +468,15 @@ class SentryEventReviewFragment : Fragment() {
         val yesterdayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
 
         val todayCount = allEvents.count { it.dateDay == todayStr }
-        val yesterdayCount = allEvents.count { it.dateDay == yesterdayStr }
-        val diff = todayCount - yesterdayCount
-        tvEventsTrend.text = if (diff >= 0) "较昨日 +$diff" else "较昨日 $diff"
+        if (todayCount == 0) {
+            tvEventsTrend.text = "全车受护"
+            tvEventsTrend.setBackgroundResource(R.drawable.sp_bg_pill)
+            tvEventsTrend.setTextColor(requireContext().getColor(R.color.sp_ok))
+        } else {
+            tvEventsTrend.text = "今日触发 ${todayCount}起"
+            tvEventsTrend.setBackgroundResource(R.drawable.sp_bg_pill_accent)
+            tvEventsTrend.setTextColor(requireContext().getColor(R.color.sp_wn))
+        }
 
 
         if (allEvents.isNotEmpty()) {
@@ -492,7 +518,18 @@ class SentryEventReviewFragment : Fragment() {
         if (selectedEvent == null || !displayedEvents.contains(selectedEvent)) {
             selectedEvent = displayedEvents.firstOrNull()
         }
-        selectedEvent?.let { updateRadarPanel(it) }
+        if (selectedEvent != null) {
+            updateRadarPanel(selectedEvent!!)
+            btnViewAllClips.isEnabled = true
+            btnViewAllClips.alpha = 1.0f
+        } else {
+            tvRadarTitle.text = "暂无哨兵警报"
+            tvRadarLevel.text = "待机就绪"
+            tvRadarLevel.setTextColor(requireContext().getColor(R.color.sp_tx3))
+            radarView.resetToSafeState()
+            btnViewAllClips.isEnabled = false
+            btnViewAllClips.alpha = 0.40f
+        }
 
         adapter.notifyDataSetChanged()
     }
@@ -512,6 +549,7 @@ class SentryEventReviewFragment : Fragment() {
             val tvCamTag: TextView = v.findViewById(R.id.tv_sentry_cam_tag)
             val tvDetails: TextView = v.findViewById(R.id.tv_sentry_details)
             val ivThumb: ImageView = v.findViewById(R.id.iv_sentry_thumb)
+            val btnViewClip: TextView? = v.findViewById(R.id.btn_sentry_view_clip)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -533,6 +571,14 @@ class SentryEventReviewFragment : Fragment() {
             holder.tvBadge.backgroundTintList = android.content.res.ColorStateList.valueOf(item.badgeColor)
             holder.tvCamTag.text = item.camTag
             holder.tvDetails.text = "${item.dateDay} ${item.timeDisplay} · 状态锁定"
+
+            holder.btnViewClip?.setOnClickListener {
+                val intent = Intent(requireContext(), QuadSyncPlayerActivity::class.java).apply {
+                    putExtra(QuadSyncPlayerActivity.EXTRA_VIDEO_PATH, item.file.absolutePath)
+                }
+                startActivity(intent)
+            }
+            holder.btnViewClip?.let { com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(it, 0.92f) }
 
             holder.itemView.setBackgroundResource(
                 if (selectedEvents.contains(item)) R.drawable.sp_bg_card_selected

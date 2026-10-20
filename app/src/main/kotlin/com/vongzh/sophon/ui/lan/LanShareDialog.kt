@@ -62,6 +62,11 @@ class LanShareDialog(context: Context) : Dialog(context) {
             dismiss()
         }
 
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnClose, 0.90f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(tvShareUrl, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnRetryNetwork, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnOpenHotspot, 0.94f)
+
         btnRetryNetwork.setOnClickListener {
             renderNetworkPortal()
             Toast.makeText(context, "已重新检测车机局域网状态", Toast.LENGTH_SHORT).show()

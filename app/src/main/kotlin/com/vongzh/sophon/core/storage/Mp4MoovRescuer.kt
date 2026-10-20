@@ -109,7 +109,7 @@ class Mp4MoovRescuer {
                         val largeSize = raf.readLong()
                         if (largeSize <= 0) break
                         pos += largeSize
-                    } else if (boxSize > 8) {
+                    } else if (boxSize >= 8L) {
                         pos += boxSize
                     } else {
                         // boxSize 为 0 代表延伸至文件末尾，若不是 moov 则直接终止

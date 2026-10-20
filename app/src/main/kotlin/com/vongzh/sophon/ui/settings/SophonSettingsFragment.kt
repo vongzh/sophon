@@ -1,11 +1,14 @@
 package com.vongzh.sophon.ui.settings
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -48,29 +51,25 @@ class SophonSettingsFragment : Fragment() {
 
     private lateinit var scrollSettingsContent: ScrollView
 
-    // 左侧导航按钮
+    // 左侧导航按钮 (8 大车规黄金标准分类)
     private lateinit var btnTabCommon: TextView
     private lateinit var btnTabBasic: TextView
-    private lateinit var btnTabStorage: TextView
     private lateinit var btnTabBlindspot: TextView
     private lateinit var btnTabHud: TextView
-    private lateinit var btnTabRemote: TextView
     private lateinit var btnTabStartup: TextView
-    private lateinit var btnTabPower: TextView
-    private lateinit var btnTabLab: TextView
+    private lateinit var btnTabStorage: TextView
+    private lateinit var btnTabRemote: TextView
     private lateinit var btnTabAbout: TextView
 
-    // 右侧卡片组
+    // 右侧卡片组 (8 大分类)
     private lateinit var groupCommon: View
+    private lateinit var groupRecord: View
     private lateinit var groupBlindspot: View
+    private lateinit var groupOverlay: View
+    private lateinit var groupSentry: View
     private lateinit var groupStorage: View
     private lateinit var groupRemote: View
     private lateinit var groupAbout: View
-    private lateinit var groupRecord: View
-    private lateinit var groupOverlay: View
-    private lateinit var groupSentry: View
-    private lateinit var groupPower: View
-    private lateinit var groupNetwork: View
 
     // 控件：切片时长
     private lateinit var rgChunkDuration: RadioGroup
@@ -96,9 +95,10 @@ class SophonSettingsFragment : Fragment() {
     private lateinit var tvLanShareAddr: TextView
     private lateinit var btnLanShareQr: TextView
 
-    // 控件：配置备份
+    // 控件：配置备份与诊断
     private lateinit var btnBackupConfig: TextView
     private lateinit var btnRestoreConfig: TextView
+    private lateinit var btnExportDiagnostics: TextView
 
     // 控件：主题模式选择 (深色/浅色/跟随系统)
     private lateinit var tvThemeModeCurrentPill: TextView
@@ -229,6 +229,7 @@ class SophonSettingsFragment : Fragment() {
 
     /** 围栏状态订阅任务：配置恢复后会重新调用 refreshGeofenceStatus，须先取消旧订阅避免重复刷新 */
     private var geofenceJob: kotlinx.coroutines.Job? = null
+    private var lastActiveTab: TextView? = null
 
     private val barkNotifier = BarkNotifier()
     private val telegramClient = TelegramBotClient()
@@ -253,30 +254,48 @@ class SophonSettingsFragment : Fragment() {
         observeStorageState()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            // 切离设置 Tab 时立即将输入框凭据与配置持久化，防止切出后修改丢失
+            if (::etSentryHomeSsids.isInitialized) {
+                runCatching { saveAllPreferences() }
+            }
+        } else if (isAdded) {
+            refreshStorageCapacityUI(SophonApp.storageVault.isUsbMounted.value)
+            refreshGeofenceStatus()
+            loadNetworkAndFirmwareInfo()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 切出前台或按 Home 键时兜底保存所有输入框参数
+        if (::etSentryHomeSsids.isInitialized) {
+            runCatching { saveAllPreferences() }
+        }
+    }
+
     private fun initViews(root: View) {
         scrollSettingsContent = root.findViewById(R.id.scroll_settings_content)
 
         btnTabCommon = root.findViewById(R.id.btn_tab_common)
         btnTabBasic = root.findViewById(R.id.btn_tab_basic)
-        btnTabStorage = root.findViewById(R.id.btn_tab_storage)
         btnTabBlindspot = root.findViewById(R.id.btn_tab_blindspot)
         btnTabHud = root.findViewById(R.id.btn_tab_hud)
-        btnTabRemote = root.findViewById(R.id.btn_tab_remote)
         btnTabStartup = root.findViewById(R.id.btn_tab_startup)
-        btnTabPower = root.findViewById(R.id.btn_tab_power)
-        btnTabLab = root.findViewById(R.id.btn_tab_lab)
+        btnTabStorage = root.findViewById(R.id.btn_tab_storage)
+        btnTabRemote = root.findViewById(R.id.btn_tab_remote)
         btnTabAbout = root.findViewById(R.id.btn_tab_about)
 
         groupCommon = root.findViewById(R.id.group_settings_common)
+        groupRecord = root.findViewById(R.id.group_settings_record)
         groupBlindspot = root.findViewById(R.id.group_settings_blindspot)
+        groupOverlay = root.findViewById(R.id.group_settings_overlay)
+        groupSentry = root.findViewById(R.id.group_settings_sentry)
         groupStorage = root.findViewById(R.id.group_settings_storage)
         groupRemote = root.findViewById(R.id.group_settings_remote)
         groupAbout = root.findViewById(R.id.group_settings_about)
-        groupRecord = root.findViewById(R.id.group_settings_record)
-        groupOverlay = root.findViewById(R.id.group_settings_overlay)
-        groupSentry = root.findViewById(R.id.group_settings_sentry)
-        groupPower = root.findViewById(R.id.group_settings_power)
-        groupNetwork = root.findViewById(R.id.group_settings_network)
 
         rgChunkDuration = root.findViewById(R.id.rg_chunk_duration)
         rbChunk1 = root.findViewById(R.id.rb_chunk_1)
@@ -300,6 +319,7 @@ class SophonSettingsFragment : Fragment() {
 
         btnBackupConfig = root.findViewById(R.id.btn_backup_config)
         btnRestoreConfig = root.findViewById(R.id.btn_restore_config)
+        btnExportDiagnostics = root.findViewById(R.id.btn_export_diagnostics)
 
         tvThemeModeCurrentPill = root.findViewById(R.id.tv_theme_mode_current_pill)
         rgThemeMode = root.findViewById(R.id.rg_theme_mode)
@@ -458,8 +478,8 @@ class SophonSettingsFragment : Fragment() {
         swSentryDeterrent.isChecked = prefs.isSentryDeterrentEnabled
 
         swBatteryProtection.isChecked = prefs.isBatteryProtectionEnabled
-        tvBattVoltsVal.text = String.format(Locale.US, "%.1f V", prefs.batteryProtectionThresholdVolts)
-        tvHazardSpeedVal.text = String.format(Locale.US, "%.0f km/h", prefs.hazardSpeedThresholdKmh)
+        syncBatteryVoltsUi(prefs.batteryProtectionThresholdVolts)
+        syncHazardSpeedUi(prefs.hazardSpeedThresholdKmh)
 
         swBarkEnabled.isChecked = prefs.isBarkEnabled
         etBarkServer.setText(prefs.barkServerUrl)
@@ -501,9 +521,9 @@ class SophonSettingsFragment : Fragment() {
         etLanPort.setText(prefs.lanSharePort.toString())
 
         // 存储空间管理偏好
-        tvVideoQuotaVal.text = "${prefs.storageVideoQuotaGb} GB"
-        tvCleanRatioVal.text = "${prefs.storageCleanupRatioPercent} %"
-        tvPhotoQuotaVal.text = "${prefs.storagePhotoQuotaGb} GB"
+        syncVideoQuotaUi(prefs.storageVideoQuotaGb)
+        syncCleanRatioUi(prefs.storageCleanupRatioPercent)
+        syncPhotoQuotaUi(prefs.storagePhotoQuotaGb)
         updateTriggerSelection(prefs.storageCleanupTrigger)
     }
 
@@ -512,6 +532,15 @@ class SophonSettingsFragment : Fragment() {
      * 背景、字重必须一起切，只改其中一个会出现「文字蓝了图标还是灰」的半选中态。
      */
     private fun highlightNav(items: List<Pair<TextView, View>>, active: TextView) {
+        val tabChanged = (lastActiveTab != active)
+        if (tabChanged) {
+            lastActiveTab = active
+            active.animate().cancel()
+            active.scaleX = 0.96f
+            active.scaleY = 0.96f
+            active.animate().scaleX(1.0f).scaleY(1.0f).setDuration(160).start()
+        }
+
         for ((btn, _) in items) {
             val isCur = (btn == active)
             btn.setBackgroundResource(
@@ -540,10 +569,8 @@ class SophonSettingsFragment : Fragment() {
             btnTabBlindspot to groupBlindspot,
             btnTabHud to groupOverlay,
             btnTabStartup to groupSentry,
-            btnTabPower to groupPower,
             btnTabStorage to groupStorage,
             btnTabRemote to groupRemote,
-            btnTabLab to groupNetwork,
             btnTabAbout to groupAbout
         )
 
@@ -720,13 +747,13 @@ class SophonSettingsFragment : Fragment() {
         btnAboutDisclaimer.setOnClickListener { showStructuredPolicyDialog(isDisclaimer = true) }
         btnAboutDiag.setOnClickListener { copyDiagnosticsToClipboard() }
 
-        // Stepper: 窄道会车双闪触发车速 (5 ~ 60 km/h, step 5)
-        btnHazardSpeedMinus.setOnClickListener { adjustHazardSpeed(-5f) }
-        btnHazardSpeedPlus.setOnClickListener { adjustHazardSpeed(5f) }
+        // Stepper: 窄道会车双闪触发车速 (5 ~ 60 km/h, step 5, 支持长按连续自增减 + 边界禁用)
+        attachContinuousStepper(btnHazardSpeedMinus) { adjustHazardSpeed(-5f) }
+        attachContinuousStepper(btnHazardSpeedPlus) { adjustHazardSpeed(5f) }
 
-        // Stepper: 低压保护阈值 (11.0 ~ 13.0 V, step 0.1)
-        btnBattVoltsMinus.setOnClickListener { adjustBatteryVolts(-0.1f) }
-        btnBattVoltsPlus.setOnClickListener { adjustBatteryVolts(0.1f) }
+        // Stepper: 低压保护阈值 (11.0 ~ 13.0 V, step 0.1, 支持长按连续自增减 + 边界禁用)
+        attachContinuousStepper(btnBattVoltsMinus) { adjustBatteryVolts(-0.1f) }
+        attachContinuousStepper(btnBattVoltsPlus) { adjustBatteryVolts(0.1f) }
 
         btnBackupConfig.setOnClickListener {
             saveAllPreferences()
@@ -734,6 +761,55 @@ class SophonSettingsFragment : Fragment() {
         }
 
         btnRestoreConfig.setOnClickListener { restoreConfigFromUsb() }
+        btnExportDiagnostics.setOnClickListener { exportDiagnosticsToUsb() }
+
+        // 车规大屏触摸优化：点击整行切换开关并附带触控水波纹
+        val switchList = listOf(
+            swAudioRecord,
+            swAutoCrashLock,
+            swShowFabLabels,
+            swTurnSignalBlindSpot,
+            swDoorOpenWarning,
+            swOsdWatermark,
+            swRainyNight,
+            swPipAuto,
+            swSentryMode,
+            swSentryDeterrent,
+            swBatteryProtection,
+            swRearViewOverlay,
+            swStatusOverlay,
+            swAssistBall,
+            swBarkEnabled,
+            swTelegramEnabled,
+            swFeishuEnabled
+        )
+        switchList.forEach { sw ->
+            com.vongzh.sophon.ui.widget.UiMotionUtils.bindSwitchRow(sw)
+        }
+
+        // 关键操作按钮车规物理弹性触感 (步进器按钮已由 attachContinuousStepper 独立处理微缩触感)
+        val tactileButtons = listOf(
+            btnLanShareQr,
+            btnBackupConfig,
+            btnRestoreConfig,
+            btnExportDiagnostics,
+            btnAboutPrivacy,
+            btnAboutDisclaimer,
+            btnAboutDiag,
+            btnFormatStorage,
+            btnRunUsbBenchmark,
+            btnApplyNightPreset,
+            btnStorageHelp,
+            btnTestBark,
+            btnTestTelegram,
+            btnTestFeishu,
+            btnTriggerRecordEnd,
+            btnTriggerHighUsage,
+            btnTriggerStartup
+        )
+        tactileButtons.forEach { btn ->
+            com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btn, 0.94f)
+        }
 
         // LAN 快传服务端口：失焦即时落盘并热重启服务
         etLanPort.setOnFocusChangeListener { _, hasFocus ->
@@ -777,65 +853,17 @@ class SophonSettingsFragment : Fragment() {
             showStoragePolicyDialog()
         }
 
-        // Stepper: 视频存储上限 (5 ~ 128 GB, step 5)
-        btnVideoQuotaMinus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storageVideoQuotaGb
-            if (cur > 5) {
-                val next = cur - 5
-                prefs.storageVideoQuotaGb = next
-                tvVideoQuotaVal.text = "$next GB"
-            }
-        }
-        btnVideoQuotaPlus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storageVideoQuotaGb
-            if (cur < 128) {
-                val next = cur + 5
-                prefs.storageVideoQuotaGb = next
-                tvVideoQuotaVal.text = "$next GB"
-            }
-        }
+        // Stepper: 视频存储上限 (5 ~ 128 GB, step 5, 支持长按连续自增减 + 边界禁用)
+        attachContinuousStepper(btnVideoQuotaMinus) { adjustVideoQuota(-5) }
+        attachContinuousStepper(btnVideoQuotaPlus) { adjustVideoQuota(5) }
 
-        // Stepper: 超出限制删除比例 (10 ~ 60 %, step 5)
-        btnCleanRatioMinus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storageCleanupRatioPercent
-            if (cur > 10) {
-                val next = cur - 5
-                prefs.storageCleanupRatioPercent = next
-                tvCleanRatioVal.text = "$next %"
-            }
-        }
-        btnCleanRatioPlus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storageCleanupRatioPercent
-            if (cur < 60) {
-                val next = cur + 5
-                prefs.storageCleanupRatioPercent = next
-                tvCleanRatioVal.text = "$next %"
-            }
-        }
+        // Stepper: 超出限制删除比例 (10 ~ 60 %, step 5, 支持长按连续自增减 + 边界禁用)
+        attachContinuousStepper(btnCleanRatioMinus) { adjustCleanRatio(-5) }
+        attachContinuousStepper(btnCleanRatioPlus) { adjustCleanRatio(5) }
 
-        // Stepper: 照片存储上限 (2 ~ 64 GB, step 2)
-        btnPhotoQuotaMinus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storagePhotoQuotaGb
-            if (cur > 2) {
-                val next = cur - 2
-                prefs.storagePhotoQuotaGb = next
-                tvPhotoQuotaVal.text = "$next GB"
-            }
-        }
-        btnPhotoQuotaPlus.setOnClickListener {
-            val prefs = SophonApp.preferences
-            val cur = prefs.storagePhotoQuotaGb
-            if (cur < 64) {
-                val next = cur + 2
-                prefs.storagePhotoQuotaGb = next
-                tvPhotoQuotaVal.text = "$next GB"
-            }
-        }
+        // Stepper: 照片存储上限 (2 ~ 64 GB, step 2, 支持长按连续自增减 + 边界禁用)
+        attachContinuousStepper(btnPhotoQuotaMinus) { adjustPhotoQuota(-2) }
+        attachContinuousStepper(btnPhotoQuotaPlus) { adjustPhotoQuota(2) }
 
         // 单选胶囊：超限删除时机
         btnTriggerRecordEnd.setOnClickListener {
@@ -881,7 +909,11 @@ class SophonSettingsFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                     btnTestBark.isEnabled = true
                     btnTestBark.text = "测试推送"
-                    Toast.makeText(context, if (ok) "Bark 推送成功" else "Bark 推送失败，请检查网络", Toast.LENGTH_SHORT).show()
+                    if (ok) {
+                        SophonApp.preferences.barkServerUrl = srv
+                        SophonApp.preferences.barkDeviceKey = key
+                    }
+                    Toast.makeText(context, if (ok) "Bark 推送成功，已自动保存" else "Bark 推送失败，请检查网络", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -902,7 +934,12 @@ class SophonSettingsFragment : Fragment() {
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         btnTestTelegram.isEnabled = true
                         btnTestTelegram.text = "测试 TG"
-                        Toast.makeText(context, if (ok) "Telegram 推送成功" else "Telegram 推送失败，请检查 Token 与 Chat ID", Toast.LENGTH_SHORT).show()
+                        if (ok) {
+                            SophonApp.preferences.telegramBotToken = token
+                            SophonApp.preferences.telegramChatId = chat
+                            SophonApp.remoteDispatcher.restartRemoteServices()
+                        }
+                        Toast.makeText(context, if (ok) "Telegram 推送成功，已自动保存" else "Telegram 推送失败，请检查 Token 与 Chat ID", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -937,9 +974,18 @@ class SophonSettingsFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     btnTestFeishu.isEnabled = true
                     btnTestFeishu.text = "测试飞书"
+                    if (ok) {
+                        if (useApp) {
+                            SophonApp.preferences.feishuAppId = appId
+                            SophonApp.preferences.feishuAppSecret = appSecret
+                            SophonApp.preferences.feishuReceiveId = receiveId
+                        } else {
+                            SophonApp.preferences.feishuWebhookUrl = webhook
+                        }
+                    }
                     Toast.makeText(
                         context,
-                        if (ok) "飞书通知成功（${if (useApp) "自建应用" else "Webhook"}）" else "飞书通知失败，请检查凭据与网络",
+                        if (ok) "飞书通知成功，已自动保存（${if (useApp) "自建应用" else "Webhook"}）" else "飞书通知失败，请检查凭据与网络",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -1131,22 +1177,22 @@ class SophonSettingsFragment : Fragment() {
             .setPositiveButton("确认清空") { _, _ ->
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                     val result = runCatching {
-                        val baseDir = File(root, "Sophon")
-                        if (baseDir.exists()) baseDir.deleteRecursively()
-                        // deleteRecursively() 对个别失败是静默的，删除后必须复查目录是否真的没了
-                        val remains = baseDir.exists()
-                        val leftovers = if (remains) baseDir.listFiles()?.size ?: 0 else 0
-                        Pair(remains, leftovers)
+                        val baseDir = File(root, "SophonRecord")
+                        val deletedOk = if (baseDir.exists()) baseDir.deleteRecursively() else true
+                        // 重新建立规范录制目录结构，确保清空后可立即无缝录制
+                        listOf("Normal", "Event", "Sentry", "Snapshot", ".Trash").forEach { sub ->
+                            File(baseDir, sub).mkdirs()
+                        }
+                        deletedOk
                     }
                     withContext(Dispatchers.Main) {
-                        val (remains, leftovers) = result.getOrNull() ?: Pair(true, -1)
+                        val ok = result.getOrDefault(false)
                         val msg = if (result.isFailure) {
                             "清理失败：${result.exceptionOrNull()?.message}"
-                        } else if (remains) {
-                            // 残留文件通常是被其他进程占用或只读挂载，如实说明而不是谎报成功
-                            "清理未完成：仍有 $leftovers 项无法删除，请检查 U 盘是否写保护"
+                        } else if (!ok) {
+                            "清理未完全完成，部分文件可能被系统占用"
                         } else {
-                            "外置存储已清空初始化"
+                            "外置存储已清空并重新初始化"
                         }
                         Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                         refreshStorageCapacityUI(SophonApp.storageVault.isUsbMounted.value)
@@ -1411,11 +1457,72 @@ class SophonSettingsFragment : Fragment() {
         }
     }
 
+    /**
+     * 更新步进器按钮的边界可用态与灰度禁用透明度
+     */
+    private fun updateStepperState(button: View, enabled: Boolean) {
+        button.isEnabled = enabled
+        button.alpha = if (enabled) 1.0f else 0.35f
+    }
+
+    /**
+     * 为车载步进器按钮绑定「物理轻弹微缩动效 + 长按连续自增减 (350ms 首发延迟，90ms 重复频率)」
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private fun attachContinuousStepper(
+        button: View,
+        scale: Float = 0.94f,
+        onStep: () -> Unit
+    ) {
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val repeatRunnable = object : Runnable {
+            override fun run() {
+                if (button.isEnabled) {
+                    onStep()
+                    handler.postDelayed(this, 90L)
+                }
+            }
+        }
+
+        button.setOnTouchListener { v, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (!button.isEnabled) return@setOnTouchListener false
+                    v.animate().scaleX(scale).scaleY(scale).setDuration(80).start()
+                    onStep()
+                    handler.removeCallbacks(repeatRunnable)
+                    handler.postDelayed(repeatRunnable, 350L)
+                    true
+                }
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> {
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(160)
+                        .setInterpolator(OvershootInterpolator(2.0f)).start()
+                    handler.removeCallbacks(repeatRunnable)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun syncHazardSpeedUi(value: Float) {
+        tvHazardSpeedVal.text = String.format(Locale.US, "%.0f km/h", value)
+        updateStepperState(btnHazardSpeedMinus, value > 5f)
+        updateStepperState(btnHazardSpeedPlus, value < 60f)
+    }
+
     private fun adjustHazardSpeed(delta: Float) {
         val prefs = SophonApp.preferences
         val next = (prefs.hazardSpeedThresholdKmh + delta).coerceIn(5f, 60f)
         prefs.hazardSpeedThresholdKmh = next
-        tvHazardSpeedVal.text = String.format(Locale.US, "%.0f km/h", next)
+        syncHazardSpeedUi(next)
+    }
+
+    private fun syncBatteryVoltsUi(value: Float) {
+        tvBattVoltsVal.text = String.format(Locale.US, "%.1f V", value)
+        updateStepperState(btnBattVoltsMinus, value > 11.0f)
+        updateStepperState(btnBattVoltsPlus, value < 13.0f)
     }
 
     private fun adjustBatteryVolts(delta: Float) {
@@ -1423,7 +1530,46 @@ class SophonSettingsFragment : Fragment() {
         // 先量化到 0.1V 网格再夹紧，避免浮点累积出 11.799999 这类脏值
         val next = ((Math.round((prefs.batteryProtectionThresholdVolts + delta) * 10f) / 10f)).coerceIn(11.0f, 13.0f)
         prefs.batteryProtectionThresholdVolts = next
-        tvBattVoltsVal.text = String.format(Locale.US, "%.1f V", next)
+        syncBatteryVoltsUi(next)
+    }
+
+    private fun syncVideoQuotaUi(value: Int) {
+        tvVideoQuotaVal.text = "$value GB"
+        updateStepperState(btnVideoQuotaMinus, value > 5)
+        updateStepperState(btnVideoQuotaPlus, value < 128)
+    }
+
+    private fun adjustVideoQuota(delta: Int) {
+        val prefs = SophonApp.preferences
+        val next = (prefs.storageVideoQuotaGb + delta).coerceIn(5, 128)
+        prefs.storageVideoQuotaGb = next
+        syncVideoQuotaUi(next)
+    }
+
+    private fun syncCleanRatioUi(value: Int) {
+        tvCleanRatioVal.text = "$value %"
+        updateStepperState(btnCleanRatioMinus, value > 10)
+        updateStepperState(btnCleanRatioPlus, value < 60)
+    }
+
+    private fun adjustCleanRatio(delta: Int) {
+        val prefs = SophonApp.preferences
+        val next = (prefs.storageCleanupRatioPercent + delta).coerceIn(10, 60)
+        prefs.storageCleanupRatioPercent = next
+        syncCleanRatioUi(next)
+    }
+
+    private fun syncPhotoQuotaUi(value: Int) {
+        tvPhotoQuotaVal.text = "$value GB"
+        updateStepperState(btnPhotoQuotaMinus, value > 2)
+        updateStepperState(btnPhotoQuotaPlus, value < 64)
+    }
+
+    private fun adjustPhotoQuota(delta: Int) {
+        val prefs = SophonApp.preferences
+        val next = (prefs.storagePhotoQuotaGb + delta).coerceIn(2, 64)
+        prefs.storagePhotoQuotaGb = next
+        syncPhotoQuotaUi(next)
     }
 
     /** 遍历网卡取首个非回环 IPv4 地址，无需任何权限 */
@@ -1515,6 +1661,25 @@ class SophonSettingsFragment : Fragment() {
         }
     }
 
+    /** 导出全维车规诊断报告至 U 盘 (严格遵循 No USB, No Write) */
+    private fun exportDiagnosticsToUsb() {
+        val root = SophonApp.storageVault.currentUsbRoot.value
+        if (root == null || !SophonApp.storageVault.isUsbMounted.value) {
+            Toast.makeText(context, "未检测到可用 U 盘，根据车规红线二禁止写入内部闪存", Toast.LENGTH_SHORT).show()
+            return
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val exporter = com.vongzh.sophon.core.storage.DiagnosticExporter(requireContext())
+            val result = exporter.exportToUsb()
+            if (result.success) {
+                val fileName = result.filePath?.let { File(it).name } ?: "sophon_diag.txt"
+                Toast.makeText(context, "诊断报告已导出至 U 盘 /Diagnostics/$fileName", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, result.errorMessage ?: "导出诊断报告失败", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     /** 夜视预设：勾选 +2EV 与关闭降噪后立即下发 */
     private fun prefsNightPresetApplied() {
         val prefs = SophonApp.preferences
@@ -1565,19 +1730,24 @@ class SophonSettingsFragment : Fragment() {
         if (!::tvSentryGeofenceStatus.isInitialized) return
         val prefs = SophonApp.preferences
         geofenceJob?.cancel()
-        if (prefs.sentryHomeSsids.isEmpty()) {
-            tvSentryGeofenceStatus.text = "围栏：未配置（哨兵不做撤防）"
+        if (prefs.sentryHomeSsids.isEmpty() && prefs.safeGeofences.isEmpty()) {
+            tvSentryGeofenceStatus.text = "安全免巡逻区：未配置（哨兵全时段待命）"
             return
         }
         val geofence = SophonApp.sentryHomeGeofence
         geofenceJob = viewLifecycleOwner.lifecycleScope.launch {
-            geofence.currentSsid.collect { ssid ->
-                val state = when {
-                    ssid == null -> "未连接 Wi-Fi"
-                    geofence.isAtHome.value -> "命中围栏（哨兵已撤防）"
-                    else -> "不在围栏内（哨兵正常布防）"
+            kotlinx.coroutines.flow.combine(
+                geofence.currentSsid,
+                geofence.matchedFenceName,
+                geofence.isAtHome
+            ) { ssid, fenceName, atHome ->
+                when {
+                    atHome -> "已进入${fenceName ?: "安全免巡逻区"} · 哨兵已休眠省电"
+                    ssid != null -> "已连接 Wi-Fi: $ssid · 哨兵正常布防警戒"
+                    else -> "未处于安全免巡逻区 · 哨兵全维待命"
                 }
-                tvSentryGeofenceStatus.text = "当前 Wi-Fi：$ssid · $state"
+            }.collect { statusText ->
+                tvSentryGeofenceStatus.text = statusText
             }
         }
     }

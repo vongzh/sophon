@@ -78,7 +78,8 @@ class SophonApp : Application() {
         sentryHomeGeofence = com.vongzh.sophon.core.geofence.SentryHomeGeofence(
             context = this,
             preferences = preferences,
-            scope = appScope
+            scope = appScope,
+            bus = vehicleSignalBus
         ).apply {
             start()
         }

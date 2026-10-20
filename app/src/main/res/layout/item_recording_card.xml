@@ -139,20 +139,22 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 侧边快捷操作键 (加锁 / 删除) -->
+    <!-- 侧边快捷操作键 (加锁 / 删除，车规级 36dp 充裕触控靶面) -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/btn_record_lock_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:gravity="center"
             android:layout_marginEnd="@dimen/sp_s_6"
             android:background="@drawable/sp_bg_pill"
-            android:paddingHorizontal="@dimen/sp_s_12"
-            android:paddingVertical="@dimen/sp_s_6"
+            android:paddingHorizontal="@dimen/sp_s_14"
             android:text="加锁"
             android:textColor="@color/sp_wn"
             android:textSize="@dimen/sp_t_caption"
@@ -162,9 +164,10 @@
             android:id="@+id/btn_record_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:gravity="center"
             android:background="@drawable/sp_bg_pill"
-            android:paddingHorizontal="@dimen/sp_s_12"
-            android:paddingVertical="@dimen/sp_s_6"
+            android:paddingHorizontal="@dimen/sp_s_14"
             android:text="删除"
             android:textColor="@color/sp_dg"
             android:textSize="@dimen/sp_t_caption" />

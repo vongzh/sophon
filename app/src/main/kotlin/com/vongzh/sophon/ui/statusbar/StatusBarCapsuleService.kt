@@ -172,12 +172,25 @@ class StatusBarCapsuleService : Service() {
             y = 44 // 在胶囊正下方弹出
         }
 
-        panelView?.findViewById<ImageView>(R.id.tv_panel_close)?.setOnClickListener {
+        val btnSnapshot = panelView?.findViewById<TextView>(R.id.btn_panel_snapshot)
+        val btnLock = panelView?.findViewById<TextView>(R.id.btn_panel_lock)
+        val btnShare = panelView?.findViewById<TextView>(R.id.btn_panel_share)
+        val btnOpen = panelView?.findViewById<TextView>(R.id.btn_panel_open)
+        val btnClose = panelView?.findViewById<ImageView>(R.id.tv_panel_close)
+
+        listOfNotNull(btnSnapshot, btnLock, btnShare, btnOpen).forEach {
+            com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(it, 0.94f)
+        }
+        btnClose?.let {
+            com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(it, 0.90f)
+        }
+
+        btnClose?.setOnClickListener {
             dismissQuickPanel()
         }
 
         // 抓拍按钮
-        panelView?.findViewById<TextView>(R.id.btn_panel_snapshot)?.setOnClickListener {
+        btnSnapshot?.setOnClickListener {
             Toast.makeText(this, "已触发四向即时抓拍", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SophonCoreService::class.java).apply {
                 action = SophonCoreService.ACTION_TRIGGER_SNAPSHOT
@@ -187,7 +200,7 @@ class StatusBarCapsuleService : Service() {
         }
 
         // 加锁按钮
-        panelView?.findViewById<TextView>(R.id.btn_panel_lock)?.setOnClickListener {
+        btnLock?.setOnClickListener {
             Toast.makeText(this, "当前视频切片已加锁保护", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, SophonCoreService::class.java).apply {
                 action = SophonCoreService.ACTION_TRIGGER_LOCK
@@ -197,7 +210,7 @@ class StatusBarCapsuleService : Service() {
         }
 
         // 局域网快传按钮
-        panelView?.findViewById<TextView>(R.id.btn_panel_share)?.setOnClickListener {
+        btnShare?.setOnClickListener {
             dismissQuickPanel()
             val mainIntent = Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -207,7 +220,7 @@ class StatusBarCapsuleService : Service() {
         }
 
         // 主页按钮
-        panelView?.findViewById<TextView>(R.id.btn_panel_open)?.setOnClickListener {
+        btnOpen?.setOnClickListener {
             val mainIntent = Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
@@ -263,8 +276,18 @@ class StatusBarCapsuleService : Service() {
 
         if (!isPanelAttached) {
             try {
+                view.alpha = 0f
+                view.scaleY = 0.85f
+                view.translationY = -20f
                 wm.addView(view, params)
                 isPanelAttached = true
+                view.animate()
+                    .alpha(1f)
+                    .scaleY(1f)
+                    .translationY(0f)
+                    .setDuration(180)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .start()
                 resetDismissTimer()
                 Log.d(TAG, "Quick action panel opened")
             } catch (e: Exception) {
@@ -276,13 +299,24 @@ class StatusBarCapsuleService : Service() {
     private fun dismissQuickPanel() {
         panelDismissJob?.cancel()
         if (isPanelAttached && panelView != null) {
-            try {
-                windowManager?.removeViewImmediate(panelView)
-                isPanelAttached = false
-                Log.d(TAG, "Quick action panel dismissed")
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to dismiss quick panel", e)
-            }
+            val view = panelView ?: return
+            view.animate()
+                .alpha(0f)
+                .scaleY(0.85f)
+                .translationY(-20f)
+                .setDuration(150)
+                .withEndAction {
+                    try {
+                        if (isPanelAttached) {
+                            windowManager?.removeViewImmediate(view)
+                            isPanelAttached = false
+                            Log.d(TAG, "Quick action panel dismissed")
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to dismiss quick panel", e)
+                    }
+                }
+                .start()
         }
     }
 
@@ -344,7 +378,7 @@ class StatusBarCapsuleService : Service() {
                     val h = duration / 3600
                     val m = (duration % 3600) / 60
                     val s = duration % 60
-                    tvTime?.text = String.format("%02d:%02d:%02d", h, m, s)
+                    tvTime?.text = String.format(java.util.Locale.getDefault(), "%02d:%02d:%02d", h, m, s)
                     dot?.alpha = if (duration % 2L == 0L) 1.0f else 0.35f
                 } else {
                     tvTime?.text = "待命中"

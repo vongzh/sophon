@@ -2,6 +2,9 @@ package com.vongzh.sophon.core.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.vongzh.sophon.domain.model.SafeGeofence
 
 /**
  * 极视全局用户偏好与车机参数配置管理 (SophonPreferences)
@@ -53,6 +56,14 @@ class SophonPreferences(context: Context) {
         private const val KEY_IMAGE_NOISE_MODE = "image_noise_mode"
         private const val KEY_SHOW_FAB_LABELS = "show_fab_labels"
         private const val KEY_THEME_MODE = "ui_theme_mode" // 0: SYSTEM(跟随系统), 1: LIGHT(浅色日间), 2: DARK(深色夜间)
+
+        // 目标 1 & 3: 阶梯低功耗哨兵与 GNSS 安全地理围栏
+        private const val KEY_GEOFENCE_EXEMPTION_ENABLED = "geofence_exemption_enabled"
+        private const val KEY_SAFE_GEOFENCES_JSON = "safe_geofences_json"
+        private const val KEY_SENTRY_LOW_POWER_TIER_ENABLED = "sentry_low_power_tier_enabled"
+
+        // 目标 4: 车规影像隐私脱敏导出 (人脸/车牌马赛克)
+        private const val KEY_PRIVACY_MASKING_EXPORT = "privacy_masking_export_enabled"
 
         // Telegram Bot 配置
         private const val KEY_TELEGRAM_BOT_TOKEN = "telegram_bot_token"
@@ -316,6 +327,58 @@ class SophonPreferences(context: Context) {
             value.map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\n")
         ).apply()
 
+    /**
+     * 目标 3：GNSS 常用安全地理围栏免巡逻总开关 (家/公司免开启哨兵)
+     */
+    var isGeofenceExemptionEnabled: Boolean
+        get() = sp.getBoolean(KEY_GEOFENCE_EXEMPTION_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_GEOFENCE_EXEMPTION_ENABLED, value).apply()
+
+    /**
+     * 目标 3：已配置的 GNSS 安全地理围栏列表
+     */
+    var safeGeofences: List<SafeGeofence>
+        get() {
+            val json = sp.getString(KEY_SAFE_GEOFENCES_JSON, null) ?: return emptyList()
+            return try {
+                val type = object : TypeToken<List<SafeGeofence>>() {}.type
+                Gson().fromJson(json, type) ?: emptyList()
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+        set(value) {
+            val json = Gson().toJson(value)
+            sp.edit().putString(KEY_SAFE_GEOFENCES_JSON, json).apply()
+        }
+
+    fun addSafeGeofence(geofence: SafeGeofence) {
+        val current = safeGeofences.toMutableList()
+        current.removeAll { it.name.equals(geofence.name, ignoreCase = true) }
+        current.add(geofence)
+        safeGeofences = current
+    }
+
+    fun removeSafeGeofence(name: String) {
+        val current = safeGeofences.toMutableList()
+        current.removeAll { it.name.equals(name, ignoreCase = true) }
+        safeGeofences = current
+    }
+
+    /**
+     * 目标 1：三级漏斗式超低功耗哨兵开关 (L0 内存预录待机 -> L1 视感警备 -> L2 报警加锁)
+     */
+    var isSentryLowPowerTierEnabled: Boolean
+        get() = sp.getBoolean(KEY_SENTRY_LOW_POWER_TIER_ENABLED, true)
+        set(value) = sp.edit().putBoolean(KEY_SENTRY_LOW_POWER_TIER_ENABLED, value).apply()
+
+    /**
+     * 目标 4：车规级影像隐私合规脱敏导出开关 (导出视频与图片自动人脸/车牌打码)
+     */
+    var isPrivacyMaskingExportEnabled: Boolean
+        get() = sp.getBoolean(KEY_PRIVACY_MASKING_EXPORT, true)
+        set(value) = sp.edit().putBoolean(KEY_PRIVACY_MASKING_EXPORT, value).apply()
+
     // ==================== 配置备份 / 恢复 ====================
 
     /**
@@ -350,6 +413,7 @@ class SophonPreferences(context: Context) {
                 is Int -> editor.putInt(key, value)
                 is Long -> editor.putLong(key, value)
                 is Float -> editor.putFloat(key, value)
+                is Double -> editor.putFloat(key, value.toFloat())
                 is String -> editor.putString(key, value)
                 is Set<*> -> {
                     @Suppress("UNCHECKED_CAST")

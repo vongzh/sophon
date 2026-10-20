@@ -77,8 +77,11 @@ class BlindSpotOverlayService : Service() {
     }
 
     private fun initWindowLayout() {
+        val density = resources.displayMetrics.density
         overlayContainer = FrameLayout(this).apply {
-            setBackgroundColor(0xCC0D0F12.toInt())
+            setBackgroundResource(R.drawable.sp_bg_quad_frame)
+            elevation = 16f * density
+            clipToOutline = true
             visibility = View.GONE
         }
 
@@ -91,20 +94,26 @@ class BlindSpotOverlayService : Service() {
         overlayContainer?.addView(surfaceHost)
 
         tvWarningBanner = TextView(this).apply {
-            textSize = 12f
+            textSize = 11.5f
             setTextColor(Color.WHITE)
-            setBackgroundColor(0xAAFF5252.toInt())
-            setPadding(16, 8, 16, 8)
+            setBackgroundResource(R.drawable.sp_bg_pill)
+            backgroundTintList = android.content.res.ColorStateList.valueOf(0xE6D92D20.toInt())
+            val ph = (14 * density).toInt()
+            val pv = (6 * density).toInt()
+            setPadding(ph, pv, ph, pv)
             gravity = Gravity.CENTER
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
             visibility = View.GONE
             text = "开门防碰撞预警 · 请留意后方非机动车"
         }
 
         val bannerParams = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply {
-            gravity = Gravity.BOTTOM
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            val m = (10 * density).toInt()
+            setMargins(m, m, m, m)
         }
         overlayContainer?.addView(tvWarningBanner, bannerParams)
     }
@@ -274,9 +283,18 @@ class BlindSpotOverlayService : Service() {
         }
 
         try {
+            view.alpha = 0f
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
             view.visibility = View.VISIBLE
             wm.addView(view, layoutParams)
             isOverlayAttached = true
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(180)
+                .start()
             Log.d(TAG, "Blind spot overlay SHOWN with live camera preview: $position (DOW: $isDoorWarning)")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to show single overlay", e)
@@ -349,9 +367,18 @@ class BlindSpotOverlayService : Service() {
         }
 
         try {
+            view.alpha = 0f
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
             view.visibility = View.VISIBLE
             wm.addView(view, layoutParams)
             isOverlayAttached = true
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(180)
+                .start()
             Log.i(TAG, "Dual hazard passing overlay SHOWN with dual live camera previews.")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to show dual hazard overlay", e)

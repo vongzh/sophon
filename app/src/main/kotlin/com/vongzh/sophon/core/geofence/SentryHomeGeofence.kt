@@ -35,7 +35,8 @@ import kotlinx.coroutines.launch
 class SentryHomeGeofence(
     private val context: Context,
     private val preferences: SophonPreferences,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val bus: com.vongzh.sophon.domain.contract.IVehicleSignalBus? = null
 ) {
     companion object {
         private const val TAG = "Sophon.HomeGeofence"
@@ -55,11 +56,17 @@ class SentryHomeGeofence(
         }
     }
 
+    private val activeBus: com.vongzh.sophon.domain.contract.IVehicleSignalBus?
+        get() = bus ?: runCatching { com.vongzh.sophon.SophonApp.vehicleSignalBus }.getOrNull()
+
     private val _isAtHome = MutableStateFlow(false)
     val isAtHome: StateFlow<Boolean> = _isAtHome.asStateFlow()
 
     private val _currentSsid = MutableStateFlow<String?>(null)
     val currentSsid: StateFlow<String?> = _currentSsid.asStateFlow()
+
+    private val _matchedFenceName = MutableStateFlow<String?>(null)
+    val matchedFenceName: StateFlow<String?> = _matchedFenceName.asStateFlow()
 
     private var pollJob: Job? = null
 
@@ -88,21 +95,40 @@ class SentryHomeGeofence(
     }
 
     /**
-     * 立即重算一次围栏状态。白名单为空时恒为 false（功能关闭）。
+     * 立即重算一次围栏状态。
+     * 支持双模融合判据：
+     * 1. 常用 Wi-Fi SSID 白名单匹配 (覆盖地下车库等无卫星信号场景)
+     * 2. 常用 GNSS 经纬度地理围栏 (覆盖地面车位、公司露天园区等场景)
      */
     fun refresh() {
-        val whitelist = preferences.sentryHomeSsids
-        if (whitelist.isEmpty()) {
-            _currentSsid.value = readCurrentSsid()
-            _isAtHome.value = false
-            return
-        }
-
         val ssid = readCurrentSsid()
         _currentSsid.value = ssid
-        val atHome = ssid != null && whitelist.any { it.equals(ssid, ignoreCase = true) }
+
+        val wifiWhitelist = preferences.sentryHomeSsids
+        val matchedWifi = ssid != null && wifiWhitelist.any { it.equals(ssid, ignoreCase = true) }
+
+        var matchedGnssFence: String? = null
+        if (preferences.isGeofenceExemptionEnabled) {
+            val gnss = activeBus?.gnssTelemetry?.value
+            if (gnss != null && gnss.hasFix) {
+                val hitFence = preferences.safeGeofences.firstOrNull { fence ->
+                    fence.contains(gnss.latitude, gnss.longitude)
+                }
+                if (hitFence != null) {
+                    matchedGnssFence = hitFence.name
+                }
+            }
+        }
+
+        val atHome = matchedWifi || (matchedGnssFence != null)
+        _matchedFenceName.value = when {
+            matchedGnssFence != null -> "安全区域: $matchedGnssFence"
+            matchedWifi -> "安全Wi-Fi: $ssid"
+            else -> null
+        }
+
         if (atHome != _isAtHome.value) {
-            Log.i(TAG, "Home geofence changed -> isAtHome=$atHome (ssid=$ssid, whitelist=${whitelist.size})")
+            Log.i(TAG, "Safe geofence status changed -> isAtHome=$atHome (name=${_matchedFenceName.value})")
         }
         _isAtHome.value = atHome
     }

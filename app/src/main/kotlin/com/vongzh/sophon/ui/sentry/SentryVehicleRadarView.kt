@@ -72,14 +72,103 @@ class SentryVehicleRadarView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    private val colorDanger = ContextCompat.getColor(context, R.color.sp_dg)
-    private val colorWarning = ContextCompat.getColor(context, R.color.sp_wn)
-    private val colorAccent = ContextCompat.getColor(context, R.color.sp_ac)
-    private val colorOk = ContextCompat.getColor(context, R.color.sp_ok)
+    private var colorDanger = ContextCompat.getColor(context, R.color.sp_dg)
+    private var colorWarning = ContextCompat.getColor(context, R.color.sp_wn)
+    private var colorAccent = ContextCompat.getColor(context, R.color.sp_ac)
+    private var colorOk = ContextCompat.getColor(context, R.color.sp_ok)
 
     private val carBounds = RectF()
     private val frontGlass = RectF()
     private val rearGlass = RectF()
+
+    /**
+     * 响应车机白昼/黑夜模式动态切换，重新绑定 Paint 语义色
+     */
+    fun refreshThemeColors() {
+        bodyPaint.color = ContextCompat.getColor(context, R.color.sp_surf3)
+        bodyStrokePaint.color = ContextCompat.getColor(context, R.color.sp_line2)
+        glassPaint.color = ContextCompat.getColor(context, R.color.sp_surf)
+        glassStrokePaint.color = ContextCompat.getColor(context, R.color.sp_line2)
+
+        colorDanger = ContextCompat.getColor(context, R.color.sp_dg)
+        colorWarning = ContextCompat.getColor(context, R.color.sp_wn)
+        colorAccent = ContextCompat.getColor(context, R.color.sp_ac)
+        colorOk = ContextCompat.getColor(context, R.color.sp_ok)
+        invalidate()
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        refreshThemeColors()
+    }
+
+    private var waveAnimator: android.animation.ValueAnimator? = null
+    private var waveProgress = 0f
+
+    private var perimeterScanAnimator: android.animation.ValueAnimator? = null
+    private var perimeterProgress = 0f
+    private val perimeterPath = android.graphics.Path()
+    private val pathMeasure = android.graphics.PathMeasure()
+    private val posTan = FloatArray(2)
+
+    private fun startWaveAnimation() {
+        stopPerimeterScanAnimation()
+        if (waveAnimator?.isRunning == true) return
+        waveAnimator?.cancel()
+        waveAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 1300L
+            repeatCount = android.animation.ValueAnimator.INFINITE
+            interpolator = android.view.animation.LinearInterpolator()
+            addUpdateListener {
+                waveProgress = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    private fun stopWaveAnimation() {
+        waveAnimator?.cancel()
+        waveAnimator = null
+        waveProgress = 0f
+        invalidate()
+    }
+
+    private fun startPerimeterScanAnimation() {
+        if (perimeterScanAnimator?.isRunning == true) return
+        perimeterScanAnimator?.cancel()
+        perimeterScanAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 3200L
+            repeatCount = android.animation.ValueAnimator.INFINITE
+            interpolator = android.view.animation.LinearInterpolator()
+            addUpdateListener {
+                perimeterProgress = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    private fun stopPerimeterScanAnimation() {
+        perimeterScanAnimator?.cancel()
+        perimeterScanAnimator = null
+        perimeterProgress = 0f
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (activeDirection != RadarDirection.NONE) {
+            startWaveAnimation()
+        } else {
+            startPerimeterScanAnimation()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        stopWaveAnimation()
+        stopPerimeterScanAnimation()
+        super.onDetachedFromWindow()
+    }
 
     /**
      * 响应式高亮指定方位的雷达波（完全由外部事件驱动，绝不绘制假波纹）
@@ -87,13 +176,19 @@ class SentryVehicleRadarView @JvmOverloads constructor(
     fun highlightDirection(direction: RadarDirection, color: Int = colorDanger) {
         this.activeDirection = direction
         this.activeWaveColor = color
-        invalidate()
+        if (direction != RadarDirection.NONE) {
+            startWaveAnimation()
+        } else {
+            stopWaveAnimation()
+            startPerimeterScanAnimation()
+        }
     }
 
     fun resetToSafeState() {
         this.activeDirection = RadarDirection.NONE
         this.activeWaveColor = colorOk
-        invalidate()
+        stopWaveAnimation()
+        startPerimeterScanAnimation()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -161,28 +256,61 @@ class SentryVehicleRadarView @JvmOverloads constructor(
                 drawRadarWave(canvas, centerX, carBottom + 16f, activeWaveColor)
             }
             RadarDirection.NONE -> {
-                // 安全待命态：仅在车身周围画极淡的绿色守护虚线
+                // 安全待命态：车身周围极淡安全虚线 + 360° 动态巡检激光光珠环游扫动 (Perimeter Laser Sweep)
                 radarPaint.color = colorOk
-                radarPaint.alpha = 45
-                canvas.drawRoundRect(
+                radarPaint.alpha = 50
+                perimeterPath.reset()
+                perimeterPath.addRoundRect(
                     carLeft - 12f, carTop - 12f, carRight + 12f, carBottom + 12f,
-                    cornerRadius + 8f, cornerRadius + 8f, radarPaint
+                    cornerRadius + 8f, cornerRadius + 8f, android.graphics.Path.Direction.CW
                 )
+                canvas.drawPath(perimeterPath, radarPaint)
+
+                // 沿边界环绕飞行的安全扫描光珠
+                pathMeasure.setPath(perimeterPath, true)
+                val len = pathMeasure.length
+                if (len > 0f) {
+                    pathMeasure.getPosTan(len * perimeterProgress, posTan, null)
+                    val scanX = posTan[0]
+                    val scanY = posTan[1]
+
+                    // 外层微光晕
+                    dotPaint.color = colorOk
+                    dotPaint.alpha = 70
+                    canvas.drawCircle(scanX, scanY, 9f, dotPaint)
+                    // 核心光珠
+                    dotPaint.alpha = 240
+                    canvas.drawCircle(scanX, scanY, 4f, dotPaint)
+                }
             }
         }
     }
 
     private fun drawRadarWave(canvas: Canvas, x: Float, y: Float, color: Int) {
-        radarPaint.color = color
-        radarPaint.alpha = 180
-        canvas.drawCircle(x, y, 34f, radarPaint)
-        radarPaint.alpha = 70
-        canvas.drawCircle(x, y, 52f, radarPaint)
+        val density = resources.displayMetrics.density
 
+        // 第一层主扩散波
+        val r1 = (22f + waveProgress * 42f) * density
+        val alpha1 = ((1f - waveProgress) * 200).toInt().coerceIn(0, 255)
+        radarPaint.color = color
+        radarPaint.alpha = alpha1
+        canvas.drawCircle(x, y, r1, radarPaint)
+
+        // 第二层跟随扩散波 (相位偏置 0.5)
+        val p2 = (waveProgress + 0.5f) % 1.0f
+        val r2 = (22f + p2 * 42f) * density
+        val alpha2 = ((1f - p2) * 130).toInt().coerceIn(0, 255)
+        radarPaint.alpha = alpha2
+        canvas.drawCircle(x, y, r2, radarPaint)
+
+        // 核心原点脉冲光晕
+        val coreHalo = (14f + (1f - waveProgress) * 6f) * density
         dotPaint.color = color
         dotPaint.alpha = 50
-        canvas.drawCircle(x, y, 18f, dotPaint)
+        canvas.drawCircle(x, y, coreHalo, dotPaint)
+
+        // 实心小圆点
         dotPaint.alpha = 255
-        canvas.drawCircle(x, y, 7f, dotPaint)
+        canvas.drawCircle(x, y, 6f * density, dotPaint)
     }
 }

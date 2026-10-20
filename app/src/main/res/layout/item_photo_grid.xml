@@ -18,18 +18,19 @@
         android:scaleType="centerCrop"
         android:contentDescription="照片缩略图" />
 
-    <!-- 顶部半透明机位标签 -->
+    <!-- 顶部半透明机位标签 (统一 OSD 视窗芯片规范，保证日光照耀与暗夜高对比) -->
     <TextView
         android:id="@+id/tv_grid_cam_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:background="@drawable/sp_bg_chip"
+        android:background="@drawable/sp_bg_osd_chip"
         android:paddingHorizontal="6dp"
         android:paddingVertical="2dp"
         android:text="前路"
-        android:textColor="@color/sp_tx"
-        android:textSize="@dimen/sp_t_micro" />
+        android:textColor="@color/sp_osd_tx"
+        android:textSize="@dimen/sp_t_micro"
+        android:textStyle="bold" />
 
     <!-- 多选复选标记 -->
     <ImageView
@@ -44,15 +45,21 @@
         android:visibility="gone"
         android:contentDescription="选中标记" />
 
-    <!-- 底部渐变信息阴影条 -->
+    <!-- 底部顺滑渐晕蒙层与元数据 (使用 sp_grad_bottom_scrim，字体恒为 OSD 反色白，彻底解决白天模式黑字压暗底不可见 Bug) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/sp_grad_bottom_scrim" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="30dp"
         android:layout_gravity="bottom"
-        android:background="#A0000000"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="8dp">
+        android:paddingHorizontal="8dp"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/tv_grid_time"
@@ -61,15 +68,17 @@
             android:layout_weight="1"
             android:fontFamily="monospace"
             android:text="12:00:00"
-            android:textColor="@color/sp_tx"
-            android:textSize="@dimen/sp_t_micro" />
+            android:textColor="@color/sp_osd_tx"
+            android:textSize="@dimen/sp_t_micro"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_grid_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="monospace"
             android:text="1.2 MB"
-            android:textColor="@color/sp_tx3"
+            android:textColor="@color/sp_osd_tx2"
             android:textSize="@dimen/sp_t_micro" />
     </LinearLayout>
 

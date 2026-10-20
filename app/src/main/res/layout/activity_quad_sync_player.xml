@@ -21,15 +21,14 @@
         <TextView
             android:id="@+id/btn_player_back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_marginEnd="@dimen/sp_s_16"
             android:background="@drawable/sp_bg_pill"
             android:drawableStart="@drawable/ic_action_back"
             android:drawablePadding="@dimen/sp_s_6"
             android:drawableTint="@color/sp_ac"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="@dimen/sp_s_12"
-            android:paddingVertical="@dimen/sp_s_6"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/sp_s_14"
             android:text="返回"
             android:textColor="@color/sp_ac"
             android:textSize="@dimen/sp_t_label"
@@ -59,10 +58,11 @@
                 android:textAppearance="@style/TextAppearance.Sophon.Caption" />
         </LinearLayout>
 
-        <!-- 视角切换 -->
+        <!-- 视角切换 (36dp 等高胶囊底座) -->
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center_vertical"
             android:background="@drawable/sp_bg_card"
             android:elevation="@dimen/sp_elev_1"
             android:orientation="horizontal"
@@ -71,10 +71,10 @@
             <TextView
                 android:id="@+id/btn_view_quad"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:background="@drawable/sp_bg_pill_accent"
                 android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
                 android:text="四分屏"
                 android:textColor="@color/sp_ac"
                 android:textSize="@dimen/sp_t_label"
@@ -83,9 +83,9 @@
             <TextView
                 android:id="@+id/btn_view_front"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
                 android:text="前视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
@@ -93,9 +93,9 @@
             <TextView
                 android:id="@+id/btn_view_back"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
                 android:text="后视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
@@ -103,9 +103,9 @@
             <TextView
                 android:id="@+id/btn_view_left"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
                 android:text="左视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
@@ -113,9 +113,9 @@
             <TextView
                 android:id="@+id/btn_view_right"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/sp_s_12"
-                android:paddingVertical="@dimen/sp_s_6"
                 android:text="右视"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label" />
@@ -271,13 +271,14 @@
                 android:id="@+id/btn_clip_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:gravity="center"
                 android:layout_marginEnd="@dimen/sp_s_12"
                 android:background="@drawable/sp_bg_pill"
                 android:drawableStart="@drawable/ic_clip_scissors"
                 android:drawablePadding="@dimen/sp_s_6"
                 android:drawableTint="@color/sp_ac"
                 android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
                 android:text="截取取证"
                 android:textColor="@color/sp_ac"
                 android:textSize="@dimen/sp_t_label"
@@ -287,9 +288,10 @@
                 android:id="@+id/btn_play_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="36dp"
+                android:gravity="center"
                 android:background="@drawable/sp_bg_pill"
                 android:paddingHorizontal="@dimen/sp_s_16"
-                android:paddingVertical="@dimen/sp_s_8"
                 android:text="1.0x"
                 android:textColor="@color/sp_tx2"
                 android:textSize="@dimen/sp_t_label"

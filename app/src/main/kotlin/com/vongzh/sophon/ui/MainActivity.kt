@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
     private var ivFabViewMode: ImageView? = null
     private var fabSnapshot: View? = null
     private var hideToastRunnable: Runnable? = null
-    private var recDotAnimator: ObjectAnimator? = null
+    private var recDotAnimator: ValueAnimator? = null
 
     private var isSingleCamMode = false
 
@@ -423,7 +423,8 @@ class MainActivity : AppCompatActivity() {
             btn.setBackgroundResource(if (isActive) R.drawable.sp_bg_nav_item_active else R.drawable.sp_bg_nav_item)
             val tintColor = getColor(if (isActive) R.color.sp_ac else R.color.sp_tx2)
             iv.setColorFilter(tintColor)
-            tv.setTextColor(getColor(if (isActive) R.color.sp_ac else R.color.sp_tx))
+            tv.setTextColor(getColor(if (isActive) R.color.sp_ac else R.color.sp_tx2))
+            tv.setTypeface(null, if (isActive) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
             if (isActive) {
                 btn.scaleX = 0.95f
                 btn.scaleY = 0.95f
@@ -544,11 +545,6 @@ class MainActivity : AppCompatActivity() {
             val isMounted = storage.isUsbMounted.value
             val root = storage.currentUsbRoot.value
 
-            val sandboxDir = File(getExternalFilesDir(null), "SophonRecord/${RecordCategory.SNAPSHOT.dirName}")
-            val sandboxPhotos = sandboxDir.listFiles()?.filter {
-                it.isFile && (it.extension.equals("jpg", ignoreCase = true) || it.extension.equals("png", ignoreCase = true))
-            } ?: emptyList()
-
             if (!isMounted || root == null || !root.exists()) {
                 withContext(Dispatchers.Main) {
                     badgeSentry.visibility = View.GONE
@@ -559,7 +555,7 @@ class MainActivity : AppCompatActivity() {
                     tvUsbStatus.text = "存储设备未就绪"
                     tvUsbStatus.setTextColor(getColor(R.color.sp_wn))
                     tvStorageUnmountedTip.visibility = View.VISIBLE
-                    tvStorageUnmountedTip.text = if (sandboxPhotos.isNotEmpty()) "已暂存 ${sandboxPhotos.size} 张照片于沙盒" else "接入存储启用录制"
+                    tvStorageUnmountedTip.text = "接入外置 U 盘启用录制"
                     storageRingMini.updateBreakdown(com.vongzh.sophon.domain.model.StorageUsageBreakdown())
                     barStorageMini.updateBreakdown(com.vongzh.sophon.domain.model.StorageUsageBreakdown())
                     layoutStorageLegend.visibility = View.GONE
@@ -644,6 +640,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun triggerSnapshot() {
+        // 0. 座舱操作物理声感与触感反馈 (盲操确定感保障)
+        fabSnapshot?.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+        fabSnapshot?.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+
         // 1. 快门弹性按压动画
         fabSnapshot?.let { shutter ->
             shutter.animate().cancel()
@@ -712,12 +712,63 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun triggerEmergencyLock() {
+        window.decorView.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+        window.decorView.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
         val intent = Intent(this, SophonCoreService::class.java).apply {
             action = SophonCoreService.ACTION_TRIGGER_LOCK
         }
         startService(intent)
-        showCaptureToast("已紧急锁定当前行车切片")
+        showEmergencyLockEffect()
         refreshStorageAndNavStats()
+    }
+
+    /**
+     * 紧急碰撞/加锁座舱 HUD 专属动效 (金盾冲击弹入 + 警示微闪 + 上浮入轨)
+     */
+    private fun showEmergencyLockEffect() {
+        val overlay = findViewById<View>(R.id.layout_emergency_lock_overlay) ?: return
+        val flash = findViewById<View>(R.id.v_emergency_lock_flash)
+        val card = findViewById<View>(R.id.card_emergency_lock_badge)
+
+        overlay.visibility = View.VISIBLE
+        overlay.alpha = 1f
+
+        // 1. 全屏红色警示微闪 (180ms 极速渐隐)
+        flash?.alpha = 0.65f
+        flash?.animate()?.cancel()
+        flash?.animate()
+            ?.alpha(0f)
+            ?.setDuration(360)
+            ?.start()
+
+        // 2. 徽章弹性冲击弹入并上浮消隐
+        card?.scaleX = 0.45f
+        card?.scaleY = 0.45f
+        card?.alpha = 0f
+        card?.translationY = 0f
+        card?.animate()?.cancel()
+        card?.animate()
+            ?.scaleX(1.0f)
+            ?.scaleY(1.0f)
+            ?.alpha(1.0f)
+            ?.setDuration(300)
+            ?.setInterpolator(OvershootInterpolator(2.2f))
+            ?.withEndAction {
+                card.postDelayed({
+                    card.animate()
+                        ?.alpha(0f)
+                        ?.scaleX(0.7f)
+                        ?.scaleY(0.7f)
+                        ?.translationY(-100f)
+                        ?.setDuration(240)
+                        ?.setInterpolator(AccelerateInterpolator())
+                        ?.withEndAction {
+                            overlay.visibility = View.GONE
+                        }
+                        ?.start()
+                }, 1000L)
+            }
+            ?.start()
     }
 
     private fun toggleQuadSingleView() {
@@ -783,11 +834,13 @@ class MainActivity : AppCompatActivity() {
             micIcon.setImageResource(R.drawable.ic_perm_mic)
             micIcon.setColorFilter(Color.parseColor("#FFFFFF"))
             micIcon.alpha = 1.0f
+            findViewById<TextView>(R.id.tv_fab_mic)?.text = "录音中"
         } else {
             micButton.setBackgroundResource(R.drawable.sp_bg_dock_btn_idle)
             micIcon.setImageResource(R.drawable.ic_mic_off)
             micIcon.setColorFilter(Color.parseColor("#B3FFFFFF"))
             micIcon.alpha = 0.75f
+            findViewById<TextView>(R.id.tv_fab_mic)?.text = "已静音"
         }
 
         if (animate) {
@@ -814,11 +867,13 @@ class MainActivity : AppCompatActivity() {
             viewIcon.setImageResource(R.drawable.ic_view_single)
             viewIcon.setColorFilter(Color.parseColor("#FFFFFF"))
             viewIcon.alpha = 1.0f
+            findViewById<TextView>(R.id.tv_fab_view_mode)?.text = "单路"
         } else {
             viewButton.setBackgroundResource(R.drawable.sp_bg_dock_btn_idle)
             viewIcon.setImageResource(R.drawable.ic_view_quad)
             viewIcon.setColorFilter(Color.parseColor("#B3FFFFFF"))
             viewIcon.alpha = 0.75f
+            findViewById<TextView>(R.id.tv_fab_view_mode)?.text = "四路"
         }
 
         if (animate) {
@@ -853,11 +908,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun startRecBreathingAnimation() {
         if (recDotAnimator == null) {
-            recDotAnimator = ObjectAnimator.ofFloat(dotRec, "alpha", 0.25f, 1.0f).apply {
+            recDotAnimator = ValueAnimator.ofFloat(0.25f, 1.0f).apply {
                 duration = 900
                 repeatMode = ValueAnimator.REVERSE
                 repeatCount = ValueAnimator.INFINITE
                 interpolator = AccelerateDecelerateInterpolator()
+                addUpdateListener { animator ->
+                    val alphaVal = animator.animatedValue as Float
+                    dotRec.alpha = alphaVal
+                    dotRecBanner.alpha = alphaVal
+                    val scaleVal = 0.90f + 0.10f * alphaVal
+                    dotRec.scaleX = scaleVal
+                    dotRec.scaleY = scaleVal
+                    dotRecBanner.scaleX = scaleVal
+                    dotRecBanner.scaleY = scaleVal
+                }
             }
         }
         if (recDotAnimator?.isRunning != true) {
@@ -868,17 +933,22 @@ class MainActivity : AppCompatActivity() {
     private fun stopRecBreathingAnimation() {
         recDotAnimator?.cancel()
         dotRec.alpha = 0.2f
+        dotRecBanner.alpha = 0.2f
+        dotRec.scaleX = 1.0f
+        dotRec.scaleY = 1.0f
+        dotRecBanner.scaleX = 1.0f
+        dotRecBanner.scaleY = 1.0f
     }
 
     override fun onKeyDown(keyCode: Int, event: android.view.KeyEvent): Boolean {
         if (isSteeringWheelCustomKey(keyCode)) {
             if (event.isLongPress || event.repeatCount > 0) {
                 SophonApp.vehicleSignalBus.dispatchHardKeyEvent(com.vongzh.sophon.domain.model.HardKeyEvent.LONG_PRESS)
-                android.widget.Toast.makeText(this, "方向盘按键长按：已紧急锁死当前视频", android.widget.Toast.LENGTH_SHORT).show()
+                showEmergencyLockEffect()
                 return true
             } else if (event.repeatCount == 0) {
                 SophonApp.vehicleSignalBus.dispatchHardKeyEvent(com.vongzh.sophon.domain.model.HardKeyEvent.SHORT_PRESS)
-                android.widget.Toast.makeText(this, "方向盘按键抓拍成功", android.widget.Toast.LENGTH_SHORT).show()
+                showCaptureToast("方向盘自定义键：四向画面已抓拍保存")
                 return true
             }
         }
@@ -944,7 +1014,6 @@ class MainActivity : AppCompatActivity() {
                             // 全局 REC 角标：画布顶部中央常驻
                             layoutRecBanner.visibility = View.VISIBLE
                             tvRecBanner.text = "REC $durationStr · 四路录制中"
-                            dotRecBanner.alpha = dotRec.alpha
                         } else {
                             tvTopRecTime.text = "录制就绪"
                             // 就绪态整体静默：灰点灰字，红色只留给真正的录制中，避免一眼像告警
@@ -953,9 +1022,10 @@ class MainActivity : AppCompatActivity() {
                             layoutRecBanner.visibility = View.GONE
                         }
 
-                        // 真实遥测信号更新（温度与 GPS，无硬件信号时呈现 -- 严禁伪造）
-                        tvTelemetryTemp.text = "-- ℃"
-                        tvTelemetryGps.text = "--"
+                        // 真实遥测信号更新（GPS 硬件就绪且定位锁定时呈现真实坐标，无信号呈现 --，严禁伪造）
+                        val gnss = SophonApp.vehicleSignalBus.gnssTelemetry.value
+                        val gpsText = if (gnss.hasFix) gnss.toCoordinateString() else "--"
+                        tvTelemetryGps.text = gpsText
 
                         val prefs = SophonApp.preferences
                         val sensText = when (prefs.crashSensitivity) {
@@ -978,7 +1048,7 @@ class MainActivity : AppCompatActivity() {
 
                         // 更新可用硬件镜头状态指示小圆点 (绿灯就绪 / 灰灯离线，代替通道待命长文案)
                         tvSingleExposure.text = "自动测光 · AE开启"
-                        tvSingleGps.text = "GPS: --"
+                        tvSingleGps.text = "GPS: $gpsText"
 
                         SophonCoreService.instance?.availableCamerasFlow?.value?.let { avail ->
                             val hasFront = avail.contains(CameraPosition.FRONT)
@@ -1059,6 +1129,26 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                // 3b. 车外环境温度 (真实 VHAL 信号驱动，无信号时诚实显示 -- ℃)
+                launch {
+                    bus.outsideTemperature.collectLatest { temp ->
+                        tvTelemetryTemp.text = if (temp != null) {
+                            String.format(Locale.getDefault(), "%.1f ℃", temp)
+                        } else {
+                            "-- ℃"
+                        }
+                    }
+                }
+
+                // 3c. VHAL 权限失败告警与显式化
+                launch {
+                    (bus as? com.vongzh.sophon.core.vhal.VehicleSignalBusImpl)?.vhalAuthError?.collectLatest { err ->
+                        if (!err.isNullOrBlank()) {
+                            android.util.Log.w("MainActivity", "VHAL unprivileged: $err")
+                        }
+                    }
+                }
+
                 // 4. 外接存储状态
                 launch {
                     storage.isUsbMounted.collectLatest { isMounted ->
@@ -1118,35 +1208,22 @@ class MainActivity : AppCompatActivity() {
      */
     private fun updateFabLabelsVisibility() {
         val showLabels = SophonApp.preferences.isShowFabLabels
-        val textIds = listOf(
-            R.id.tv_fab_mic,
-            R.id.tv_fab_view_mode
-        )
-        for (id in textIds) {
-            findViewById<View>(id)?.visibility = if (showLabels) View.VISIBLE else View.GONE
-        }
-        val iconIds = listOf(
-            R.id.iv_fab_mic,
-            R.id.iv_fab_view_mode
-        )
         val density = resources.displayMetrics.density
-        val endMargin = if (showLabels) (6 * density).toInt() else 0
-        for (id in iconIds) {
-            val iv = findViewById<ImageView>(id) ?: continue
-            val lp = iv.layoutParams as? ViewGroup.MarginLayoutParams ?: continue
-            lp.marginStart = 0
-            lp.setMarginEnd(endMargin)
-            lp.rightMargin = endMargin
-            iv.layoutParams = lp
-        }
-        val buttonIds = listOf(
-            R.id.fab_mic,
-            R.id.fab_view_mode
-        )
-        for (id in buttonIds) {
-            val btn = findViewById<View>(id) ?: continue
-            val padH = if (showLabels) (14 * density).toInt() else (12 * density).toInt()
-            btn.setPadding(padH, 0, padH, 0)
+        val padH = if (showLabels) (14 * density).toInt() else (11 * density).toInt()
+
+        findViewById<View>(R.id.tv_fab_mic)?.visibility = if (showLabels) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.tv_fab_view_mode)?.visibility = if (showLabels) View.VISIBLE else View.GONE
+
+        fabMic?.setPadding(padH, 0, padH, 0)
+        fabViewMode?.setPadding(padH, 0, padH, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopRecBreathingAnimation()
+        recDotAnimator = null
+        hideToastRunnable?.let { runnable ->
+            layoutCaptureToast?.removeCallbacks(runnable)
         }
     }
 }

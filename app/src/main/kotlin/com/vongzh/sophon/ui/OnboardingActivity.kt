@@ -148,6 +148,13 @@ class OnboardingActivity : AppCompatActivity() {
         rowCar.desc.text = getString(R.string.perm_car_desc)
         // 系统签名级权限无法运行时申请，不提供点了也没用的按钮
         rowCar.action.visibility = View.GONE
+
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnContinue, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(btnGrantAll, 0.94f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(rowCamera.action, 0.92f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(rowAudio.action, 0.92f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(rowNotify.action, 0.92f)
+        com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(rowOverlay.action, 0.92f)
     }
 
     private fun refreshAllPermissionStates() {

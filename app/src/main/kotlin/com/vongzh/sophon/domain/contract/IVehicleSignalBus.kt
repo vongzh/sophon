@@ -41,6 +41,11 @@ interface IVehicleSignalBus {
     val vehicleSpeed: StateFlow<Float>
 
     /**
+     * 车外环境温度 (摄氏度，null 表示未获取或未授权)
+     */
+    val outsideTemperature: StateFlow<Float?>
+
+    /**
      * 变速箱挡位状态 (P / R / N / D)
      */
     val gearState: StateFlow<GearState>
@@ -82,6 +87,21 @@ interface IVehicleSignalBus {
     val emergencyCollisionEvents: SharedFlow<String>
 
     /**
+     * GNSS / GPS 经纬度与定位遥测数据 (只读流，无定位硬件或无锁定时 hasFix 为 false)
+     */
+    val gnssTelemetry: StateFlow<com.vongzh.sophon.domain.model.GnssTelemetry>
+
+    /**
+     * VHAL 信号授权错误/安全异常告警流 (未提权时上抛错误描述，无异常时为 null)
+     */
+    val vhalAuthError: StateFlow<String?>
+
+    /**
+     * 目标 2：鸣笛状态流 (借鉴特斯拉鸣笛瞬时加锁存证)
+     */
+    val isHornActive: StateFlow<Boolean>
+
+    /**
      * 启动信号监听
      */
     fun startListening()
@@ -90,6 +110,11 @@ interface IVehicleSignalBus {
      * 手动分发按键动作事件 (如方向盘物理按键)
      */
     fun dispatchHardKeyEvent(event: HardKeyEvent)
+
+    /**
+     * 分发车辆鸣笛事件 (true: 鸣笛中，false: 鸣笛结束)
+     */
+    fun dispatchHornEvent(active: Boolean)
 
     /**
      * 停止信号监听并释放资源

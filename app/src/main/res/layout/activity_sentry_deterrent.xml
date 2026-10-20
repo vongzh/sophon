@@ -16,27 +16,15 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <!--  警示眼（呼吸动效） -->
-        <FrameLayout
-            android:id="@+id/fl_sentry_eye_container"
-            android:layout_width="180dp"
-            android:layout_height="180dp">
-
-            <View
-                android:id="@+id/v_eye_halo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_sentry_halo" />
-
-            <View
-                android:id="@+id/v_eye_core"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_sentry_core" />
-        </FrameLayout>
+        <!--  智能虹膜超感智眸 (三轨逆向旋转星瞳 + 360° 激光全域扫描光束) -->
+        <com.vongzh.sophon.ui.sentry.SentryEyeIrisView
+            android:id="@+id/sentry_eye_view"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center_horizontal" />
 
         <TextView
+            android:id="@+id/tv_deterrent_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_s_32"
@@ -47,6 +35,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_deterrent_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_s_8"
@@ -57,6 +46,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_deterrent_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sp_s_12"

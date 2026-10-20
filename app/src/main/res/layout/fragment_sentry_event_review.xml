@@ -163,8 +163,8 @@
                         android:paddingHorizontal="6dp"
                         android:paddingVertical="1.5dp"
                         android:singleLine="true"
-                        android:text="较昨日 +0"
-                        android:textColor="@color/sp_tx2"
+                        android:text="全车受护"
+                        android:textColor="@color/sp_ok"
                         android:textSize="9.5sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -336,6 +336,7 @@
         android:layout_height="34dp"
         android:layout_marginTop="6dp"
         android:background="@color/sp_page"
+        android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/sp_s_20">
@@ -351,6 +352,7 @@
                 android:id="@+id/layout_sentry_date_pills"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -363,7 +365,7 @@
                     android:background="@drawable/sp_bg_pill_accent"
                     android:gravity="center"
                     android:paddingHorizontal="13dp"
-                    android:text="全部"
+                    android:text="全部日期"
                     android:textColor="@color/sp_ac"
                     android:textSize="11sp"
                     android:textStyle="bold" />
@@ -702,13 +704,13 @@
             <TextView
                 android:id="@+id/btn_sentry_view_all_clips"
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="38dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/sp_bg_pill_accent"
                 android:gravity="center"
                 android:text="四路同步回看事件瞬间"
                 android:textColor="@color/sp_ac"
-                android:textSize="11.5sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

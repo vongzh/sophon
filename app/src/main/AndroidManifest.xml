@@ -25,16 +25,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!-- 哨兵围栏：读取当前 Wi-Fi SSID 作为地理围栏判据。
-         Android 13+ 走 NEARBY_WIFI_DEVICES 且声明 neverForLocation，不涉及位置信息采集；
-         Android 12L 及以下 SSID 读取受位置权限保护，仅在用户主动配置围栏白名单时按需申请。 -->
+    <!-- 车载 GNSS / GPS 遥测定位与哨兵围栏权限。
+         车规事故取证要求在录像与抓拍元数据中记录真实经纬度与车速；
+         若用户未授权或无硬件模块，系统静默降级呈现占位横杠，严禁强弹权限或造假。 -->
     <uses-permission
         android:name="android.permission.NEARBY_WIFI_DEVICES"
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="33" />
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- 车内录音权限 (循环录像音轨) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

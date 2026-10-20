@@ -33,6 +33,7 @@ class NativeVehiclePropertyObserver(
         private const val VEHICLE_PROPERTY_PERF_SPEED = 291504647 // 0x11600207
         private const val VEHICLE_PROPERTY_GEAR_SELECTION = 289408000 // 0x11400400
         private const val VEHICLE_PROPERTY_TURN_SIGNAL = 289408008 // 0x11400408
+        private const val VEHICLE_PROPERTY_ENV_OUTSIDE_TEMPERATURE = 291505924 // 0x11600304
 
         private const val SENSOR_RATE_ONCHANGE = 0.0f
         private const val SENSOR_RATE_NORMAL = 3.0f
@@ -126,6 +127,7 @@ class NativeVehiclePropertyObserver(
                 registerMethod.invoke(mgr, proxy, VEHICLE_PROPERTY_PERF_SPEED, SENSOR_RATE_NORMAL)
                 registerMethod.invoke(mgr, proxy, VEHICLE_PROPERTY_GEAR_SELECTION, SENSOR_RATE_ONCHANGE)
                 registerMethod.invoke(mgr, proxy, VEHICLE_PROPERTY_TURN_SIGNAL, SENSOR_RATE_ONCHANGE)
+                registerMethod.invoke(mgr, proxy, VEHICLE_PROPERTY_ENV_OUTSIDE_TEMPERATURE, SENSOR_RATE_NORMAL)
                 isConnected = true
                 Log.i(TAG, "CarPropertyManager callbacks registered successfully.")
             } else {
@@ -201,6 +203,10 @@ class NativeVehiclePropertyObserver(
                         else -> TurnSignalState.OFF
                     }
                     signalBus.dispatchTurnSignalUpdate(state)
+                }
+                VEHICLE_PROPERTY_ENV_OUTSIDE_TEMPERATURE -> {
+                    val temp = (value as? Number)?.toFloat() ?: return
+                    signalBus.dispatchOutsideTemperatureUpdate(temp)
                 }
             }
         } catch (e: SecurityException) {

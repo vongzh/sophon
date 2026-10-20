@@ -49,6 +49,9 @@ class SingleCameraSession(
     private val openCloseLock = Semaphore(1)
     private var isSessionActive = false
 
+    var onSessionOpened: ((CameraPosition) -> Unit)? = null
+    var onSessionClosed: ((CameraPosition, Int?) -> Unit)? = null
+
     var surfaceTexture: SurfaceTexture? = null
         private set
     private var outputSurface: Surface? = null
@@ -105,12 +108,14 @@ class SingleCameraSession(
             Log.w(TAG, "Camera $position disconnected.")
             openCloseLock.release()
             closeInternal()
+            onSessionClosed?.invoke(position, null)
         }
 
         override fun onError(camera: CameraDevice, error: Int) {
             Log.e(TAG, "Camera $position error: $error")
             openCloseLock.release()
             closeInternal()
+            onSessionClosed?.invoke(position, error)
         }
     }
 
@@ -158,16 +163,19 @@ class SingleCameraSession(
                     isSessionActive = true
                     Log.i(TAG, "CaptureSession configured for camera $position on ${surfaces.size} surfaces.")
                     startRepeatingRequest(session, surfaces)
+                    onSessionOpened?.invoke(position)
                 }
 
                 override fun onConfigureFailed(session: CameraCaptureSession) {
                     Log.e(TAG, "CaptureSession configuration failed for camera $position!")
                     isSessionActive = false
+                    onSessionClosed?.invoke(position, -1)
                 }
             }, cameraHandler)
 
         } catch (e: Exception) {
             Log.e(TAG, "Failed to create capture session for camera $position", e)
+            onSessionClosed?.invoke(position, -2)
         }
     }
 

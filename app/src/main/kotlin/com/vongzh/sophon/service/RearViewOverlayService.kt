@@ -57,8 +57,10 @@ class RearViewOverlayService : Service() {
     }
 
     private fun buildLayout() {
+        val density = resources.displayMetrics.density
         container = FrameLayout(this).apply {
-            setBackgroundResource(R.drawable.sp_bg_card)
+            setBackgroundResource(R.drawable.sp_bg_quad_frame)
+            elevation = 16f * density
             visibility = View.GONE
             clipToOutline = true
         }
@@ -72,18 +74,22 @@ class RearViewOverlayService : Service() {
         container?.addView(surfaceHost)
 
         tvTitle = TextView(this).apply {
-            text = "后视 · R"
+            text = "后视 · R 挡"
             setTextColor(getColor(R.color.sp_osd_tx))
-            setBackgroundColor(getColor(R.color.sp_on_rec))
+            setBackgroundResource(R.drawable.sp_bg_osd_chip)
             textSize = 11f
-            setPadding(14, 6, 14, 6)
+            val ph = (10 * density).toInt()
+            val pv = (4 * density).toInt()
+            setPadding(ph, pv, ph, pv)
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
         val titleParams = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            setMargins(12, 12, 12, 12)
+            val m = (10 * density).toInt()
+            setMargins(m, m, m, m)
         }
         container?.addView(tvTitle, titleParams)
     }
@@ -149,9 +155,18 @@ class RearViewOverlayService : Service() {
         }
 
         try {
+            view.alpha = 0f
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
             view.visibility = View.VISIBLE
             wm.addView(view, params)
             isAttached = true
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(180)
+                .start()
             Log.d(TAG, "Rear view overlay shown (REVERSE gear).")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to attach rear view overlay", e)

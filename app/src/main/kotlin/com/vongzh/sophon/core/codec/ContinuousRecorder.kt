@@ -74,6 +74,10 @@ class ContinuousRecorder(
     /** MediaMuxer 非线程安全：视频 drain、音频 drain、切片热切换都会碰它，统一加锁 */
     private val muxerLock = Any()
 
+    /** 复用 BufferInfo 实例，消除音视频高频热循环中的对象频繁分配 (0 Allocation per frame) */
+    private val videoAdjustedBufferInfo = MediaCodec.BufferInfo()
+    private val audioAdjustedBufferInfo = MediaCodec.BufferInfo()
+
     private var baseCategory = RecordCategory.NORMAL
     private var currentCategory = RecordCategory.NORMAL
     private val shouldSliceAtNextKeyframe = AtomicBoolean(false)
@@ -223,11 +227,9 @@ class ContinuousRecorder(
             val basePts = chunkBasePtsUs
             if (basePts < 0L) return
             val normalizedPts = (info.presentationTimeUs - basePts).coerceAtLeast(0L)
-            val adjustedInfo = MediaCodec.BufferInfo().apply {
-                set(info.offset, info.size, normalizedPts, info.flags)
-            }
+            audioAdjustedBufferInfo.set(info.offset, info.size, normalizedPts, info.flags)
             try {
-                currentMuxer?.writeSampleData(currentAudioTrackIndex, data, adjustedInfo)
+                currentMuxer?.writeSampleData(currentAudioTrackIndex, data, audioAdjustedBufferInfo)
             } catch (e: Exception) {
                 Log.w(TAG, "Failed writing audio sample to MediaMuxer", e)
             }
@@ -315,14 +317,12 @@ class ContinuousRecorder(
                             chunkBasePtsUs = bufferInfo.presentationTimeUs
                         }
                         val normalizedPts = (bufferInfo.presentationTimeUs - chunkBasePtsUs).coerceAtLeast(0L)
-                        val adjustedInfo = MediaCodec.BufferInfo().apply {
-                            set(bufferInfo.offset, bufferInfo.size, normalizedPts, bufferInfo.flags)
-                        }
 
                         var written = false
                         synchronized(muxerLock) {
+                            videoAdjustedBufferInfo.set(bufferInfo.offset, bufferInfo.size, normalizedPts, bufferInfo.flags)
                             try {
-                                currentMuxer?.writeSampleData(currentVideoTrackIndex, encodedData, adjustedInfo)
+                                currentMuxer?.writeSampleData(currentVideoTrackIndex, encodedData, videoAdjustedBufferInfo)
                                 written = true
                             } catch (e: Exception) {
                                 Log.e(TAG, "Failed writing sample to MediaMuxer! Cushioning in RamRingBuffer...", e)

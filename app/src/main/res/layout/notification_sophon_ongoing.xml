@@ -13,8 +13,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_status_record"  android:contentDescription="极视录制状态图标" />
         android:contentDescription="极视录制状态图标"
+        android:src="@drawable/ic_status_record" />
 
     <!-- 文本信息区 -->
     <LinearLayout

@@ -58,10 +58,48 @@ class StorageCapacityRingView @JvmOverloads constructor(
     }
 
     private var breakdown: StorageUsageBreakdown = StorageUsageBreakdown()
+    private var animProgress = 1f
+    private var ringAnimator: android.animation.ValueAnimator? = null
 
-    fun updateBreakdown(data: StorageUsageBreakdown) {
+    fun updateBreakdown(data: StorageUsageBreakdown, animate: Boolean = true) {
         this.breakdown = data
+        if (animate && isAttachedToWindow) {
+            ringAnimator?.cancel()
+            ringAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 850L
+                interpolator = android.view.animation.DecelerateInterpolator(1.8f)
+                addUpdateListener {
+                    animProgress = it.animatedValue as Float
+                    invalidate()
+                }
+                start()
+            }
+        } else {
+            animProgress = 1f
+            invalidate()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        ringAnimator?.cancel()
+        super.onDetachedFromWindow()
+    }
+
+    /**
+     * 响应车机白昼/黑夜模式动态切换，重新绑定 Paint 语义色
+     */
+    fun refreshThemeColors() {
+        paintFree.color = ContextCompat.getColor(context, R.color.ring_free)
+        paintOther.color = ContextCompat.getColor(context, R.color.ring_other)
+        paintDriving.color = ContextCompat.getColor(context, R.color.ring_driving)
+        paintSentry.color = ContextCompat.getColor(context, R.color.ring_sentry)
+        paintPhotos.color = ContextCompat.getColor(context, R.color.ring_photos)
         invalidate()
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        refreshThemeColors()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -97,10 +135,10 @@ class StorageCapacityRingView @JvmOverloads constructor(
 
         var startAngle = -90f
 
-        val sweepOther = (breakdown.otherBytes.toFloat() / total) * 360f
-        val sweepDriving = (breakdown.drivingBytes.toFloat() / total) * 360f
-        val sweepPhotos = (breakdown.photoBytes.toFloat() / total) * 360f
-        val sweepSentry = (breakdown.sentryBytes.toFloat() / total) * 360f
+        val sweepOther = (breakdown.otherBytes.toFloat() / total) * 360f * animProgress
+        val sweepDriving = (breakdown.drivingBytes.toFloat() / total) * 360f * animProgress
+        val sweepPhotos = (breakdown.photoBytes.toFloat() / total) * 360f * animProgress
+        val sweepSentry = (breakdown.sentryBytes.toFloat() / total) * 360f * animProgress
 
         // 1. 底环 (可用空间)
         canvas.drawArc(rectF, 0f, 360f, false, paintFree)

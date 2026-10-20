@@ -307,6 +307,21 @@ class RecordingHistoryFragment : Fragment() {
         btnActionPlay.setOnClickListener { selectedItem?.let { playRecording(it) } }
         btnActionLock.setOnClickListener { selectedItem?.let { toggleLock(it) } }
         btnActionDelete.setOnClickListener { selectedItem?.let { deleteRecording(it) } }
+
+        // 车规物理触控反馈
+        UiMotionUtils.attachPressFeedback(btnPreviewPlayCenter, 0.90f)
+        UiMotionUtils.attachPressFeedback(btnActionPlay, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnActionLock, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnActionDelete, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnBatchManage, 0.95f)
+        UiMotionUtils.attachPressFeedback(catItemAll, 0.95f)
+        UiMotionUtils.attachPressFeedback(catItemEmergency, 0.95f)
+        UiMotionUtils.attachPressFeedback(catItemNight, 0.95f)
+        UiMotionUtils.attachPressFeedback(catItemTrash, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnQuickToday, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnQuickYesterday, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnQuickAllDate, 0.95f)
+        UiMotionUtils.attachPressFeedback(btnDatePicker, 0.95f)
     }
 
     private fun updateDateButtonsUi(selectedIndex: Int) {
@@ -336,9 +351,17 @@ class RecordingHistoryFragment : Fragment() {
             titleTv?.setTextColor(requireContext().getColor(if (isActive) R.color.sp_ac else R.color.sp_tx2))
             titleTv?.setTypeface(null, if (isActive) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
             tvCount.setTextColor(requireContext().getColor(if (isActive) R.color.sp_ac else R.color.sp_tx3))
+            tvCount.setTypeface(null, if (isActive) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
             titleTv?.compoundDrawableTintList = ColorStateList.valueOf(
                 requireContext().getColor(if (isActive) R.color.sp_ac else R.color.sp_tx2)
             )
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && isAdded) {
+            loadRecordingsFromUsb()
         }
     }
 
@@ -481,46 +504,17 @@ class RecordingHistoryFragment : Fragment() {
 
     private fun updateTodayKpiCard() {
         val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
-        val yesterdayStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
-
         val todayClips = allRecordings.filter { it.dateDay == todayStr && it.category != HistoryCategory.TRASH }
-        val yesterdayClips = allRecordings.filter { it.dateDay == yesterdayStr && it.category != HistoryCategory.TRASH }
 
-        // 1. 录像总数与趋势
+        // 1. 今日录像
         val todayCount = todayClips.size
-        val yesterdayCount = yesterdayClips.size
-        val diffCount = todayCount - yesterdayCount
         tvKpiTodayClips.text = "$todayCount 段"
-        tvKpiTodayTrend.text = when {
-            diffCount > 0 -> "较昨日 +$diffCount"
-            diffCount < 0 -> "较昨日 $diffCount"
-            else -> "较昨日持平"
-        }
+        tvKpiTodayTrend.text = if (todayCount > 0) "今日累计" else "循环录制就绪"
+        tvKpiTodayTrend.setBackgroundResource(if (todayCount > 0) R.drawable.sp_bg_pill_accent else R.drawable.sp_bg_pill)
+        tvKpiTodayTrend.setTextColor(requireContext().getColor(if (todayCount > 0) R.color.sp_ac else R.color.sp_tx2))
 
-        val hasTrend1 = diffCount != 0
-        tvKpiTodayTrend.setBackgroundResource(if (hasTrend1) R.drawable.sp_bg_pill_accent else R.drawable.sp_bg_pill)
-        tvKpiTodayTrend.setTextColor(requireContext().getColor(if (hasTrend1) R.color.sp_ac else R.color.sp_tx2))
-
-        // 2. 紧急加锁
-        val todayEmergency = todayClips.count { it.isLocked || it.category == HistoryCategory.EMERGENCY }
-        val yesterdayEmergency = yesterdayClips.count { it.isLocked || it.category == HistoryCategory.EMERGENCY }
-        val diffEmergency = todayEmergency - yesterdayEmergency
-        tvKpiEmergencyCount.text = "$todayEmergency 段"
-        tvKpiEmergencySub.text = when {
-            diffEmergency > 0 -> "较昨日 +$diffEmergency"
-            diffEmergency < 0 -> "较昨日 $diffEmergency"
-            else -> "较昨日持平"
-        }
-        val hasTrend2 = diffEmergency != 0
-        tvKpiEmergencySub.setBackgroundResource(if (hasTrend2) R.drawable.sp_bg_pill_accent else R.drawable.sp_bg_pill)
-        tvKpiEmergencySub.setTextColor(requireContext().getColor(if (hasTrend2) R.color.sp_wn else R.color.sp_tx2))
-
-        // 3. 录制时长
+        // 2. 驾驶时长
         val todayDurSec = todayClips.sumOf { it.durationMs } / 1000
-        val yesterdayDurSec = yesterdayClips.sumOf { it.durationMs } / 1000
-        val diffDurSec = todayDurSec - yesterdayDurSec
-
         val todayMin = todayDurSec / 60
         val todayHours = todayMin / 60
         tvKpiDurationVal.text = if (todayHours > 0) {
@@ -528,31 +522,29 @@ class RecordingHistoryFragment : Fragment() {
         } else {
             "${todayMin}m"
         }
+        tvKpiDurationSub.text = if (todayMin > 0) "今日巡航累计" else "待机无行驶"
+        tvKpiDurationSub.setBackgroundResource(if (todayMin > 0) R.drawable.sp_bg_pill_accent else R.drawable.sp_bg_pill)
+        tvKpiDurationSub.setTextColor(requireContext().getColor(if (todayMin > 0) R.color.sp_ac else R.color.sp_tx2))
 
-        val absDiffSec = kotlin.math.abs(diffDurSec)
-        val absDiffMin = absDiffSec / 60
-        val absDiffH = absDiffMin / 60
-        val diffMinStr = if (absDiffH > 0) "${absDiffH}h ${absDiffMin % 60}m" else "${absDiffMin}m"
-        tvKpiDurationSub.text = when {
-            diffDurSec > 0 -> "较昨日 +$diffMinStr"
-            diffDurSec < 0 -> "较昨日 -$diffMinStr"
-            else -> "较昨日持平"
+        // 3. 紧急加锁
+        val todayEmergency = todayClips.count { it.isLocked || it.category == HistoryCategory.EMERGENCY }
+        tvKpiEmergencyCount.text = "$todayEmergency 段"
+        if (todayEmergency == 0) {
+            tvKpiEmergencyCount.setTextColor(requireContext().getColor(R.color.sp_ok))
+            tvKpiEmergencySub.text = "安全受护"
+            tvKpiEmergencySub.setBackgroundResource(R.drawable.sp_bg_pill)
+            tvKpiEmergencySub.setTextColor(requireContext().getColor(R.color.sp_ok))
+        } else {
+            tvKpiEmergencyCount.setTextColor(requireContext().getColor(R.color.sp_wn))
+            tvKpiEmergencySub.text = "已加锁 ${todayEmergency}起"
+            tvKpiEmergencySub.setBackgroundResource(R.drawable.sp_bg_pill_accent)
+            tvKpiEmergencySub.setTextColor(requireContext().getColor(R.color.sp_wn))
         }
-        val hasTrend3 = diffDurSec != 0L
-        tvKpiDurationSub.setBackgroundResource(if (hasTrend3) R.drawable.sp_bg_pill_accent else R.drawable.sp_bg_pill)
-        tvKpiDurationSub.setTextColor(requireContext().getColor(if (hasTrend3) R.color.sp_ac else R.color.sp_tx2))
 
         // 4. 外接存储写入量 & 全盘占用监控
         val todayBytes = todayClips.sumOf { it.sizeBytes }
-        val yesterdayBytes = yesterdayClips.sumOf { it.sizeBytes }
-        val diffBytes = todayBytes - yesterdayBytes
-
         tvKpiTodayStorageBytes.text = formatByteSize(todayBytes)
-        tvKpiTodayStorageTrend.text = when {
-            diffBytes > 0 -> "较昨日 +${formatByteSize(diffBytes)}"
-            diffBytes < 0 -> "较昨日 -${formatByteSize(kotlin.math.abs(diffBytes))}"
-            else -> "较昨日持平"
-        }
+        tvKpiTodayStorageTrend.text = if (SophonApp.storageVault.isUsbMounted.value) "高速存储写入正常" else "存储未就绪"
 
         val breakdown = try {
             SophonApp.storageVault.queryStorageBreakdown()
@@ -628,7 +620,31 @@ class RecordingHistoryFragment : Fragment() {
         if (selectedItem == null || !displayedRecordings.contains(selectedItem)) {
             selectedItem = displayedRecordings.firstOrNull()
         }
-        selectedItem?.let { updateDetailPanel(it) }
+        if (selectedItem != null) {
+            layoutDetailPanel.alpha = 1.0f
+            btnActionPlay.isEnabled = true
+            btnActionLock.isEnabled = true
+            btnActionDelete.isEnabled = true
+            btnPreviewPlayCenter.isEnabled = true
+            updateDetailPanel(selectedItem!!)
+        } else {
+            layoutDetailPanel.alpha = 0.40f
+            btnActionPlay.isEnabled = false
+            btnActionLock.isEnabled = false
+            btnActionDelete.isEnabled = false
+            btnPreviewPlayCenter.isEnabled = false
+            tvDetailTitle.text = "暂无选中切片"
+            tvDetailCameraTag.text = "--"
+            tvDetailTimestamp.text = "--"
+            tvDetailDurationBadge.text = "--:--"
+            tvDetailTriggerReason.text = "请从左侧列表选择一段录像进行回放与取证"
+            tvSpecResolution.text = "--"
+            tvSpecCodec.text = "--"
+            tvSpecDuration.text = "--"
+            tvSpecSize.text = "--"
+            tvSpecLocation.text = "--"
+            ivDetailPreview.setImageDrawable(null)
+        }
 
         adapter.notifyDataSetChanged()
     }
@@ -738,10 +754,17 @@ class RecordingHistoryFragment : Fragment() {
 
     private fun deleteRecording(item: RecordingItem) {
         if (item.category == HistoryCategory.TRASH) {
-            if (item.file.delete()) {
-                Toast.makeText(context, "已从 U 盘彻底粉碎抹除", Toast.LENGTH_SHORT).show()
-                loadRecordingsFromUsb()
-            }
+            AlertDialog.Builder(requireContext())
+                .setTitle("确认彻底粉碎？")
+                .setMessage("切片「${item.file.name}」将从外接存储永久抹除，无法恢复。")
+                .setPositiveButton("彻底粉碎") { _, _ ->
+                    if (item.file.delete()) {
+                        Toast.makeText(context, "已从 U 盘彻底粉碎抹除", Toast.LENGTH_SHORT).show()
+                        loadRecordingsFromUsb()
+                    }
+                }
+                .setNegativeButton("取消", null)
+                .show()
         } else {
             val usbRoot = SophonApp.storageVault.currentUsbRoot.value ?: item.file.parentFile?.parentFile ?: return
             val trashDir = File(File(usbRoot, "SophonRecord"), ".Trash").apply { mkdirs() }
@@ -794,7 +817,14 @@ class RecordingHistoryFragment : Fragment() {
         }
         if (alive.isNotEmpty()) {
             labels.add("批量移入回收站（${alive.size} 段）")
-            actions.add { batchMove(alive, null) }
+            actions.add {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("批量移入回收站")
+                    .setMessage("确认将当前筛选的 ${alive.size} 段切片移入待删回收站？\n移入后仍可在回收站中随时还原。")
+                    .setPositiveButton("确认移入") { _, _ -> batchMove(alive, null) }
+                    .setNegativeButton("取消", null)
+                    .show()
+            }
         }
         if (trashed.isNotEmpty()) {
             labels.add("彻底粉碎（${trashed.size} 段）")
@@ -903,6 +933,8 @@ class RecordingHistoryFragment : Fragment() {
             private val tvBadgeRes: TextView? = view.findViewById(R.id.tv_badge_res)
             private val tvBadgeCam: TextView? = view.findViewById(R.id.tv_badge_cam)
             private val tvBadgeLocked: TextView? = view.findViewById(R.id.tv_badge_locked)
+            private val btnLockToggle: TextView? = view.findViewById(R.id.btn_record_lock_toggle)
+            private val btnDelete: TextView? = view.findViewById(R.id.btn_record_delete)
 
             fun bind(item: RecordingItem) {
                 val isSelected = (item == selectedItem)
@@ -917,6 +949,32 @@ class RecordingHistoryFragment : Fragment() {
                 tvBadgeRes?.text = if (item.height > 0) "${item.height}P" else "--"
                 tvBadgeCam?.text = item.camTag
                 tvBadgeLocked?.visibility = if (item.isLocked) View.VISIBLE else View.GONE
+
+                btnLockToggle?.text = when {
+                    item.category == HistoryCategory.TRASH -> "还原"
+                    item.isLocked -> "解锁"
+                    else -> "加锁"
+                }
+                btnLockToggle?.setTextColor(
+                    requireContext().getColor(
+                        when {
+                            item.category == HistoryCategory.TRASH -> R.color.sp_ac
+                            item.isLocked -> R.color.sp_tx2
+                            else -> R.color.sp_wn
+                        }
+                    )
+                )
+                btnLockToggle?.setOnClickListener {
+                    toggleLock(item)
+                }
+
+                btnDelete?.text = if (item.category == HistoryCategory.TRASH) "粉碎" else "删除"
+                btnDelete?.setOnClickListener {
+                    deleteRecording(item)
+                }
+
+                btnLockToggle?.let { UiMotionUtils.attachPressFeedback(it, 0.92f) }
+                btnDelete?.let { UiMotionUtils.attachPressFeedback(it, 0.92f) }
 
                 ivThumb.tag = item.file.absolutePath
                 ivThumb.setImageDrawable(null)

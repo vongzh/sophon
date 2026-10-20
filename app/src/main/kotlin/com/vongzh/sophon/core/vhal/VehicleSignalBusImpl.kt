@@ -49,6 +49,9 @@ class VehicleSignalBusImpl(
     private val _vehicleSpeed = MutableStateFlow(0f)
     override val vehicleSpeed: StateFlow<Float> = _vehicleSpeed.asStateFlow()
 
+    private val _outsideTemperature = MutableStateFlow<Float?>(null)
+    override val outsideTemperature: StateFlow<Float?> = _outsideTemperature.asStateFlow()
+
     private val _gearState = MutableStateFlow(GearState.PARK)
     override val gearState: StateFlow<GearState> = _gearState.asStateFlow()
 
@@ -74,13 +77,19 @@ class VehicleSignalBusImpl(
      * 供 UI / 通知显式提示，避免车速/挡位/温度"静默恒为默认值"却被误认为真数据。
      */
     private val _vhalAuthError = MutableStateFlow<String?>(null)
-    val vhalAuthError: StateFlow<String?> = _vhalAuthError.asStateFlow()
+    override val vhalAuthError: StateFlow<String?> = _vhalAuthError.asStateFlow()
 
     private val _sentryTriggerEvents = MutableSharedFlow<Long>(extraBufferCapacity = 8)
     override val sentryTriggerEvents: SharedFlow<Long> = _sentryTriggerEvents.asSharedFlow()
 
     private val _emergencyCollisionEvents = MutableSharedFlow<String>(extraBufferCapacity = 8)
     override val emergencyCollisionEvents: SharedFlow<String> = _emergencyCollisionEvents.asSharedFlow()
+
+    private val _gnssTelemetry = MutableStateFlow(com.vongzh.sophon.domain.model.GnssTelemetry())
+    override val gnssTelemetry: StateFlow<com.vongzh.sophon.domain.model.GnssTelemetry> = _gnssTelemetry.asStateFlow()
+
+    private val _isHornActive = MutableStateFlow(false)
+    override val isHornActive: StateFlow<Boolean> = _isHornActive.asStateFlow()
 
     private var nativeObserver: NativeVehiclePropertyObserver? = null
     private var batteryReceiver: android.content.BroadcastReceiver? = null
@@ -164,6 +173,10 @@ class VehicleSignalBusImpl(
         _vehicleSpeed.value = speed
     }
 
+    fun dispatchOutsideTemperatureUpdate(tempCelsius: Float) {
+        _outsideTemperature.value = tempCelsius
+    }
+
     fun dispatchGearUpdate(gear: GearState) {
         _gearState.value = gear
         if (gear == GearState.REVERSE) {
@@ -202,11 +215,24 @@ class VehicleSignalBusImpl(
         }
     }
 
+    fun dispatchGnssTelemetry(telemetry: com.vongzh.sophon.domain.model.GnssTelemetry) {
+        _gnssTelemetry.value = telemetry
+    }
+
     /**
      * 上报车规信号授权失败 (权限未授予 / 非系统应用)
      */
     fun dispatchVhalAuthFailure(reason: String) {
         Log.e(TAG, "VHAL authorization failure: $reason")
         _vhalAuthError.value = reason
+    }
+
+    override fun dispatchHornEvent(active: Boolean) {
+        val wasActive = _isHornActive.value
+        _isHornActive.value = active
+        if (active && !wasActive) {
+            Log.i(TAG, "Horn activated -> dispatching HORN_QUICK_SAVE")
+            dispatchHardKeyEvent(HardKeyEvent.HORN_QUICK_SAVE)
+        }
     }
 }

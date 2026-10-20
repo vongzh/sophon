@@ -217,6 +217,7 @@ class RemoteDispatcher(
         dispatcherScope.launch {
             val usbRoot = SophonApp.storageVault.currentUsbRoot.value
             if (usbRoot == null || !SophonApp.storageVault.isUsbMounted.value) {
+                Log.w(TAG, "extractRecentVideoClip aborted: No external USB mounted. Prohibiting write to internal flash.")
                 onComplete(null)
                 return@launch
             }
@@ -233,8 +234,9 @@ class RemoteDispatcher(
                 return@launch
             }
 
-            val cacheDir = File(context.cacheDir, "remote_clips").apply { if (!exists()) mkdirs() }
-            val outputFile = File(cacheDir, "CLIP_${System.currentTimeMillis()}_${durationSec}s.mp4")
+            // 临时切片严格写入外置 U 盘的 .Temp 目录，严禁写入车机机身内部 cache 目录
+            val tempDir = File(File(usbRoot, "SophonRecord"), ".Temp").apply { if (!exists()) mkdirs() }
+            val outputFile = File(tempDir, "CLIP_${System.currentTimeMillis()}_${durationSec}s.mp4")
 
             try {
                 val retriever = MediaMetadataRetriever()
@@ -258,7 +260,7 @@ class RemoteDispatcher(
     }
 
     /**
-     * 获取最新的一张抓拍照片（优先外置 U 盘，兜底机身沙盒）
+     * 获取最新的一张抓拍照片（仅允许读取外置 U 盘，严禁读取机身沙盒）
      */
     fun getLatestSnapshotFile(): File? {
         val candidates = mutableListOf<File>()
@@ -268,10 +270,6 @@ class RemoteDispatcher(
             if (snapshotDir.exists() && snapshotDir.isDirectory) {
                 candidates.addAll(snapshotDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) } ?: emptyArray())
             }
-        }
-        val sandboxDir = File(context.getExternalFilesDir(null), "SophonRecord/Snapshot")
-        if (sandboxDir.exists() && sandboxDir.isDirectory) {
-            candidates.addAll(sandboxDir.listFiles { f -> f.isFile && f.name.endsWith(".jpg", ignoreCase = true) } ?: emptyArray())
         }
         return candidates.maxByOrNull { it.lastModified() }
     }

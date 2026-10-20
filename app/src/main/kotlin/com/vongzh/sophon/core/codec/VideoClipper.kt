@@ -87,6 +87,9 @@ class VideoClipper {
             val buffer = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE)
             val bufferInfo = MediaCodec.BufferInfo()
 
+            var firstSampleTimeUs = -1L
+            val lastTrackPts = HashMap<Int, Long>()
+
             while (true) {
                 buffer.clear()
                 val sampleSize = extractor.readSampleData(buffer, 0)
@@ -103,14 +106,23 @@ class VideoClipper {
                 val muxerTrackIndex = trackMap[trackIndex]
 
                 if (muxerTrackIndex != null) {
+                    if (firstSampleTimeUs < 0) {
+                        firstSampleTimeUs = sampleTimeUs
+                    }
+                    val rawRelativePts = maxOf(0L, sampleTimeUs - firstSampleTimeUs)
+                    val lastPts = lastTrackPts[muxerTrackIndex] ?: -1L
+                    // 确保 MediaMuxer 轨道时间戳非负且严格单调递增，杜绝底层 HAL/Muxer 抛出 Invalid presentation time
+                    val presentationTime = if (rawRelativePts > lastPts) rawRelativePts else lastPts + 1L
+                    lastTrackPts[muxerTrackIndex] = presentationTime
+
                     bufferInfo.offset = 0
                     bufferInfo.size = sampleSize
-                    bufferInfo.presentationTimeUs = sampleTimeUs - startUs
+                    bufferInfo.presentationTimeUs = presentationTime
                     bufferInfo.flags = extractor.sampleFlags
 
                     muxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
 
-                    val progress = ((sampleTimeUs - startUs).toFloat() / totalUs).coerceIn(0f, 1f)
+                    val progress = ((sampleTimeUs - firstSampleTimeUs).toFloat() / totalUs).coerceIn(0f, 1f)
                     onProgress?.invoke(progress)
                 }
 

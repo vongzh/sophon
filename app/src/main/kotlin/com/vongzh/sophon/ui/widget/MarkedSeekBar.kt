@@ -49,6 +49,25 @@ class MarkedSeekBar @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
+    private val haloPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = 0x80000000.toInt()
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+    }
+
+    fun refreshThemeColors() {
+        paintEmergency.color = ContextCompat.getColor(context, R.color.sp_dg)
+        paintWarning.color = ContextCompat.getColor(context, R.color.sp_wn)
+        dotPaintEmergency.color = ContextCompat.getColor(context, R.color.sp_dg)
+        dotPaintWarning.color = ContextCompat.getColor(context, R.color.sp_wn)
+        invalidate()
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        refreshThemeColors()
+    }
+
     fun setMarkers(markers: List<EventMarker>) {
         markerList.clear()
         markerList.addAll(markers.sortedBy { it.positionRatio })
@@ -84,20 +103,29 @@ class MarkedSeekBar @JvmOverloads constructor(
         super.onDraw(canvas)
         if (markerList.isEmpty()) return
 
+        val density = resources.displayMetrics.density
         val barWidth = width - paddingLeft - paddingRight
         val topY = paddingTop.toFloat()
         val bottomY = (height - paddingBottom).toFloat()
-        val dotRadius = 7f
+        val dotRadius = 5.5f * density
+        val strokeWidthPx = 3f * density
+
+        paintEmergency.strokeWidth = strokeWidthPx
+        paintWarning.strokeWidth = strokeWidthPx
+        haloPaint.strokeWidth = 1.5f * density
 
         for (marker in markerList) {
             val markerX = paddingLeft + (marker.positionRatio * barWidth)
             val linePaint = if (marker.isEmergency) paintEmergency else paintWarning
             val dotPaint = if (marker.isEmergency) dotPaintEmergency else dotPaintWarning
 
-            // 绘制垂直标线
+            // 绘制垂直标线 (两侧带微阴影)
             canvas.drawLine(markerX, topY, markerX, bottomY, linePaint)
-            // 绘制顶部高能标记小圆点
-            canvas.drawCircle(markerX, topY + dotRadius, dotRadius, dotPaint)
+
+            // 绘制顶部高能标记小圆点及外层防死角反差暗环
+            val dotCenterY = topY + dotRadius + 1f * density
+            canvas.drawCircle(markerX, dotCenterY, dotRadius + 1.5f * density, haloPaint)
+            canvas.drawCircle(markerX, dotCenterY, dotRadius, dotPaint)
         }
     }
 }

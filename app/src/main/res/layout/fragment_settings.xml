@@ -74,7 +74,7 @@
                 android:paddingHorizontal="@dimen/sp_s_12"
                 android:paddingVertical="@dimen/sp_s_12">
 
-                <!-- 1. 常用功能 → group_settings_common -->
+                <!-- 1. 通用与显示 → group_settings_common -->
                 <TextView
                     android:id="@+id/btn_tab_common"
                     style="@style/Widget.Sophon.NavItem"
@@ -85,11 +85,11 @@
                     android:drawableStart="@drawable/ic_settings_common"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="常用功能"
+                    android:text="通用与显示"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 2. 录制策略与影像 → group_settings_record -->
+                <!-- 2. 行车录制与影像 → group_settings_record -->
                 <TextView
                     android:id="@+id/btn_tab_basic"
                     style="@style/Widget.Sophon.NavItem"
@@ -101,11 +101,11 @@
                     android:drawableStart="@drawable/ic_section_record"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="录制策略与影像"
+                    android:text="行车录制与影像"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 3. 补盲与安全预警 → group_settings_blindspot -->
+                <!-- 3. 驾驶辅助与补盲 → group_settings_blindspot -->
                 <TextView
                     android:id="@+id/btn_tab_blindspot"
                     style="@style/Widget.Sophon.NavItem"
@@ -117,11 +117,11 @@
                     android:drawableStart="@drawable/ic_settings_blindspot"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="补盲与安全预警"
+                    android:text="驾驶辅助与补盲"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 4. 悬浮窗矩阵 → group_settings_overlay -->
+                <!-- 4. 多任务视窗矩阵 → group_settings_overlay -->
                 <TextView
                     android:id="@+id/btn_tab_hud"
                     style="@style/Widget.Sophon.NavItem"
@@ -133,11 +133,11 @@
                     android:drawableStart="@drawable/ic_pip_window"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="悬浮窗矩阵"
+                    android:text="多任务视窗矩阵"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 5. 哨兵与围栏 → group_settings_sentry -->
+                <!-- 5. 安全守护与哨兵 → group_settings_sentry -->
                 <TextView
                     android:id="@+id/btn_tab_startup"
                     style="@style/Widget.Sophon.NavItem"
@@ -149,27 +149,11 @@
                     android:drawableStart="@drawable/ic_settings_guard"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="哨兵与围栏"
+                    android:text="安全守护与哨兵"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 6. 电源与低压保护 → group_settings_power -->
-                <TextView
-                    android:id="@+id/btn_tab_power"
-                    style="@style/Widget.Sophon.NavItem"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="2dp"
-                    android:background="@drawable/sp_bg_nav_item"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="@dimen/sp_s_12"
-                    android:drawableStart="@drawable/ic_battery_shield"
-                    android:drawablePadding="@dimen/sp_s_8"
-                    android:drawableTint="@color/sp_tx2"
-                    android:text="电源与低压保护"
-                    android:textColor="@color/sp_tx2"
-                    android:textSize="@dimen/sp_t_caption" />
-
-                <!-- 7. 存储配置 → group_settings_storage -->
+                <!-- 6. 存储金库管理 → group_settings_storage -->
                 <TextView
                     android:id="@+id/btn_tab_storage"
                     style="@style/Widget.Sophon.NavItem"
@@ -181,11 +165,11 @@
                     android:drawableStart="@drawable/ic_settings_storage"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="存储配置"
+                    android:text="存储金库管理"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 8. 远程告警与消息推送 → group_settings_remote -->
+                <!-- 7. 远程消息推送 → group_settings_remote -->
                 <TextView
                     android:id="@+id/btn_tab_remote"
                     style="@style/Widget.Sophon.NavItem"
@@ -197,27 +181,11 @@
                     android:drawableStart="@drawable/ic_settings_notify"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="远程告警与消息推送"
+                    android:text="远程消息推送"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
 
-                <!-- 9. 网络 → group_settings_network -->
-                <TextView
-                    android:id="@+id/btn_tab_lab"
-                    style="@style/Widget.Sophon.NavItem"
-                    android:layout_height="44dp"
-                    android:layout_marginTop="2dp"
-                    android:background="@drawable/sp_bg_nav_item"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="@dimen/sp_s_12"
-                    android:drawableStart="@drawable/ic_section_network"
-                    android:drawablePadding="@dimen/sp_s_8"
-                    android:drawableTint="@color/sp_tx2"
-                    android:text="网络"
-                    android:textColor="@color/sp_tx2"
-                    android:textSize="@dimen/sp_t_caption" />
-
-                <!-- 10. 关于 → group_settings_about -->
+                <!-- 8. 关于与系统信息 → group_settings_about -->
                 <TextView
                     android:id="@+id/btn_tab_about"
                     style="@style/Widget.Sophon.NavItem"
@@ -229,7 +197,7 @@
                     android:drawableStart="@drawable/ic_settings_about"
                     android:drawablePadding="@dimen/sp_s_8"
                     android:drawableTint="@color/sp_tx2"
-                    android:text="关于"
+                    android:text="关于与系统信息"
                     android:textColor="@color/sp_tx2"
                     android:textSize="@dimen/sp_t_caption" />
             </LinearLayout>
@@ -255,7 +223,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- 分组 1：常用功能卡片网格 -->
+                <!-- 分组 1：通用与显示 -->
                 <LinearLayout
                     android:id="@+id/group_settings_common"
                     android:layout_width="match_parent"
@@ -269,7 +237,7 @@
                         android:drawableStart="@drawable/ic_settings_common"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="常用功能"
+                        android:text="通用与显示"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
@@ -281,7 +249,7 @@
                         android:baselineAligned="false"
                         android:orientation="horizontal">
 
-                        <!-- 卡片 A: 局域网快传（车规精致卡片，带清晰状态胶囊与图标操作键） -->
+                        <!-- 卡片 A: 局域网快传（带服务端口设置） -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -327,24 +295,56 @@
                                 android:textColor="@color/sp_tx3"
                                 android:textSize="@dimen/sp_t_micro" />
 
-                            <TextView
-                                android:id="@+id/btn_lan_share_qr"
-                                android:layout_width="wrap_content"
-                                android:layout_height="38dp"
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/sp_s_12"
-                                android:background="@drawable/sp_bg_pill_accent"
-                                android:drawableStart="@drawable/ic_btn_qr_code"
-                                android:drawablePadding="@dimen/sp_s_6"
-                                android:drawableTint="@color/sp_ac"
-                                android:gravity="center"
-                                android:paddingHorizontal="@dimen/sp_s_16"
-                                android:text="扫码快传"
-                                android:textColor="@color/sp_ac"
-                                android:textSize="@dimen/sp_t_caption"
-                                android:textStyle="bold" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/btn_lan_share_qr"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="38dp"
+                                    android:background="@drawable/sp_bg_pill_accent"
+                                    android:drawableStart="@drawable/ic_btn_qr_code"
+                                    android:drawablePadding="@dimen/sp_s_6"
+                                    android:drawableTint="@color/sp_ac"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/sp_s_16"
+                                    android:text="扫码快传"
+                                    android:textColor="@color/sp_ac"
+                                    android:textSize="@dimen/sp_t_caption"
+                                    android:textStyle="bold" />
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="1dp"
+                                    android:layout_weight="1" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="@dimen/sp_s_6"
+                                    android:text="端口:"
+                                    android:textColor="@color/sp_tx3"
+                                    android:textSize="@dimen/sp_t_micro" />
+
+                                <EditText
+                                    android:id="@+id/et_lan_port"
+                                    android:layout_width="68dp"
+                                    android:layout_height="34dp"
+                                    android:background="@drawable/sp_bg_input_field"
+                                    android:gravity="center"
+                                    android:inputType="number"
+                                    android:maxLength="5"
+                                    android:hint="8088"
+                                    android:textColor="@color/sp_tx"
+                                    android:textSize="@dimen/sp_t_micro" />
+                            </LinearLayout>
                         </LinearLayout>
 
-                        <!-- 卡片 B: 备份与导入软件配置（车规规整卡片，双按钮对齐 38dp 规整规格） -->
+                        <!-- 卡片 B: 备份与导入软件配置 -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -378,7 +378,7 @@
                                 <TextView
                                     android:id="@+id/btn_backup_config"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="38dp"
+                                    android:layout_height="44dp"
                                     android:layout_marginEnd="@dimen/sp_s_10"
                                     android:background="@drawable/sp_bg_pill"
                                     android:drawableStart="@drawable/ic_btn_config_export"
@@ -394,7 +394,8 @@
                                 <TextView
                                     android:id="@+id/btn_restore_config"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="38dp"
+                                    android:layout_height="44dp"
+                                    android:layout_marginEnd="@dimen/sp_s_10"
                                     android:background="@drawable/sp_bg_pill"
                                     android:drawableStart="@drawable/ic_btn_config_import"
                                     android:drawablePadding="@dimen/sp_s_6"
@@ -402,6 +403,20 @@
                                     android:gravity="center"
                                     android:paddingHorizontal="@dimen/sp_s_16"
                                     android:text="导入配置"
+                                    android:textColor="@color/sp_tx2"
+                                    android:textSize="@dimen/sp_t_caption" />
+
+                                <TextView
+                                    android:id="@+id/btn_export_diagnostics"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="44dp"
+                                    android:background="@drawable/sp_bg_pill"
+                                    android:drawableStart="@drawable/ic_action_info"
+                                    android:drawablePadding="@dimen/sp_s_6"
+                                    android:drawableTint="@color/sp_tx2"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="@dimen/sp_s_16"
+                                    android:text="导出诊断日志"
                                     android:textColor="@color/sp_tx2"
                                     android:textSize="@dimen/sp_t_caption" />
                             </LinearLayout>
@@ -500,65 +515,7 @@
                         </RadioGroup>
                     </LinearLayout>
 
-                    <!-- 行车分段时长选择卡片 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_12"
-                        android:background="@drawable/sp_bg_card_raised"
-                        android:orientation="vertical"
-                        android:padding="@dimen/sp_s_16">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="单段录制切片时长"
-                            android:textColor="@color/sp_tx"
-                            android:textSize="@dimen/sp_t_subtitle"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="建议设置为 3 分钟，兼顾检索效率与写入负载"
-                            android:textColor="@color/sp_tx3"
-                            android:textSize="@dimen/sp_t_micro" />
-
-                        <RadioGroup
-                            android:id="@+id/rg_chunk_duration"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sp_s_12"
-                            android:orientation="horizontal">
-
-                            <RadioButton
-                                android:id="@+id/rb_chunk_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/sp_s_24"
-                                android:text="1 分钟切片"
-                                android:textColor="@color/sp_tx" />
-
-                            <RadioButton
-                                android:id="@+id/rb_chunk_3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/sp_s_24"
-                                android:checked="true"
-                                android:text="3 分钟切片 (推荐)"
-                                android:textColor="@color/sp_tx" />
-
-                            <RadioButton
-                                android:id="@+id/rb_chunk_5"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="5 分钟切片"
-                                android:textColor="@color/sp_tx" />
-                        </RadioGroup>
-                    </LinearLayout>
-
-                    <!-- 常用开关行 -->
+                    <!-- 卡片 D: 主界面按键文字显示 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -567,89 +524,6 @@
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/sp_s_16">
 
-                        <!-- 开关 1：车内录音 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="座舱音频同步收音"
-                                    android:textColor="@color/sp_tx"
-                                    android:textSize="@dimen/sp_t_caption"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="录制行车视频时同步记录车内麦克风音频（需已授予麦克风权限）"
-                                    android:textColor="@color/sp_tx3"
-                                    android:textSize="@dimen/sp_t_micro" />
-                            </LinearLayout>
-
-                            <Switch
-                                android:id="@+id/sw_audio_record"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/sp_line" />
-
-                        <!-- 开关 2：碰撞自动加锁 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="碰撞自动加锁禁覆盖"
-                                    android:textColor="@color/sp_tx"
-                                    android:textSize="@dimen/sp_t_caption"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="检测到剧烈碰撞或急刹时，自动将切片转移至 Event 目录加锁保护"
-                                    android:textColor="@color/sp_tx3"
-                                    android:textSize="@dimen/sp_t_micro" />
-                            </LinearLayout>
-
-                            <Switch
-                                android:id="@+id/sw_auto_crash_lock"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="true" />
-                        </LinearLayout>
-
-                        <!-- 分割线 -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/sp_line" />
-
-                        <!-- 开关 3：主界面功能按键显示文字描述 -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
@@ -685,67 +559,9 @@
                                 android:checked="false" />
                         </LinearLayout>
                     </LinearLayout>
-
-                    <!-- 碰撞检测灵敏度卡片 -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sp_s_12"
-                        android:background="@drawable/sp_bg_card_raised"
-                        android:orientation="vertical"
-                        android:padding="@dimen/sp_s_16">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="碰撞检测灵敏度"
-                            android:textColor="@color/sp_tx"
-                            android:textSize="@dimen/sp_t_subtitle"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="加速度计触发阈值，越高越容易触发加锁；颠簸路段建议调低"
-                            android:textColor="@color/sp_tx3"
-                            android:textSize="@dimen/sp_t_micro" />
-
-                        <RadioGroup
-                            android:id="@+id/rg_crash_sensitivity"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sp_s_12"
-                            android:orientation="horizontal">
-
-                            <RadioButton
-                                android:id="@+id/rb_crash_low"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/sp_s_24"
-                                android:text="低 (3.5G)"
-                                android:textColor="@color/sp_tx" />
-
-                            <RadioButton
-                                android:id="@+id/rb_crash_mid"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="@dimen/sp_s_24"
-                                android:checked="true"
-                                android:text="中 (2.5G)"
-                                android:textColor="@color/sp_tx" />
-
-                            <RadioButton
-                                android:id="@+id/rb_crash_high"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="高 (1.8G)"
-                                android:textColor="@color/sp_tx" />
-                        </RadioGroup>
-                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- 分组 1.5：录制策略与影像参数 (车身 CAN 信号联动 + Camera2 硬件影像调节) -->
+                <!-- 分组 2：行车录制与影像 -->
                 <LinearLayout
                     android:id="@+id/group_settings_record"
                     android:layout_width="match_parent"
@@ -760,14 +576,113 @@
                         android:drawableStart="@drawable/ic_section_record"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="录制策略与影像"
+                        android:text="行车录制与影像"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
 
+                    <!-- 卡片 A：分段时长与座舱收音 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/sp_bg_card_raised"
+                        android:orientation="vertical"
+                        android:padding="@dimen/sp_s_16">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="单段录制切片时长"
+                            android:textColor="@color/sp_tx"
+                            android:textSize="@dimen/sp_t_body"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="建议设置为 3 分钟，兼顾检索效率与写入负载；切片热切换 0 毫秒无感交接"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_micro" />
+
+                        <RadioGroup
+                            android:id="@+id/rg_chunk_duration"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sp_s_12"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb_chunk_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/sp_s_24"
+                                android:text="1 分钟切片"
+                                android:textColor="@color/sp_tx" />
+
+                            <RadioButton
+                                android:id="@+id/rb_chunk_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/sp_s_24"
+                                android:checked="true"
+                                android:text="3 分钟切片 (推荐)"
+                                android:textColor="@color/sp_tx" />
+
+                            <RadioButton
+                                android:id="@+id/rb_chunk_5"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5 分钟切片"
+                                android:textColor="@color/sp_tx" />
+                        </RadioGroup>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/sp_s_12"
+                            android:background="@color/sp_line" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="座舱音频同步收音"
+                                    android:textColor="@color/sp_tx"
+                                    android:textSize="@dimen/sp_t_caption"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="录制行车视频时同步记录车内麦克风音频（需已授予麦克风权限）"
+                                    android:textColor="@color/sp_tx3"
+                                    android:textSize="@dimen/sp_t_micro" />
+                            </LinearLayout>
+
+                            <Switch
+                                android:id="@+id/sw_audio_record"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- 卡片 B：车身信号联动录制 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
                         android:background="@drawable/sp_bg_card_raised"
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/sp_s_16"
@@ -807,18 +722,22 @@
                             android:text="主驾车门开启自动停止录制"
                             android:textColor="@color/sp_tx"
                             android:textSize="@dimen/sp_t_body" />
+                    </LinearLayout>
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="@dimen/sp_s_12"
-                            android:background="@color/sp_line2" />
+                    <!-- 卡片 C：影像参数与画面增强 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
+                        android:background="@drawable/sp_bg_card_raised"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/sp_s_16"
+                        android:paddingVertical="@dimen/sp_s_12">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sp_s_12"
-                            android:text="影像参数调节"
+                            android:text="Camera2 影像参数调节"
                             android:textColor="@color/sp_tx"
                             android:textSize="@dimen/sp_t_body"
                             android:textStyle="bold" />
@@ -948,7 +867,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sp_s_12"
-                            android:text="画面与播放"
+                            android:text="画面处理与水印"
                             android:textColor="@color/sp_tx"
                             android:textSize="@dimen/sp_t_body"
                             android:textStyle="bold" />
@@ -1023,15 +942,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
-
-                        <Switch
-                            android:id="@+id/sw_pip_auto"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minHeight="52dp"
-                            android:text="切出应用时自动进入画中画"
-                            android:textColor="@color/sp_tx"
-                            android:textSize="@dimen/sp_t_body" />
                     </LinearLayout>
                 </LinearLayout>
                 <!-- 分组 2：补盲与视觉设置 -->
@@ -1208,7 +1118,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 分组 2.5：悬浮窗矩阵 -->
+                <!-- 分组 4：多任务视窗矩阵 -->
                 <LinearLayout
                     android:id="@+id/group_settings_overlay"
                     android:layout_width="match_parent"
@@ -1223,7 +1133,7 @@
                         android:drawableStart="@drawable/ic_pip_window"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="悬浮窗矩阵"
+                        android:text="多任务视窗矩阵"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
@@ -1270,9 +1180,24 @@
                             android:text="功能悬浮球 (抓拍/加锁/布撤防)"
                             android:textColor="@color/sp_tx"
                             android:textSize="@dimen/sp_t_body" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/sp_line" />
+
+                        <Switch
+                            android:id="@+id/sw_pip_auto"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="52dp"
+                            android:text="切出应用时自动进入画中画"
+                            android:textColor="@color/sp_tx"
+                            android:textSize="@dimen/sp_t_body" />
                     </LinearLayout>
                 </LinearLayout>
-                <!-- 分组 2.6：哨兵围栏 -->
+
+                <!-- 分组 5：安全守护与哨兵 -->
                 <LinearLayout
                     android:id="@+id/group_settings_sentry"
                     android:layout_width="match_parent"
@@ -1287,11 +1212,12 @@
                         android:drawableStart="@drawable/ic_settings_guard"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="哨兵与围栏"
+                        android:text="安全守护与哨兵"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
 
+                    <!-- 卡片 A：碰撞与紧急加锁 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -1300,7 +1226,106 @@
                         android:paddingHorizontal="@dimen/sp_s_16"
                         android:paddingVertical="@dimen/sp_s_12">
 
-                        <!-- 哨兵模式总开关：此前只能从悬浮球切换，设置页缺入口 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="碰撞自动加锁禁覆盖"
+                                    android:textColor="@color/sp_tx"
+                                    android:textSize="@dimen/sp_t_caption"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="检测到剧烈碰撞或急刹时，自动将切片转移至 Event 目录加锁保护"
+                                    android:textColor="@color/sp_tx3"
+                                    android:textSize="@dimen/sp_t_micro" />
+                            </LinearLayout>
+
+                            <Switch
+                                android:id="@+id/sw_auto_crash_lock"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/sp_line" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sp_s_12"
+                            android:text="碰撞感应触发灵敏度"
+                            android:textColor="@color/sp_tx"
+                            android:textSize="@dimen/sp_t_caption"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="加速度计触发阈值，越高越容易触发加锁；颠簸路段建议调低"
+                            android:textColor="@color/sp_tx3"
+                            android:textSize="@dimen/sp_t_micro" />
+
+                        <RadioGroup
+                            android:id="@+id/rg_crash_sensitivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sp_s_12"
+                            android:orientation="horizontal">
+
+                            <RadioButton
+                                android:id="@+id/rb_crash_low"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/sp_s_24"
+                                android:text="低 (3.5G)"
+                                android:textColor="@color/sp_tx" />
+
+                            <RadioButton
+                                android:id="@+id/rb_crash_mid"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/sp_s_24"
+                                android:checked="true"
+                                android:text="中 (2.5G)"
+                                android:textColor="@color/sp_tx" />
+
+                            <RadioButton
+                                android:id="@+id/rb_crash_high"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="高 (1.8G)"
+                                android:textColor="@color/sp_tx" />
+                        </RadioGroup>
+                    </LinearLayout>
+
+                    <!-- 卡片 B：驻车哨兵与电子围栏 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
+                        android:background="@drawable/sp_bg_card_raised"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/sp_s_16"
+                        android:paddingVertical="@dimen/sp_s_12">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
@@ -1415,30 +1440,12 @@
                             android:textColor="@color/sp_tx2"
                             android:textSize="@dimen/sp_t_label" />
                     </LinearLayout>
-                </LinearLayout>
-                <!-- 分组 2.7：电源与低压保护 (12V 小电瓶防亏电) -->
-                <LinearLayout
-                    android:id="@+id/group_settings_power"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_s_20"
-                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/sp_s_12"
-                        android:drawableStart="@drawable/ic_battery_shield"
-                        android:drawablePadding="@dimen/sp_s_8"
-                        android:drawableTint="@color/sp_ac"
-                        android:text="电源与低压保护"
-                        android:textColor="@color/sp_tx"
-                        android:textSize="@dimen/sp_t_subtitle"
-                        android:textStyle="bold" />
-
+                    <!-- 卡片 C：12V 蓄电池防亏电保护 (合并原电源设置) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_s_12"
                         android:background="@drawable/sp_bg_card_raised"
                         android:orientation="vertical"
                         android:paddingHorizontal="@dimen/sp_s_16"
@@ -1488,7 +1495,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:paddingVertical="@dimen/sp_s_8">
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -1545,7 +1553,7 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-                <!-- 分组 3：存储配置 (遵循三大安全底线：严禁车身内部闪存写入，唯一指定外置 U 盘存储) -->
+                <!-- 分组 6：存储金库管理 -->
                 <LinearLayout
                     android:id="@+id/group_settings_storage"
                     android:layout_width="match_parent"
@@ -1560,7 +1568,7 @@
                         android:drawableStart="@drawable/ic_settings_storage"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="存储配置"
+                        android:text="存储金库管理"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
@@ -2358,7 +2366,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 分组 4：三方消息提醒 -->
+                <!-- 分组 7：远程消息推送 -->
                 <LinearLayout
                     android:id="@+id/group_settings_remote"
                     android:layout_width="match_parent"
@@ -2373,7 +2381,7 @@
                         android:drawableStart="@drawable/ic_settings_notify"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="远程告警与消息推送"
+                        android:text="远程消息推送"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />
@@ -2687,66 +2695,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 分组 9：网络 -->
-                <LinearLayout
-                    android:id="@+id/group_settings_network"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sp_s_20"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/sp_s_12"
-                        android:drawableStart="@drawable/ic_section_network"
-                        android:drawablePadding="@dimen/sp_s_8"
-                        android:drawableTint="@color/sp_ac"
-                        android:text="网络"
-                        android:textColor="@color/sp_tx"
-                        android:textSize="@dimen/sp_t_subtitle"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/sp_bg_card_raised"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="@dimen/sp_s_16"
-                        android:paddingVertical="@dimen/sp_s_12">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="LAN 快传服务端口"
-                            android:textColor="@color/sp_tx"
-                            android:textSize="@dimen/sp_t_body"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="手机与车机处于同一局域网时，用浏览器访问 车机IP:端口 直接下载录像。端口被占用时服务会启动失败，改完保存即自动重试新端口"
-                            android:textColor="@color/sp_tx3"
-                            android:textSize="@dimen/sp_t_micro" />
-
-                        <EditText
-                            android:id="@+id/et_lan_port"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sp_s_8"
-                            android:background="@drawable/sp_bg_input_field"
-                            android:hint="8088"
-                            android:inputType="number"
-                            android:padding="@dimen/sp_s_12"
-                            android:textColor="@color/sp_tx"
-                            android:textColorHint="@color/sp_tx3"
-                            android:textSize="@dimen/sp_t_body" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 分组 10：关于 -->
+                <!-- 分组 8：关于与系统信息 -->
                 <LinearLayout
                     android:id="@+id/group_settings_about"
                     android:layout_width="match_parent"
@@ -2761,7 +2710,7 @@
                         android:drawableStart="@drawable/ic_settings_about"
                         android:drawablePadding="@dimen/sp_s_8"
                         android:drawableTint="@color/sp_ac"
-                        android:text="关于"
+                        android:text="关于与系统信息"
                         android:textColor="@color/sp_tx"
                         android:textSize="@dimen/sp_t_subtitle"
                         android:textStyle="bold" />

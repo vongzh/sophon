@@ -67,11 +67,12 @@ class AssistBallOverlayService : Service() {
     }
 
     private fun buildBall() {
-        val size = (BALL_SIZE_DP * resources.displayMetrics.density).toInt()
+        val density = resources.displayMetrics.density
+        val size = (BALL_SIZE_DP * density).toInt()
 
         ballView = FrameLayout(this).apply {
             setBackgroundResource(R.drawable.sp_bg_assist_ball)
-            elevation = 8f
+            elevation = 12f * density
         }
         val tvIcon = TextView(this).apply {
             text = "极视"
@@ -138,11 +139,13 @@ class AssistBallOverlayService : Service() {
 
     private fun buildMenu() {
         if (menuView != null) return
-        val width = (MENU_WIDTH_DP * resources.displayMetrics.density).toInt()
+        val density = resources.displayMetrics.density
+        val width = (MENU_WIDTH_DP * density).toInt()
 
         menuView = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundResource(R.drawable.sp_bg_card)
+            elevation = 16f * density
             setPadding(8, 8, 8, 8)
         }
 
@@ -186,6 +189,7 @@ class AssistBallOverlayService : Service() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 (52 * resources.displayMetrics.density).toInt()
             )
+            com.vongzh.sophon.ui.widget.UiMotionUtils.attachPressFeedback(this, 0.95f)
             setOnClickListener {
                 onClick()
                 hideMenu()
@@ -198,9 +202,20 @@ class AssistBallOverlayService : Service() {
         buildMenu()
         if (isMenuAttached) return
         syncMenuPosition()
+        val view = menuView ?: return
         try {
-            windowManager?.addView(menuView, menuParams)
+            view.alpha = 0f
+            view.scaleX = 0.88f
+            view.scaleY = 0.88f
+            windowManager?.addView(view, menuParams)
             isMenuAttached = true
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(160)
+                .setInterpolator(android.view.animation.OvershootInterpolator(1.8f))
+                .start()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to show assist menu", e)
         }
@@ -208,11 +223,31 @@ class AssistBallOverlayService : Service() {
 
     private fun hideMenu() {
         if (!isMenuAttached) return
+        val view = menuView ?: return
         try {
-            windowManager?.removeViewImmediate(menuView)
+            view.animate()
+                .alpha(0f)
+                .scaleX(0.88f)
+                .scaleY(0.88f)
+                .setDuration(120)
+                .withEndAction {
+                    try {
+                        if (isMenuAttached) {
+                            windowManager?.removeViewImmediate(view)
+                            isMenuAttached = false
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Error removing assist menu", e)
+                    }
+                }
+                .start()
         } catch (e: Exception) {
-            Log.w(TAG, "Error removing assist menu", e)
-        } finally {
+            Log.w(TAG, "Error animating assist menu hide", e)
+            try {
+                windowManager?.removeViewImmediate(view)
+            } catch (e2: Exception) {
+                // ignore
+            }
             isMenuAttached = false
         }
     }

@@ -98,6 +98,7 @@ class SophonCoreService : Service() {
     private lateinit var multiCameraManager: MultiCameraManager
     private lateinit var continuousRecorder: ContinuousRecorder
     private lateinit var crashSensorDetector: com.vongzh.sophon.core.sensor.CrashSensorDetector
+    private var gnssLocationObserver: com.vongzh.sophon.core.sensor.GnssLocationObserver? = null
     private var lanShareServer: com.vongzh.sophon.core.lan.LanShareServer? = null
 
     private var isRecordingActive = false
@@ -129,6 +130,7 @@ class SophonCoreService : Service() {
         initVisualAndRecordingPipeline()
         startLanShareServerInternal()
         initCrashSensorDetector()
+        initGnssLocationObserver()
         observeStorageHealth()
         observeVehicleTelemetryForOsd()
         observeEmergencyCollisionEvents()
@@ -142,9 +144,26 @@ class SophonCoreService : Service() {
     private fun initCrashSensorDetector() {
         crashSensorDetector = com.vongzh.sophon.core.sensor.CrashSensorDetector(this) { impactG ->
             val bus = SophonApp.vehicleSignalBus as? com.vongzh.sophon.core.vhal.VehicleSignalBusImpl
-            bus?.dispatchEmergencyCollisionEvent("加速度计剧烈碰撞 (%.1fG)".format(impactG))
+            val powerState = SophonApp.powerStateMachine.currentState.value
+            val isSentry = powerState == PowerState.SENTRY_STANDBY ||
+                (powerState == PowerState.AWAKE_PARKED && SophonApp.preferences.isSentryModeEnabled)
+            if (isSentry) {
+                Log.w(TAG, "Sentry shock alarm triggered at %.2f G (dispatching sentry vibration event)".format(impactG))
+                bus?.dispatchSentryVibrationEvent(System.currentTimeMillis())
+            } else {
+                bus?.dispatchEmergencyCollisionEvent("加速度计剧烈碰撞 (%.1fG)".format(impactG))
+            }
         }
         crashSensorDetector.start()
+    }
+
+    private fun initGnssLocationObserver() {
+        gnssLocationObserver = com.vongzh.sophon.core.sensor.GnssLocationObserver(this) { telemetry ->
+            val bus = SophonApp.vehicleSignalBus as? com.vongzh.sophon.core.vhal.VehicleSignalBusImpl
+            bus?.dispatchGnssTelemetry(telemetry)
+        }.apply {
+            start()
+        }
     }
 
     /**
@@ -490,6 +509,11 @@ class SophonCoreService : Service() {
                         continuousRecorder.triggerEventLock("Steering Wheel Custom Key Long Press")
                         SophonApp.remoteDispatcher.sendMultiChannelAlert("方向盘加锁", "驾驶员长按方向盘自定义键锁定了当前视频。")
                     }
+                    com.vongzh.sophon.domain.model.HardKeyEvent.HORN_QUICK_SAVE -> {
+                        Log.w(TAG, "Hard key HORN_QUICK_SAVE -> Triggering horn event lock (Tesla-style)")
+                        continuousRecorder.triggerEventLock("Horn Honked Quick Save")
+                        SophonApp.remoteDispatcher.sendMultiChannelAlert("鸣笛加锁", "侦测到车辆鸣笛，已自动锁定该时段前后关键事件切片。")
+                    }
                     else -> {}
                 }
             }
@@ -538,25 +562,26 @@ class SophonCoreService : Service() {
     private fun takeManualSnapshot() {
         val storage = SophonApp.storageVault
         val isUsb = storage.isUsbMounted.value && storage.currentUsbRoot.value != null
-        val snapshotDir = if (isUsb) {
-            File(File(storage.currentUsbRoot.value!!, "SophonRecord"), "Snapshot")
-        } else {
-            // 机身安全沙盒应急/测试存储
-            File(applicationContext.getExternalFilesDir(null), "SophonRecord/Snapshot")
+
+        // 车规安全红线二：严格执行 No USB, No Write，严禁向车机内部闪存写入高频抓拍图片
+        if (!isUsb) {
+            Log.w(TAG, "Manual snapshot rejected: External USB drive is not mounted. Prohibiting write to internal flash.")
+            _snapshotEventFlow.tryEmit(
+                SnapshotResult(
+                    success = false,
+                    filePath = null,
+                    isExternalUsb = false,
+                    message = "未检测到外接 U 盘，为保护车机闪存寿命已禁止写入"
+                )
+            )
+            return
         }
 
+        val usbRoot = storage.currentUsbRoot.value!!
+        val snapshotDir = File(File(usbRoot, "SophonRecord"), "Snapshot")
         try {
             if (!snapshotDir.exists()) {
                 snapshotDir.mkdirs()
-            }
-            // 若为机身沙盒，严格防爆（最多保留 50 张），避免对车机空间造成侵占
-            if (!isUsb) {
-                val existing = snapshotDir.listFiles { f ->
-                    f.isFile && (f.extension.equals("jpg", ignoreCase = true) || f.extension.equals("png", ignoreCase = true))
-                }
-                if (existing != null && existing.size >= 50) {
-                    existing.sortedBy { it.lastModified() }.take(existing.size - 49).forEach { it.delete() }
-                }
             }
         } catch (e: Exception) {
             Log.w(TAG, "Failed to prepare snapshot dir: ${snapshotDir.absolutePath}", e)
@@ -567,14 +592,26 @@ class SophonCoreService : Service() {
 
         gpuCompositor.captureSnapshot(photoFile) { success ->
             if (success) {
-                val locText = if (isUsb) "外接存储" else "机身安全沙盒"
-                Log.i(TAG, "Snapshot taken successfully to $locText: ${photoFile.name}")
-                val tip = if (isUsb) "四路原图已抓拍并存入外接相册" else "四路原图已抓拍并存入相册 (机身沙盒)"
-                _snapshotEventFlow.tryEmit(SnapshotResult(true, photoFile.absolutePath, isUsb, tip))
-                SophonApp.remoteDispatcher.sendMultiChannelAlert("抓拍成功", "四路全景原图已保存至$locText Snapshot/${photoFile.name}", photoFile)
+                Log.i(TAG, "Snapshot taken successfully to external storage: ${photoFile.name}")
+                _snapshotEventFlow.tryEmit(
+                    SnapshotResult(
+                        success = true,
+                        filePath = photoFile.absolutePath,
+                        isExternalUsb = true,
+                        message = "四路原图已抓拍并存入外接相册"
+                    )
+                )
+                SophonApp.remoteDispatcher.sendMultiChannelAlert("抓拍成功", "四路全景原图已保存至外接存储 Snapshot/${photoFile.name}", photoFile)
             } else {
                 Log.e(TAG, "Failed to capture snapshot.")
-                _snapshotEventFlow.tryEmit(SnapshotResult(false, null, isUsb, "抓拍合成失败，请重试"))
+                _snapshotEventFlow.tryEmit(
+                    SnapshotResult(
+                        success = false,
+                        filePath = null,
+                        isExternalUsb = true,
+                        message = "抓拍合成失败，请重试"
+                    )
+                )
             }
         }
     }
@@ -586,6 +623,7 @@ class SophonCoreService : Service() {
         _lanShareRunning.value = false
         _lanSharePort.value = null
         try {
+            gnssLocationObserver?.stop()
             crashSensorDetector.stop()
             lanShareServer?.stop()
             continuousRecorder.stopRecording()

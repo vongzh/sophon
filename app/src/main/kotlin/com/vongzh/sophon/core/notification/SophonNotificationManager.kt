@@ -73,7 +73,7 @@ class SophonNotificationManager(
         val hours = durationSec / 3600
         val minutes = (durationSec % 3600) / 60
         val seconds = durationSec % 60
-        val timeStr = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+        val timeStr = String.format(java.util.Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
 
         // 2. 状态文本
         if (isRecording) {

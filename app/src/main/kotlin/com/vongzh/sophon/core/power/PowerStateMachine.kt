@@ -28,6 +28,20 @@ enum class PowerState {
     EMERGENCY_POWER_CUT  // 紧急断电保护: 12V电瓶电压过低 (<11.8V) 或系统底层 STR Suspend 关机，立即强制闭合 MP4 moov 封包并释放硬件
 }
 
+/**
+ * 目标 1: 哨兵能耗分级梯次 (SentryPowerTier)
+ *
+ * 借鉴小鹏与理想超低功耗哨兵设计：
+ * - L0_STANDBY: 极省电待命，仅保留加速度计与微传感器，录制进入纯内存预录环形缓冲，不写 U 盘闪存，保护 U 盘寿命与车机电池；
+ * - L1_PREVIEW: 视感警备，微震感知（如有人拉车门、轻靠），开启观察窗并启动视频观察；
+ * - L2_ALERT: 确定威胁或强烈冲击，10Mbps 满血落盘写入 U 盘，触发声光与远程报警。
+ */
+enum class SentryPowerTier {
+    L0_STANDBY,  // 超低功耗：纯内存环形预录，零闪存写入
+    L1_PREVIEW,  // 视感戒备：微震先导唤醒
+    L2_ALERT     // 满血告警：全量加密写盘与声光威慑
+}
+
 class PowerStateMachine(
     private val bus: IVehicleSignalBus,
     private val preferences: SophonPreferences,
@@ -41,6 +55,9 @@ class PowerStateMachine(
 
     private val _currentState = MutableStateFlow(PowerState.AWAKE_PARKED)
     val currentState: StateFlow<PowerState> = _currentState.asStateFlow()
+
+    private val _currentSentryTier = MutableStateFlow(SentryPowerTier.L0_STANDBY)
+    val currentSentryTier: StateFlow<SentryPowerTier> = _currentSentryTier.asStateFlow()
 
     private var alertTimerJob: Job? = null
     private var lastRecordedVoltage = 12.8f
@@ -177,7 +194,7 @@ class PowerStateMachine(
 
         val gear = bus.gearState.value
         val speed = bus.vehicleSpeed.value
-        if (gear == GearState.DRIVE || gear == GearState.REVERSE || speed > 1.0f) {
+        if (gear == GearState.DRIVE || gear == GearState.REVERSE || gear == GearState.NEUTRAL || speed > 1.0f) {
             transitionTo(PowerState.AWAKE_DRIVING, "Vehicle STR Resume -> AWAKE_DRIVING")
         } else {
             transitionTo(PowerState.AWAKE_PARKED, "Vehicle STR Resume -> AWAKE_PARKED")
@@ -212,5 +229,18 @@ class PowerStateMachine(
 
         Log.i(TAG, "PowerState Transition: [$oldState] -> [$newState] (Reason: $reason)")
         _currentState.value = newState
+
+        // 同步维护哨兵三级能耗梯次
+        when (newState) {
+            PowerState.SENTRY_STANDBY -> {
+                _currentSentryTier.value = SentryPowerTier.L0_STANDBY
+            }
+            PowerState.SENTRY_ALERT -> {
+                _currentSentryTier.value = SentryPowerTier.L2_ALERT
+            }
+            else -> {
+                _currentSentryTier.value = SentryPowerTier.L0_STANDBY
+            }
+        }
     }
 }

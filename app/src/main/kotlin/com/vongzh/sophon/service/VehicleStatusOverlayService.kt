@@ -50,6 +50,7 @@ class VehicleStatusOverlayService : Service() {
     private lateinit var tvSpeed: TextView
     private lateinit var tvGear: TextView
     private lateinit var tvVoltage: TextView
+    private lateinit var tvTemp: TextView
     private lateinit var tvRecord: TextView
     private lateinit var tvSentry: TextView
     private lateinit var tvStorage: TextView
@@ -62,10 +63,12 @@ class VehicleStatusOverlayService : Service() {
     }
 
     private fun buildPanel() {
-        val padding = (14 * resources.displayMetrics.density).toInt()
+        val density = resources.displayMetrics.density
+        val padding = (14 * density).toInt()
         panel = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundResource(R.drawable.sp_bg_card)
+            elevation = 16f * density
             setPadding(padding, padding, padding, padding)
             visibility = View.GONE
         }
@@ -73,6 +76,7 @@ class VehicleStatusOverlayService : Service() {
         tvSpeed = addRow("车速", "-- km/h", 20f, true)
         tvGear = addRow("挡位", "--")
         tvVoltage = addRow("12V 电压", "-- V")
+        tvTemp = addRow("车外温度", "-- ℃")
         tvRecord = addRow("录制", "--")
         tvSentry = addRow("哨兵", "--")
         tvStorage = addRow("外置存储", "--")
@@ -102,6 +106,8 @@ class VehicleStatusOverlayService : Service() {
             text = initial
             textSize = valueSp
             setTextColor(getColor(if (isAccent) R.color.sp_ac else R.color.sp_tx))
+            typeface = android.graphics.Typeface.MONOSPACE
+            includeFontPadding = false
             if (isAccent) setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
 
@@ -140,6 +146,9 @@ class VehicleStatusOverlayService : Service() {
             GearState.UNKNOWN -> "未知"
         }
         tvVoltage.text = if (volts > 0f) "%.2f V".format(volts) else "未接入"
+
+        val temp = bus.outsideTemperature.value
+        tvTemp.text = if (temp != null) "%.1f ℃".format(temp) else "-- ℃"
 
         val isRecording = SophonCoreService.instance?.isRecordingFlow?.value ?: false
         tvRecord.text = if (isRecording) "● 录制中" else "○ 已停止"
@@ -192,9 +201,18 @@ class VehicleStatusOverlayService : Service() {
         }
 
         try {
+            view.alpha = 0f
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
             view.visibility = View.VISIBLE
             wm.addView(view, params)
             isAttached = true
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(180)
+                .start()
             Log.d(TAG, "Vehicle status overlay attached.")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to attach status overlay", e)
